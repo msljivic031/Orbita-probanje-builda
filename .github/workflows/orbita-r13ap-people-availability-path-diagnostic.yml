@@ -57,20 +57,20 @@ jobs:
       - name: Apply inspector app-root runtime repair
         shell: pwsh
         run: node ci/r13ap-visual-inspector-root-launch-patch.cjs candidate 2>&1 | Tee-Object evidence/app-root-repair.log
-      - name: Restrict diagnostic to the two failed People scenarios
+      - name: Install dependencies against full canonical scenario set
+        working-directory: candidate
+        shell: pwsh
+        run: npm ci --no-audit --no-fund 2>&1 | Tee-Object ../evidence/npm-ci.log
+      - name: Build and pass governance against full canonical scenario set
+        working-directory: candidate
+        shell: pwsh
+        run: npm run build 2>&1 | Tee-Object ../evidence/build.log
+      - name: Restrict runtime diagnostic to the two failed People scenarios
         shell: pwsh
         run: node ci/r13ap-target-two-people-scenarios.cjs candidate 2>&1 | Tee-Object evidence/two-scenario-filter.log
       - name: Apply diagnostic-only visible availability tab scenario patch
         shell: pwsh
         run: node ci/r13ap-people-availability-tab-diagnostic-patch.cjs candidate 2>&1 | Tee-Object evidence/availability-tab-diagnostic-patch.log
-      - name: Install dependencies
-        working-directory: candidate
-        shell: pwsh
-        run: npm ci --no-audit --no-fund 2>&1 | Tee-Object ../evidence/npm-ci.log
-      - name: Build
-        working-directory: candidate
-        shell: pwsh
-        run: npm run build 2>&1 | Tee-Object ../evidence/build.log
       - name: Run bounded visual inspector diagnostic
         working-directory: candidate
         shell: pwsh
