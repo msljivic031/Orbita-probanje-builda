@@ -2,97 +2,59 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.resolve(process.argv[2] || 'candidate');
-const targets = ['people-open-availability-surface', 'people-availability-period-validation-and-layout'];
-const allowedExt = new Set(['.json', '.mjs', '.js', '.cjs', '.ts', '.tsx']);
+const scenarioTargets = ['people-open-availability-surface', 'people-availability-period-validation-and-layout'];
+const uiTokens = ['person-availability-quick', 'people-command-focus', 'people-single-command-panel', 'people-detail-tabs'];
+const allowedExt = new Set(['.json', '.mjs', '.js', '.cjs', '.ts', '.tsx', '.css']);
 const skipDirs = new Set(['node_modules', 'dist', 'dist-electron', 'release', '.git']);
-const out = { schemaVersion: 1, audit: 'R13AP_SANITIZED_PEOPLE_SCENARIO_FORENSIC', files: [] };
+const out = { schemaVersion: 2, audit: 'R13AP_SANITIZED_PEOPLE_SCENARIO_AND_UI_OWNER_FORENSIC', scenarioFiles: [], uiOwnerFiles: [], cssRules: [] };
 
-function walk(dir) {
-  for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (ent.isDirectory() && skipDirs.has(ent.name)) continue;
-    const full = path.join(dir, ent.name);
-    if (ent.isDirectory()) walk(full);
-    else if (allowedExt.has(path.extname(ent.name).toLowerCase())) inspect(full);
-  }
-}
-
+function count(text, token) { return text.split(token).length - 1; }
+function lineOf(text, token) { const i=text.indexOf(token); return i<0?null:text.slice(0,i).split(/\r?\n/).length; }
 function classifySelector(v) {
   if (typeof v !== 'string') return null;
   if (v.includes('person-availability-quick')) return 'PERSON_AVAILABILITY_QUICK';
-  if (v.includes('availability-period')) return 'AVAILABILITY_PERIOD';
   if (v.includes('availability-period-next')) return 'AVAILABILITY_PERIOD_NEXT';
+  if (v.includes('availability-period')) return 'AVAILABILITY_PERIOD';
   if (v.includes('orbita-person-node')) return 'PERSON_NODE';
   return 'OTHER_REDACTED';
 }
-
 function sanitizeScenario(obj) {
-  const safe = {
-    id: obj.id,
-    keys: Object.keys(obj).sort(),
-    required: typeof obj.required === 'boolean' ? obj.required : null,
-    allowMutation: typeof obj.allowMutation === 'boolean' ? obj.allowMutation : null,
-    allowFormInput: typeof obj.allowFormInput === 'boolean' ? obj.allowFormInput : null,
-    routePresent: typeof obj.route === 'string',
-    steps: []
-  };
-  if (Array.isArray(obj.steps)) {
-    safe.steps = obj.steps.map((s, index) => ({
-      index: index + 1,
-      type: typeof s.type === 'string' ? s.type : null,
-      keys: Object.keys(s).sort(),
-      selectorKind: classifySelector(s.selector),
-      selectorAnyKinds: Array.isArray(s.selectors) ? s.selectors.map(classifySelector) : null,
-      actionKind: classifySelector(s.action),
-      milliseconds: Number.isFinite(s.milliseconds) ? s.milliseconds : null,
-      hasTextValue: typeof s.text === 'string',
-      hasValue: Object.prototype.hasOwnProperty.call(s, 'value'),
-      hasLabel: typeof s.label === 'string'
-    }));
-  }
+  const safe={id:obj.id,keys:Object.keys(obj).sort(),required:typeof obj.required==='boolean'?obj.required:null,allowMutation:typeof obj.allowMutation==='boolean'?obj.allowMutation:null,allowFormInput:typeof obj.allowFormInput==='boolean'?obj.allowFormInput:null,routePresent:typeof obj.route==='string',steps:[]};
+  if(Array.isArray(obj.steps)) safe.steps=obj.steps.map((s,index)=>({index:index+1,type:typeof s.type==='string'?s.type:null,keys:Object.keys(s).sort(),selectorKind:classifySelector(s.selector),selectorAnyKinds:Array.isArray(s.selectors)?s.selectors.map(classifySelector):null,milliseconds:Number.isFinite(s.milliseconds)?s.milliseconds:null,hasTextValue:typeof s.text==='string',hasValue:Object.prototype.hasOwnProperty.call(s,'value'),hasLabel:typeof s.label==='string'}));
   return safe;
 }
-
-function findScenarioObjects(value, found = []) {
-  if (!value || typeof value !== 'object') return found;
-  if (!Array.isArray(value) && targets.includes(value.id)) found.push(sanitizeScenario(value));
-  if (Array.isArray(value)) for (const item of value) findScenarioObjects(item, found);
-  else for (const v of Object.values(value)) findScenarioObjects(v, found);
+function findScenarioObjects(value,found=[]) {
+  if(!value||typeof value!=='object') return found;
+  if(!Array.isArray(value)&&scenarioTargets.includes(value.id)) found.push(sanitizeScenario(value));
+  if(Array.isArray(value)) for(const item of value) findScenarioObjects(item,found); else for(const v of Object.values(value)) findScenarioObjects(v,found);
   return found;
 }
-
-function count(text, token) { return text.split(token).length - 1; }
-
-function inspect(full) {
-  let text;
-  try { text = fs.readFileSync(full, 'utf8'); } catch { return; }
-  const presentTargets = targets.filter((t) => text.includes(t));
-  if (!presentTargets.length) return;
-  const rel = path.relative(root, full).split(path.sep).join('/');
-  const entry = {
-    path: rel,
-    bytes: Buffer.byteLength(text),
-    presentTargets,
-    tokenCounts: {
-      personAvailabilityQuick: count(text, 'person-availability-quick'),
-      availabilityPeriodNext: count(text, 'availability-period-next'),
-      orbitaPersonNode: count(text, 'orbita-person-node'),
-      waitForVisibleSelector: count(text, 'waitForVisibleSelector'),
-      clickSelector: count(text, 'clickSelector'),
-      clickText: count(text, 'clickText'),
-      clickAny: count(text, 'clickAny'),
-      assertVisible: count(text, 'assertVisible'),
-      capture: count(text, 'capture')
-    },
-    jsonScenarios: []
-  };
-  if (path.extname(full).toLowerCase() === '.json') {
-    try { entry.jsonScenarios = findScenarioObjects(JSON.parse(text)); } catch {}
+function parseCssRules(text, rel) {
+  const re=/([^{}]+)\{([^{}]*)\}/g; let m;
+  while((m=re.exec(text))){
+    const selector=m[1].trim();
+    const matched=uiTokens.filter(t=>selector.includes(t));
+    if(!matched.length) continue;
+    const decl={};
+    for(const part of m[2].split(';')){const k=part.indexOf(':');if(k<0)continue;const p=part.slice(0,k).trim().toLowerCase(),v=part.slice(k+1).trim().toLowerCase();if(p)decl[p]=v;}
+    const props=['display','visibility','opacity','overflow','overflow-x','overflow-y','height','max-height','min-height','position','transform','clip','clip-path','content-visibility'];
+    const facts={}; for(const p of props) if(Object.prototype.hasOwnProperty.call(decl,p)) facts[p]=decl[p];
+    out.cssRules.push({path:rel,selectorTokens:matched,selectorClassCount:(selector.match(/\./g)||[]).length,selectorHasMediaContext:false,declarationProperties:Object.keys(decl).sort(),layoutFacts:facts,forcesDisplayNone:decl.display==='none',forcesVisibilityHidden:decl.visibility==='hidden',forcesZeroOpacity:decl.opacity==='0'});
   }
-  out.files.push(entry);
 }
-
+function inspect(full){
+  let text; try{text=fs.readFileSync(full,'utf8')}catch{return}
+  const rel=path.relative(root,full).split(path.sep).join('/'); const ext=path.extname(full).toLowerCase();
+  const presentScenarios=scenarioTargets.filter(t=>text.includes(t));
+  if(presentScenarios.length){const e={path:rel,bytes:Buffer.byteLength(text),presentScenarios,jsonScenarios:[]}; if(ext==='.json'){try{e.jsonScenarios=findScenarioObjects(JSON.parse(text))}catch{}} out.scenarioFiles.push(e);}
+  const presentUi=uiTokens.filter(t=>text.includes(t));
+  if(presentUi.length){
+    out.uiOwnerFiles.push({path:rel,ext,bytes:Buffer.byteLength(text),presentUi,counts:Object.fromEntries(presentUi.map(t=>[t,count(text,t)])),firstLines:Object.fromEntries(presentUi.map(t=>[t,lineOf(text,t)])),containsDisplayNone:text.includes('display: none')||text.includes('display:none'),containsVisibilityHidden:text.includes('visibility: hidden')||text.includes('visibility:hidden'),containsOverflowHidden:text.includes('overflow: hidden')||text.includes('overflow:hidden')});
+    if(ext==='.css') parseCssRules(text,rel);
+  }
+}
+function walk(dir){for(const ent of fs.readdirSync(dir,{withFileTypes:true})){if(ent.isDirectory()&&skipDirs.has(ent.name))continue;const full=path.join(dir,ent.name);if(ent.isDirectory())walk(full);else if(allowedExt.has(path.extname(ent.name).toLowerCase()))inspect(full)}}
 walk(root);
-out.files.sort((a,b) => a.path.localeCompare(b.path));
-out.state = out.files.length ? 'PASS' : 'FAIL';
-console.log(JSON.stringify(out, null, 2));
-if (!out.files.length) process.exit(2);
+out.scenarioFiles.sort((a,b)=>a.path.localeCompare(b.path)); out.uiOwnerFiles.sort((a,b)=>a.path.localeCompare(b.path)); out.cssRules.sort((a,b)=>a.path.localeCompare(b.path));
+out.state=out.scenarioFiles.length&&out.uiOwnerFiles.length?'PASS':'FAIL';
+console.log(JSON.stringify(out,null,2)); if(out.state!=='PASS')process.exit(2);
