@@ -1,6 +1,6 @@
 ORBITA redesign Wave 4 People trigger
-2026-08-12T23:13+02:00
-Retry after inspector-schema repair: new deep People captures now have explicit evidence labels.
-Design Brain 0.5 ACTIVE; no product intent change and no weakened gate.
+2026-08-12T23:20+02:00
+Retry after runtime-proof correction: deep step-3/step-4 assertions now explicitly read data-orbita-availability-step.
+Design Brain 0.5 ACTIVE; product candidate unchanged from prior runtime attempt.
 Wave 4 scope: People organization tree refinement + affected-work operational table; no new third-party dependency; 21st.dev pattern adaptation only.
 Proof must cover Period -> Zamena -> Pogođeni Radovi -> Potvrda at both 1440x900 and 1366x768.
