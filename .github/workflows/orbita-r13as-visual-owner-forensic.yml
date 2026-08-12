@@ -44,6 +44,6 @@ jobs:
         run: |
           node ci/r13ar-people-availability-live-entry-repair.cjs candidate | Out-Null
           if($LASTEXITCODE-ne0){throw "R13AR"}
-      - name: Emit sanitized visual owner map
+      - name: Emit compact visual owner map
         shell: pwsh
-        run: node ci/r13as-visual-owner-forensic.cjs candidate
+        run: node ci/r13as-visual-owner-minimal-forensic.cjs candidate
