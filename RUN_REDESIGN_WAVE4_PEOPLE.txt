@@ -1,6 +1,6 @@
 ORBITA redesign Wave 4 People trigger
-2026-08-12T23:20+02:00
-Retry after runtime-proof correction: deep step-3/step-4 assertions now explicitly read data-orbita-availability-step.
-Design Brain 0.5 ACTIVE; product candidate unchanged from prior runtime attempt.
-Wave 4 scope: People organization tree refinement + affected-work operational table; no new third-party dependency; 21st.dev pattern adaptation only.
+2026-08-12T23:23+02:00
+UNCHANGED product candidate retry after transient Electron binary fetch failure in CI (0 captures / app never launched).
+Deep step-3/step-4 assertions explicitly read data-orbita-availability-step.
+Design Brain 0.5 ACTIVE.
 Proof must cover Period -> Zamena -> Pogođeni Radovi -> Potvrda at both 1440x900 and 1366x768.
