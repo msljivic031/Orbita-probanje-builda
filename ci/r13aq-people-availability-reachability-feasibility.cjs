@@ -11,25 +11,28 @@ if ((jsx.split(quickMarker).length - 1) !== 1) throw new Error('expected exactly
 
 const markerPos = jsx.indexOf(quickMarker);
 const buttonStart = jsx.lastIndexOf('<button', markerPos);
-const buttonOpenEnd = jsx.indexOf('>', markerPos);
 const buttonEnd = jsx.indexOf('</button>', markerPos);
-if (buttonStart < 0 || buttonOpenEnd < 0 || buttonEnd < 0) throw new Error('legacy availability button boundary not found');
+if (buttonStart < 0 || buttonEnd < 0) throw new Error('legacy availability button boundary not found');
 const originalButton = jsx.slice(buttonStart, buttonEnd + '</button>'.length);
 if (!originalButton.includes(quickMarker)) throw new Error('legacy button capture failed');
 const currentButton = originalButton.replace(quickMarker, 'data-orbita-action="person-availability-edit"');
 if (currentButton === originalButton) throw new Error('current edit marker replacement failed');
 
-const tabsPos = jsx.indexOf('people-detail-tabs');
-if (tabsPos < 0) throw new Error('people detail tabs owner not found');
-const availabilityLabelPos = jsx.indexOf('Dostupnost', tabsPos);
-if (availabilityLabelPos < 0) throw new Error('Dostupnost tab label not found after people detail tabs');
-const tabButtonStart = jsx.lastIndexOf('<button', availabilityLabelPos);
-const tabButtonOpenEnd = jsx.indexOf('>', tabButtonStart);
-if (tabButtonStart < tabsPos || tabButtonOpenEnd < availabilityLabelPos) throw new Error('Dostupnost tab button boundary not found');
-const tabOpen = jsx.slice(tabButtonStart, tabButtonOpenEnd + 1);
+const tabsClassPos = jsx.indexOf('people-detail-tabs');
+if (tabsClassPos < 0) throw new Error('people detail tabs owner not found');
+const navStart = jsx.lastIndexOf('<nav', tabsClassPos);
+const navEnd = jsx.indexOf('</nav>', tabsClassPos);
+if (navStart < 0 || navEnd < 0) throw new Error('people detail tabs nav boundary not found');
+const navSource = jsx.slice(navStart, navEnd + '</nav>'.length);
+const buttonMatches = [...navSource.matchAll(/<button\b/g)];
+if (buttonMatches.length !== 4) throw new Error('expected exactly four People detail tab buttons, found ' + buttonMatches.length);
+const thirdButtonStart = navStart + buttonMatches[2].index;
+const thirdButtonOpenEnd = jsx.indexOf('>', thirdButtonStart);
+if (thirdButtonOpenEnd < 0 || thirdButtonOpenEnd > navEnd) throw new Error('third People detail tab button opening boundary not found');
+const tabOpen = jsx.slice(thirdButtonStart, thirdButtonOpenEnd + 1);
 if (!tabOpen.includes('data-orbita-action="person-availability-tab"')) {
   const instrumentedTabOpen = tabOpen.replace('<button', '<button data-orbita-action="person-availability-tab"');
-  jsx = jsx.slice(0, tabButtonStart) + instrumentedTabOpen + jsx.slice(tabButtonOpenEnd + 1);
+  jsx = jsx.slice(0, thirdButtonStart) + instrumentedTabOpen + jsx.slice(thirdButtonOpenEnd + 1);
 }
 
 function findSectionEnd(source, start) {
@@ -90,6 +93,7 @@ console.log(JSON.stringify({
   proofOwner: 'config/inspector/scenarios.json',
   legacyActionbarChanged: false,
   modalOwnerChanged: false,
+  detailTabCount: buttonMatches.length,
   currentAvailabilityEntry: 'person-availability-edit',
   currentAvailabilityTab: 'person-availability-tab',
   canonicalScenariosChanged: changed
