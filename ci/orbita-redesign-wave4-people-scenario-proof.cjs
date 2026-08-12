@@ -14,12 +14,12 @@ if(!existing){
     {type:'clickText',text:'Prikaži pogođene Radove'},
     {type:'wait',milliseconds:350},
     {type:'assertAttribute',selector:'[data-orbita-modal="person-availability"]',value:'3'},
-    {type:'capture'},
+    {type:'capture',label:'people-availability-affected-work-review'},
     {type:'clickText',text:'Pregledaj potvrdu'},
     {type:'wait',milliseconds:220},
     {type:'assertAttribute',selector:'[data-orbita-modal="person-availability"]',value:'4'},
-    {type:'capture'}
+    {type:'capture',label:'people-availability-confirmation-review'}
   );
 }
 fs.writeFileSync(p,JSON.stringify(doc,null,2)+'\n');
-console.log(JSON.stringify({scenario:target.id,extendedThrough:['period','replacement','affected-work','confirmation'],productSrcChanged:false},null,2));
+console.log(JSON.stringify({scenario:target.id,extendedThrough:['period','replacement','affected-work','confirmation'],captures:['people-availability-affected-work-review','people-availability-confirmation-review'],productSrcChanged:false},null,2));
