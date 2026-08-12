@@ -1,0 +1,5 @@
+ORBITA R13AP PEOPLE AVAILABILITY PATH DIAGNOSTIC
+trigger=2026-08-12T15:34:00+02:00
+base_identity=8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704
+mode=diagnostic-only-visible-third-tab
+not_an_admission=true
