@@ -1,0 +1,3 @@
+ORBITA redesign People scenario forensic trigger
+2026-08-12T22:50+02:00
+Read-only: inspect current People canonical scenario steps so Wave 4 proves affected-work and confirmation states, not only Period/Zamena.
