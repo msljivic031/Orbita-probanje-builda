@@ -1,0 +1,38 @@
+const fs=require('fs'),path=require('path');
+const root=path.resolve(process.argv[2]||'candidate'),out=path.resolve(process.argv[3]||'workforce-owner-forensic.json');
+const sourceRoots=['src','electron','config'];
+const files=[];function walk(d){if(!fs.existsSync(d))return;for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(e.isDirectory())walk(p);else if(/\.(ts|tsx|js|mjs|cjs|css|json|sql)$/.test(e.name))files.push(p)}}for(const r of sourceRoots)walk(path.join(root,r));
+const domains={
+ availability:['PersonAvailabilityEvent','availabilityEvents','getPersonAvailability','effective availability','startsAt','endsAt'],
+ temporalMembership:['TemporalTeamMembership','temporalTeamMemberships','validFrom','boundaryConfidence'],
+ calendarWorkingDays:['nonWorking','non-working','weekend','working day','radni dan','neradni','holiday','praznik'],
+ settings:['Podesavanja','Settings','statusRules','settingsRepository','configuration','config'],
+ persistence:['sqlite','CREATE TABLE','migration','repository','save','insert','update'],
+ exportPrint:['window.print','print','export','csv','xlsx','pdf','saveAs','download'],
+ peopleOrg:['OrganizationTeam','organizationTeams','Person','teamId','organizationId'],
+ reportsAsOf:['asOf','periodStart','periodEnd','report','snapshot'],
+ dateUtils:['startOfMonth','endOfMonth','daysInMonth','getDay','Date.UTC','toISOString']
+};
+function count(s,term){let n=0,at=0,low=s.toLowerCase(),q=term.toLowerCase();while((at=low.indexOf(q,at))>=0){n++;at+=Math.max(q.length,1)}return n}
+const hits=[];
+for(const f of files){const s=fs.readFileSync(f,'utf8');const matched={};let total=0;for(const [domain,terms] of Object.entries(domains)){let n=0;for(const t of terms)n+=count(s,t);if(n){matched[domain]=n;total+=n}}if(total)hits.push({file:path.relative(root,f).replaceAll('\\','/'),total,matched});}
+hits.sort((a,b)=>b.total-a.total||a.file.localeCompare(b.file));
+const focus=hits.filter(x=>/people|ljudi|availability|temporal|organization|calendar|kalendar|setting|podesavanja|report|izvest|export|print|sqlite|repository|migration|date/i.test(x.file)).slice(0,180);
+const exact=[];
+const symbolRe=/(?:export\s+)?(?:class|function|const|type|interface)\s+([A-Za-z0-9_]+)/g;
+for(const item of focus){if(!/\.(ts|tsx|js|mjs|cjs)$/.test(item.file))continue;const s=fs.readFileSync(path.join(root,item.file),'utf8');const symbols=[...s.matchAll(symbolRe)].map(m=>m[1]).filter(n=>/availability|membership|organization|calendar|working|holiday|export|print|report|repository|setting|date/i.test(n));if(symbols.length)exact.push({file:item.file,symbols:[...new Set(symbols)].slice(0,80)});}
+const schema=[];
+for(const f of files.filter(f=>/\.sql$|migration|schema/i.test(f))){const s=fs.readFileSync(f,'utf8');for(const m of s.matchAll(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?["'`]?([A-Za-z0-9_]+)/gi)){const table=m[1];if(/people|person|team|availability|membership|setting|config|calendar|workforce|legend/i.test(table))schema.push({file:path.relative(root,f).replaceAll('\\','/'),table});}}
+const verdict={
+ hasDedicatedWorkforceOwner:focus.some(x=>/workforce|attendance|timesheet/i.test(x.file)),
+ availabilityOwnerCandidates:focus.filter(x=>x.matched.availability).slice(0,30).map(x=>x.file),
+ temporalMembershipOwnerCandidates:focus.filter(x=>x.matched.temporalMembership).slice(0,30).map(x=>x.file),
+ workingDayCandidates:focus.filter(x=>x.matched.calendarWorkingDays).slice(0,30).map(x=>x.file),
+ settingsCandidates:focus.filter(x=>x.matched.settings&&x.matched.persistence).slice(0,30).map(x=>x.file),
+ exportPrintCandidates:focus.filter(x=>x.matched.exportPrint).slice(0,40).map(x=>x.file),
+ persistenceCandidates:focus.filter(x=>x.matched.persistence).slice(0,40).map(x=>x.file),
+ schemaTables:schema,
+ rule:'This is owner discovery only. Presence does not prove Workforce runtime closure.'
+};
+fs.writeFileSync(out,JSON.stringify({audit:'ORBITA_WAVE6_WORKFORCE_OWNER_FORENSIC',verdict,exactSymbols:exact,focus},null,2));
+console.log(JSON.stringify(verdict,null,2));
