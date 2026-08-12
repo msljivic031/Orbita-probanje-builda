@@ -104,10 +104,9 @@ jobs:
           npm run build 2>&1 | Tee-Object ../evidence/build.log
           if($LASTEXITCODE-ne0){throw "build $LASTEXITCODE"}
       - name: Full canonical visual inspector 1440x900
-        working-directory: candidate
         shell: pwsh
         run: |
-          node tooling/inspector/visual-runtime-inspector.mjs --output "$env:GITHUB_WORKSPACE\VISUAL_REDESIGN_W4_1440" --width 1440 --height 900 --max-actions 220 --max-depth 3 --max-states 180 2>&1 | Tee-Object ../evidence/visual-1440-console.log
+          & "$env:GITHUB_WORKSPACE\ci\orbita-visual-inspector-infra-retry.ps1" -CandidateRoot "$env:GITHUB_WORKSPACE\candidate" -Output "$env:GITHUB_WORKSPACE\VISUAL_REDESIGN_W4_1440" -Width 1440 -Height 900 -LogFile "$env:GITHUB_WORKSPACE\evidence\visual-1440-console.log"
           if($LASTEXITCODE-ne0){throw "visual 1440 $LASTEXITCODE"}
       - name: Assert Wave 4 admission 1440
         shell: pwsh
@@ -120,10 +119,9 @@ jobs:
           "unlabeled=$($unlabeled.Count)" | Tee-Object evidence/unlabeled-1440.txt
           if($unlabeled.Count-ne0){throw "unlabeled $($unlabeled.Count)"}
       - name: Full canonical visual inspector 1366x768
-        working-directory: candidate
         shell: pwsh
         run: |
-          node tooling/inspector/visual-runtime-inspector.mjs --output "$env:GITHUB_WORKSPACE\VISUAL_REDESIGN_W4_1366" --width 1366 --height 768 --max-actions 220 --max-depth 3 --max-states 180 2>&1 | Tee-Object ../evidence/visual-1366-console.log
+          & "$env:GITHUB_WORKSPACE\ci\orbita-visual-inspector-infra-retry.ps1" -CandidateRoot "$env:GITHUB_WORKSPACE\candidate" -Output "$env:GITHUB_WORKSPACE\VISUAL_REDESIGN_W4_1366" -Width 1366 -Height 768 -LogFile "$env:GITHUB_WORKSPACE\evidence\visual-1366-console.log"
           if($LASTEXITCODE-ne0){throw "visual 1366 $LASTEXITCODE"}
       - name: Assert Wave 4 admission 1366
         shell: pwsh
