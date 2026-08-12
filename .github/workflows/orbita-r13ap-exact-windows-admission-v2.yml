@@ -1,0 +1,126 @@
+name: ORBITA R13AP Exact Windows Admission V2
+
+on:
+  push:
+    branches: [main]
+    paths: ['RUN_R13AP_EXACT_WINDOWS_ADMISSION_V2.txt']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CI: 'true'
+  CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+  ORBITA_BRIDGE_ZIP: 'ORBITA_R13AN_PUBLIC_ENCRYPTED_CI_REPO_READY_R1_2026_08_12.zip'
+  ORBITA_BRIDGE_SHA256: 'dfe1f58a7df5c79c2d841496fd364418f98a91ed2fd6112fc0f5e0ab9c43731e'
+  ORBITA_BASE_R13AN_SHA256: '140846e9be04d3da222996fed9701771c4cb1be1c8395e766512ece153ba399a'
+  ORBITA_ENCRYPTED_SHA256: '827742a1633bd71dae1d2e1fb3dc77a95835a279a660016c8844d305341b1687'
+  ORBITA_AAD: 'ORBITA-R13AN-PUBLIC-CI-R1'
+  ORBITA_ENCRYPTED_FILE: 'bridge/ORBITA2_R14_R13AN_NATIVE_CONTENT_SIGNATURE_HARDENING_NON_PROMOTED_CANDIDATE_R2_2026_08_12.zip.aesgcm'
+  ORBITA_R13AO_SOURCE_IDENTITY: '34ca534fe7382fa5df6778d89b312f3e67493cb8740684965fe012b29759cac6'
+  ORBITA_R13AP_SOURCE_IDENTITY: '8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704'
+
+jobs:
+  admission:
+    name: Windows x64 exact R13AP admission V2
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare evidence
+        shell: pwsh
+        run: New-Item -ItemType Directory -Force evidence | Out-Null
+
+      - name: Verify bridge and decrypt exact R13AN
+        shell: pwsh
+        env:
+          ORBITA_CI_AES256_KEY_B64: ${{ secrets.ORBITA_CI_AES256_KEY_B64 }}
+        run: |
+          $bh=(Get-FileHash $env:ORBITA_BRIDGE_ZIP -Algorithm SHA256).Hash.ToLowerInvariant(); if($bh-ne$env:ORBITA_BRIDGE_SHA256){throw "bridge sha $bh"}; "bridge=$bh" | Out-File evidence/bridge.txt
+          Expand-Archive $env:ORBITA_BRIDGE_ZIP bridge -Force
+          $eh=(Get-FileHash $env:ORBITA_ENCRYPTED_FILE -Algorithm SHA256).Hash.ToLowerInvariant(); if($eh-ne$env:ORBITA_ENCRYPTED_SHA256){throw "encrypted sha $eh"}; "encrypted=$eh" | Out-File evidence/encrypted.txt
+          @'
+          const fs=require('fs'),crypto=require('crypto'); const key=Buffer.from(process.env.ORBITA_CI_AES256_KEY_B64||'','base64'); if(key.length!==32)throw Error('secret'); const b=fs.readFileSync(process.env.ORBITA_ENCRYPTED_FILE); if(b.subarray(0,8).toString('ascii')!=='ORBAGCM1')throw Error('magic'); const n=b.subarray(8,20),x=b.subarray(20),tag=x.subarray(x.length-16),ct=x.subarray(0,x.length-16),d=crypto.createDecipheriv('aes-256-gcm',key,n); d.setAAD(Buffer.from(process.env.ORBITA_AAD)); d.setAuthTag(tag); const p=Buffer.concat([d.update(ct),d.final()]); const s=crypto.createHash('sha256').update(p).digest('hex'); console.log(s); if(s!==process.env.ORBITA_BASE_R13AN_SHA256)throw Error(s); fs.writeFileSync('candidate.zip',p);
+          '@ | Set-Content decrypt.cjs -Encoding utf8
+          node decrypt.cjs 2>&1 | Tee-Object evidence/r13an-sha.txt
+          Expand-Archive candidate.zip candidate -Force
+
+      - name: Reconstruct exact formal R13AP and prove ledger
+        shell: pwsh
+        run: |
+          node ci/r13ao-tooling-patch.cjs candidate 2>&1 | Tee-Object evidence/r13ao-transform.log
+          $a=Get-Content candidate/.orbita-code-boundary.json -Raw | ConvertFrom-Json; if($a.sourceDirectoryIdentitySha256-ne$env:ORBITA_R13AO_SOURCE_IDENTITY){throw "R13AO identity $($a.sourceDirectoryIdentitySha256)"}
+          python ci/r13ap-transform.py candidate 2>&1 | Tee-Object evidence/r13ap-transform.log
+          $p=Get-Content candidate/.orbita-code-boundary.json -Raw | ConvertFrom-Json; "identity=$($p.sourceDirectoryIdentitySha256) files=$($p.files.Count)" | Tee-Object evidence/r13ap-identity.txt
+          if($p.sourceDirectoryIdentitySha256-ne$env:ORBITA_R13AP_SOURCE_IDENTITY){throw "R13AP identity $($p.sourceDirectoryIdentitySha256)"}
+          Push-Location candidate
+          try { node tooling/quality/check-code-boundary-ledger.mjs 2>&1 | Tee-Object ../evidence/code-ledger.log; if($LASTEXITCODE-ne0){throw "ledger exit $LASTEXITCODE"} }
+          finally { Pop-Location }
+          Select-String candidate/src/main/runtime/windowManager.ts -Pattern 'sandbox:' | ForEach-Object {$_.Line.Trim()} | Out-File evidence/sandbox-source.txt
+          Select-String candidate/src/main/runtime/runtimePaths.ts -Pattern 'preload.cjs' | ForEach-Object {$_.Line.Trim()} | Out-File evidence/preload-path.txt
+
+      - name: Install exact dependencies
+        working-directory: candidate
+        shell: pwsh
+        run: npm ci --no-audit --no-fund 2>&1 | Tee-Object ../evidence/npm-ci.log
+      - name: Typecheck
+        working-directory: candidate
+        shell: pwsh
+        run: npm run typecheck 2>&1 | Tee-Object ../evidence/typecheck.log
+      - name: Full governance
+        working-directory: candidate
+        shell: pwsh
+        run: npm run check 2>&1 | Tee-Object ../evidence/check.log
+      - name: Production build
+        working-directory: candidate
+        shell: pwsh
+        run: |
+          npm run build 2>&1 | Tee-Object ../evidence/build.log
+          if(-not(Test-Path dist-electron/preload/preload.cjs)){throw 'preload.cjs missing'}
+          Get-FileHash dist-electron/preload/preload.cjs -Algorithm SHA256 | Format-List | Out-File ../evidence/preload-cjs-sha256.txt
+      - name: Windows NSIS and portable x64 package
+        working-directory: candidate
+        shell: pwsh
+        run: npm run package:win 2>&1 | Tee-Object ../evidence/package-win.log
+      - name: Packaged sandboxed EXE preload IPC SQLite proof
+        working-directory: candidate
+        shell: pwsh
+        env:
+          ORBITA_VISUAL_INSPECTOR: '1'
+          ORBITA_VISUAL_INSPECTOR_HIDDEN: '1'
+          ORBITA_VISUAL_INSPECTOR_HEADLESS: '1'
+          ORBITA_REMOTE_DEBUGGING_PORT: '9451'
+          ORBITA_USER_DATA_PATH: '${{ github.workspace }}\candidate\R13AP_EXACT_RUNTIME\user-data'
+          ORBITA_LOCAL_WORKSPACE_DATABASE_PATH: '${{ github.workspace }}\candidate\R13AP_EXACT_RUNTIME\data\orbita-r13ap.sqlite'
+        run: |
+          New-Item -ItemType Directory -Force (Split-Path $env:ORBITA_LOCAL_WORKSPACE_DATABASE_PATH) | Out-Null
+          New-Item -ItemType Directory -Force $env:ORBITA_USER_DATA_PATH | Out-Null
+          $exe=(Resolve-Path 'release\win-unpacked\Orbita OI Pro.exe').Path
+          $proc=Start-Process $exe -PassThru -RedirectStandardOutput ../evidence/runtime.stdout.log -RedirectStandardError ../evidence/runtime.stderr.log
+          try { node ../ci/packaged-runtime-smoke.cjs 2>&1 | Tee-Object ../evidence/runtime-smoke.json; if($LASTEXITCODE-ne0){throw "runtime exit $LASTEXITCODE"} } finally { if(-not$proc.HasExited){Stop-Process -Id $proc.Id -Force} }
+      - name: Hash release outputs
+        if: always()
+        shell: pwsh
+        run: |
+          if(Test-Path candidate/release){Get-ChildItem candidate/release -File -Recurse | Get-FileHash -Algorithm SHA256 | Format-Table -AutoSize | Out-File evidence/release-sha256.txt}else{'release absent'|Out-File evidence/release-sha256.txt}
+      - name: Upload exact admission evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ORBITA-R13AP-EXACT-WINDOWS-ADMISSION-V2-EVIDENCE
+          path: evidence
+          retention-days: 7
+      - name: Upload exact Windows packages
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ORBITA-R13AP-EXACT-WINDOWS-X64-PACKAGES
+          path: candidate/release
+          retention-days: 7
