@@ -1,6 +1,6 @@
 ORBITA R13AQ PEOPLE AVAILABILITY REACHABILITY FEASIBILITY
-trigger=2026-08-12T15:34:00+02:00
+trigger=2026-08-12T15:46:00+02:00
 predecessor_identity=8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704
-mode=non-admission-feasibility
+mode=non-admission-feasibility-v2-structural-tab-owner
 visual=18-canonical-15-required
 product_repair=current-Dostupnost-pane-opens-existing-modal
