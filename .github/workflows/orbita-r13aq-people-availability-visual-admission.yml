@@ -48,28 +48,39 @@ jobs:
           const fs=require('fs'),crypto=require('crypto');const k=Buffer.from(process.env.ORBITA_CI_AES256_KEY_B64||'','base64');if(k.length!==32)throw Error('secret');const b=fs.readFileSync(process.env.ORBITA_ENCRYPTED_FILE),n=b.subarray(8,20),x=b.subarray(20),tag=x.subarray(x.length-16),ct=x.subarray(0,x.length-16),d=crypto.createDecipheriv('aes-256-gcm',k,n);d.setAAD(Buffer.from(process.env.ORBITA_AAD));d.setAuthTag(tag);const p=Buffer.concat([d.update(ct),d.final()]);const s=crypto.createHash('sha256').update(p).digest('hex');if(s!==process.env.ORBITA_BASE_R13AN_SHA256)throw Error(s);fs.writeFileSync('candidate.zip',p);console.log(s);
           '@ | Set-Content decrypt.cjs -Encoding utf8
           node decrypt.cjs | Tee-Object evidence/r13an-sha.txt
+          if($LASTEXITCODE-ne0){throw "decrypt exit $LASTEXITCODE"}
           Expand-Archive candidate.zip candidate -Force
           node ci/r13ao-tooling-patch.cjs candidate | Tee-Object evidence/r13ao-transform.log
+          if($LASTEXITCODE-ne0){throw "R13AO transform exit $LASTEXITCODE"}
           python ci/r13ap-transform.py candidate | Tee-Object evidence/r13ap-transform.log
+          if($LASTEXITCODE-ne0){throw "R13AP transform exit $LASTEXITCODE"}
           $p=Get-Content candidate/.orbita-code-boundary.json -Raw | ConvertFrom-Json; "parentIdentity=$($p.sourceDirectoryIdentitySha256)" | Tee-Object evidence/r13ap-parent-identity.txt
           if($p.sourceDirectoryIdentitySha256-ne$env:ORBITA_R13AP_SOURCE_IDENTITY){throw "identity $($p.sourceDirectoryIdentitySha256)"}
       - name: Apply R13AQ People scenario-owner repair
         shell: pwsh
         run: |
           node ci/r13aq-people-availability-scenario-owner-repair.cjs candidate 2>&1 | Tee-Object evidence/r13aq-people-scenario-repair.log
+          if($LASTEXITCODE-ne0){throw "R13AQ repair exit $LASTEXITCODE"}
           node ci/r13ap-visual-inspector-root-launch-patch.cjs candidate 2>&1 | Tee-Object evidence/visual-inspector-root-launch-patch.log
+          if($LASTEXITCODE-ne0){throw "root-launch patch exit $LASTEXITCODE"}
       - name: Install exact dependencies
         working-directory: candidate
         shell: pwsh
-        run: npm ci --no-audit --no-fund 2>&1 | Tee-Object ../evidence/npm-ci.log
+        run: |
+          npm ci --no-audit --no-fund 2>&1 | Tee-Object ../evidence/npm-ci.log
+          if($LASTEXITCODE-ne0){throw "npm ci exit $LASTEXITCODE"}
       - name: Validate repaired inspector schema
         working-directory: candidate
         shell: pwsh
-        run: npm run check:inspector-schema 2>&1 | Tee-Object ../evidence/inspector-schema.log
+        run: |
+          npm run check:inspector-schema 2>&1 | Tee-Object ../evidence/inspector-schema.log
+          if($LASTEXITCODE-ne0){throw "inspector schema exit $LASTEXITCODE"}
       - name: Build R13AQ successor
         working-directory: candidate
         shell: pwsh
-        run: npm run build 2>&1 | Tee-Object ../evidence/build.log
+        run: |
+          npm run build 2>&1 | Tee-Object ../evidence/build.log
+          if($LASTEXITCODE-ne0){throw "build exit $LASTEXITCODE"}
       - name: Run full canonical visual runtime inspector
         working-directory: candidate
         shell: pwsh
