@@ -1,5 +1,4 @@
 ORBITA redesign Wave 3 trigger
-2026-08-12T22:12+02:00
-UNCHANGED product candidate retry after transient Electron binary fetch failure in CI.
-Canon-first Rad dossier natural workflow: direct operational facts, progressive New Rad, restrained navigation.
+2026-08-12T22:34+02:00
+Human-review repair: dossier operational strip must show Status, Rok, Prioritet and Napredak in one row; duplicate Koraci/Dokumenti metrics remain hidden because dossier tabs own those domains.
 Required: typecheck/build + 18/18 at 1440 and 1366 + zero unlabeled + human screenshot review.
