@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   CI: 'true'
@@ -73,6 +73,8 @@ jobs:
         run: |
           node ci/orbita-redesign-forensic.mjs candidate redesign-evidence 2>&1 | Tee-Object redesign-evidence/forensic-console.log
           if($LASTEXITCODE-ne0){throw "forensic $LASTEXITCODE"}
+          node ci/r13as-visual-owner-minimal-forensic.cjs candidate > redesign-evidence/owner-snippets.json
+          if($LASTEXITCODE-ne0){throw "owner forensic $LASTEXITCODE"}
 
       - name: Validate exact current product baseline
         working-directory: candidate
@@ -88,19 +90,6 @@ jobs:
           if($LASTEXITCODE-ne0){throw "action coverage $LASTEXITCODE"}
           npm run build 2>&1 | Tee-Object ../redesign-evidence/build.log
           if($LASTEXITCODE-ne0){throw "build $LASTEXITCODE"}
-
-      - name: Persist public-safe forensic metadata on redesign branch
-        if: success()
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force redesign/evidence | Out-Null
-          Copy-Item redesign-evidence/forensic.json redesign/evidence/FORENSIC_LATEST.json -Force
-          Copy-Item redesign-evidence/forensic.md redesign/evidence/FORENSIC_LATEST.md -Force
-          git config user.name "orbita-redesign-ci"
-          git config user.email "orbita-redesign-ci@users.noreply.github.com"
-          git add redesign/evidence/FORENSIC_LATEST.json redesign/evidence/FORENSIC_LATEST.md
-          git diff --cached --quiet
-          if($LASTEXITCODE-ne0){git commit -m "redesign evidence: refresh product UX forensic"; git push origin HEAD:orbita-redesign}
 
       - name: Upload redesign forensic evidence
         if: always()
