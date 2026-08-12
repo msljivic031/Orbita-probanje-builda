@@ -1,0 +1,154 @@
+name: ORBITA Redesign Wave 2 Proof
+
+on:
+  push:
+    branches: [orbita-redesign]
+    paths: ['RUN_REDESIGN_WAVE2.txt']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CI: 'true'
+  CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+  ORBITA_BRIDGE_ZIP: 'ORBITA_R13AN_PUBLIC_ENCRYPTED_CI_REPO_READY_R1_2026_08_12.zip'
+  ORBITA_BRIDGE_SHA256: 'dfe1f58a7df5c79c2d841496fd364418f98a91ed2fd6112fc0f5e0ab9c43731e'
+  ORBITA_BASE_R13AN_SHA256: '140846e9be04d3da222996fed9701771c4cb1be1c8395e766512ece153ba399a'
+  ORBITA_ENCRYPTED_SHA256: '827742a1633bd71dae1d2e1fb3dc77a95835a279a660016c8844d305341b1687'
+  ORBITA_AAD: 'ORBITA-R13AN-PUBLIC-CI-R1'
+  ORBITA_ENCRYPTED_FILE: 'bridge/ORBITA2_R14_R13AN_NATIVE_CONTENT_SIGNATURE_HARDENING_NON_PROMOTED_CANDIDATE_R2_2026_08_12.zip.aesgcm'
+  ORBITA_R13AP_SOURCE_IDENTITY: '8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704'
+
+jobs:
+  proof:
+    name: Windows Designer Brain 0.4 redesign wave 2
+    runs-on: windows-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: orbita-redesign
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare evidence
+        shell: pwsh
+        run: New-Item -ItemType Directory -Force evidence | Out-Null
+
+      - name: Reconstruct exact R13AP parent
+        shell: pwsh
+        env:
+          ORBITA_CI_AES256_KEY_B64: ${{ secrets.ORBITA_CI_AES256_KEY_B64 }}
+        run: |
+          $bh=(Get-FileHash $env:ORBITA_BRIDGE_ZIP -Algorithm SHA256).Hash.ToLowerInvariant(); if($bh-ne$env:ORBITA_BRIDGE_SHA256){throw "bridge $bh"}
+          Expand-Archive $env:ORBITA_BRIDGE_ZIP bridge -Force
+          $eh=(Get-FileHash $env:ORBITA_ENCRYPTED_FILE -Algorithm SHA256).Hash.ToLowerInvariant(); if($eh-ne$env:ORBITA_ENCRYPTED_SHA256){throw "enc $eh"}
+          @'
+          const fs=require('fs'),crypto=require('crypto');const k=Buffer.from(process.env.ORBITA_CI_AES256_KEY_B64||'','base64');if(k.length!==32)throw Error('secret');const b=fs.readFileSync(process.env.ORBITA_ENCRYPTED_FILE),n=b.subarray(8,20),x=b.subarray(20),tag=x.subarray(x.length-16),ct=x.subarray(0,x.length-16),d=crypto.createDecipheriv('aes-256-gcm',k,n);d.setAAD(Buffer.from(process.env.ORBITA_AAD));d.setAuthTag(tag);const p=Buffer.concat([d.update(ct),d.final()]);const s=crypto.createHash('sha256').update(p).digest('hex');if(s!==process.env.ORBITA_BASE_R13AN_SHA256)throw Error(s);fs.writeFileSync('candidate.zip',p);console.log(s);
+          '@ | Set-Content decrypt.cjs -Encoding utf8
+          node decrypt.cjs | Tee-Object evidence/r13an-sha.txt
+          if($LASTEXITCODE-ne0){throw "decrypt exit $LASTEXITCODE"}
+          Expand-Archive candidate.zip candidate -Force
+          node ci/r13ao-tooling-patch.cjs candidate | Tee-Object evidence/r13ao-transform.log
+          if($LASTEXITCODE-ne0){throw "R13AO exit $LASTEXITCODE"}
+          python ci/r13ap-transform.py candidate | Tee-Object evidence/r13ap-transform.log
+          if($LASTEXITCODE-ne0){throw "R13AP exit $LASTEXITCODE"}
+          $p=Get-Content candidate/.orbita-code-boundary.json -Raw | ConvertFrom-Json
+          if($p.sourceDirectoryIdentitySha256-ne$env:ORBITA_R13AP_SOURCE_IDENTITY){throw "parent identity $($p.sourceDirectoryIdentitySha256)"}
+          "parentIdentity=$($p.sourceDirectoryIdentitySha256)" | Tee-Object evidence/r13ap-parent-identity.txt
+
+      - name: Apply proven R13AR baseline repair
+        shell: pwsh
+        run: |
+          node ci/r13ar-people-availability-live-entry-repair.cjs candidate 2>&1 | Tee-Object evidence/r13ar-product-repair.log
+          if($LASTEXITCODE-ne0){throw "R13AR product repair $LASTEXITCODE"}
+          node ci/r13aq-people-availability-scenario-owner-repair.cjs candidate 2>&1 | Tee-Object evidence/r13ar-scenario-alignment.log
+          if($LASTEXITCODE-ne0){throw "R13AR scenario $LASTEXITCODE"}
+          node ci/r13ap-visual-inspector-root-launch-patch.cjs candidate 2>&1 | Tee-Object evidence/visual-root-launch.log
+          if($LASTEXITCODE-ne0){throw "visual root $LASTEXITCODE"}
+
+      - name: Apply isolated redesign Wave 1 then Wave 2
+        shell: pwsh
+        run: |
+          node ci/orbita-redesign-wave1-transform.cjs candidate 2>&1 | Tee-Object evidence/redesign-wave1-transform.log
+          if($LASTEXITCODE-ne0){throw "Wave1 transform $LASTEXITCODE"}
+          node ci/orbita-redesign-wave2-run.cjs candidate 2>&1 | Tee-Object evidence/redesign-wave2-transform.log
+          if($LASTEXITCODE-ne0){throw "Wave2 transform $LASTEXITCODE"}
+          $b=Get-Content candidate/.orbita-code-boundary.json -Raw | ConvertFrom-Json
+          "wave2Identity=$($b.sourceDirectoryIdentitySha256)" | Tee-Object evidence/redesign-wave2-identity.txt
+
+      - name: Install dependencies
+        working-directory: candidate
+        shell: pwsh
+        run: |
+          npm ci --no-audit --no-fund 2>&1 | Tee-Object ../evidence/npm-ci.log
+          if($LASTEXITCODE-ne0){throw "npm ci $LASTEXITCODE"}
+      - name: Typecheck schema and action ownership
+        working-directory: candidate
+        shell: pwsh
+        run: |
+          npm run typecheck 2>&1 | Tee-Object ../evidence/typecheck.log
+          if($LASTEXITCODE-ne0){throw "typecheck $LASTEXITCODE"}
+          npm run check:inspector-schema 2>&1 | Tee-Object ../evidence/inspector-schema.log
+          if($LASTEXITCODE-ne0){throw "schema $LASTEXITCODE"}
+          npm run check:action-coverage 2>&1 | Tee-Object ../evidence/action-coverage.log
+          if($LASTEXITCODE-ne0){throw "action coverage $LASTEXITCODE"}
+      - name: Build redesign candidate
+        working-directory: candidate
+        shell: pwsh
+        run: |
+          npm run build 2>&1 | Tee-Object ../evidence/build.log
+          if($LASTEXITCODE-ne0){throw "build $LASTEXITCODE"}
+
+      - name: Full canonical visual inspector 1440x900
+        working-directory: candidate
+        shell: pwsh
+        run: |
+          node tooling/inspector/visual-runtime-inspector.mjs --output "$env:GITHUB_WORKSPACE\VISUAL_REDESIGN_W2_1440" --width 1440 --height 900 --max-actions 180 --max-depth 3 --max-states 160 2>&1 | Tee-Object ../evidence/visual-1440-console.log
+          if($LASTEXITCODE-ne0){throw "visual 1440 $LASTEXITCODE"}
+      - name: Assert canonical and accessibility 1440
+        shell: pwsh
+        run: |
+          $m=Get-Content VISUAL_REDESIGN_W2_1440/MANIFEST.json -Raw | ConvertFrom-Json
+          $m.summary | ConvertTo-Json -Depth 8 | Out-File evidence/visual-1440-summary.json
+          $m.gates | ConvertTo-Json -Depth 8 | Out-File evidence/visual-1440-gates.json
+          if($m.summary.state-ne'PASS' -or $m.summary.canonicalScenarios-ne18 -or $m.summary.passedCanonicalScenarios-ne18 -or $m.summary.failedRequiredCanonicalScenarios-ne0 -or $m.summary.failedGates-ne0){throw '1440 canonical admission failure'}
+          $g=Get-Content VISUAL_REDESIGN_W2_1440/GAP_REGISTER.json -Raw | ConvertFrom-Json
+          $unlabeled=@($g.explicitGaps | Where-Object {$_.classification -eq 'UNLABELED'})
+          "unlabeled=$($unlabeled.Count)" | Tee-Object evidence/unlabeled-1440.txt
+          if($unlabeled.Count-ne0){$unlabeled | ConvertTo-Json -Depth 8 | Out-File evidence/unlabeled-1440.json; throw "unlabeled controls remain: $($unlabeled.Count)"}
+          "coverageState=$($g.coverageState)" | Tee-Object evidence/product-coverage-1440.txt
+
+      - name: Full canonical visual inspector 1366x768
+        working-directory: candidate
+        shell: pwsh
+        run: |
+          node tooling/inspector/visual-runtime-inspector.mjs --output "$env:GITHUB_WORKSPACE\VISUAL_REDESIGN_W2_1366" --width 1366 --height 768 --max-actions 180 --max-depth 3 --max-states 160 2>&1 | Tee-Object ../evidence/visual-1366-console.log
+          if($LASTEXITCODE-ne0){throw "visual 1366 $LASTEXITCODE"}
+      - name: Assert canonical and accessibility 1366
+        shell: pwsh
+        run: |
+          $m=Get-Content VISUAL_REDESIGN_W2_1366/MANIFEST.json -Raw | ConvertFrom-Json
+          $m.summary | ConvertTo-Json -Depth 8 | Out-File evidence/visual-1366-summary.json
+          $m.gates | ConvertTo-Json -Depth 8 | Out-File evidence/visual-1366-gates.json
+          if($m.summary.state-ne'PASS' -or $m.summary.canonicalScenarios-ne18 -or $m.summary.passedCanonicalScenarios-ne18 -or $m.summary.failedRequiredCanonicalScenarios-ne0 -or $m.summary.failedGates-ne0){throw '1366 canonical admission failure'}
+          $g=Get-Content VISUAL_REDESIGN_W2_1366/GAP_REGISTER.json -Raw | ConvertFrom-Json
+          $unlabeled=@($g.explicitGaps | Where-Object {$_.classification -eq 'UNLABELED'})
+          "unlabeled=$($unlabeled.Count)" | Tee-Object evidence/unlabeled-1366.txt
+          if($unlabeled.Count-ne0){$unlabeled | ConvertTo-Json -Depth 8 | Out-File evidence/unlabeled-1366.json; throw "unlabeled controls remain: $($unlabeled.Count)"}
+          "coverageState=$($g.coverageState)" | Tee-Object evidence/product-coverage-1366.txt
+
+      - name: Upload Wave 2 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ORBITA-REDESIGN-WAVE2-EVIDENCE
+          path: |
+            VISUAL_REDESIGN_W2_1440
+            VISUAL_REDESIGN_W2_1366
+            evidence
+          retention-days: 7
