@@ -1,0 +1,13 @@
+const fs=require('fs'),path=require('path');
+const root=path.resolve(process.argv[2]||'candidate'),out=path.resolve(process.argv[3]||'wave3-cascade-forensic.json');
+const css=[];function walk(d){if(!fs.existsSync(d))return;for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(e.isDirectory())walk(p);else if(e.name.endsWith('.css'))css.push(p)}}walk(path.join(root,'src'));
+const rel=p=>path.relative(root,p).replaceAll('\\','/');
+const needles=['rad-dossier-natural-metrics','rad-dossier-metric-strip','rad-dossier-metric','rad-dossier-natural-tabs','rad-dossier-tabs','rad-dossier-tab-context'];
+const blocks=[];
+for(const f of css){const s=fs.readFileSync(f,'utf8');for(const n of needles){let at=0;while((at=s.indexOf('.'+n,at))>=0){const brace=s.indexOf('{',at);if(brace<0)break;const prior=Math.max(s.lastIndexOf('}',at),s.lastIndexOf(';',at));let start=prior+1;const mediaStart=s.lastIndexOf('@media',at);if(mediaStart>prior)start=mediaStart;let depth=0,end=-1;for(let i=brace;i<s.length;i++){if(s[i]==='{')depth++;else if(s[i]==='}'){depth--;if(depth===0){end=i+1;break}}}if(end<0)break;const selector=s.slice(start,brace).replace(/\/\*[\s\S]*?\*\//g,'').replace(/\s+/g,' ').trim();const body=s.slice(brace+1,end-1).replace(/\/\*[\s\S]*?\*\//g,'').split(';').map(x=>x.trim()).filter(Boolean).filter(x=>/display|grid|height|min-height|max-height|overflow|gap|padding|margin|width|align|position/.test(x));blocks.push({file:rel(f),needle:n,offset:at,selector:selector.slice(0,300),decl:body.slice(0,30)});at=end;}}
+}
+// Find style import references to understand broad cascade ownership.
+const refs=[];const code=[];function walkCode(d){if(!fs.existsSync(d))return;for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(e.isDirectory()){if(!['node_modules','dist','build'].includes(e.name))walkCode(p)}else if(/\.(tsx?|jsx?|css)$/.test(e.name))code.push(p)}}walkCode(path.join(root,'src'));
+for(const f of code){const s=fs.readFileSync(f,'utf8');for(const m of s.matchAll(/(?:import\s+["']([^"']+\.css)["']|@import\s+["']([^"']+\.css)["'])/g))refs.push({file:rel(f),target:m[1]||m[2],offset:m.index});}
+fs.writeFileSync(out,JSON.stringify({audit:'ORBITA_WAVE3_DOSSIER_CASCADE_FORENSIC',blocks,styleImports:refs},null,2));
+console.log(JSON.stringify({blocks:blocks.length,byNeedle:Object.fromEntries(needles.map(n=>[n,blocks.filter(x=>x.needle===n).length])),imports:refs.length},null,2));
