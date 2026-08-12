@@ -75,6 +75,8 @@ jobs:
           if($LASTEXITCODE-ne0){throw "forensic $LASTEXITCODE"}
           node ci/r13as-visual-owner-minimal-forensic.cjs candidate > redesign-evidence/owner-snippets.json
           if($LASTEXITCODE-ne0){throw "owner forensic $LASTEXITCODE"}
+          node ci/orbita-redesign-owner-locator.cjs candidate redesign-evidence/first-wave-owners.json 2>&1 | Tee-Object redesign-evidence/owner-locator-console.log
+          if($LASTEXITCODE-ne0){throw "owner locator $LASTEXITCODE"}
 
       - name: Validate exact current product baseline
         working-directory: candidate
