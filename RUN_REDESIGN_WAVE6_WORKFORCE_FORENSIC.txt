@@ -1,0 +1,5 @@
+ORBITA redesign Wave 6 Workforce preimplementation forensic
+2026-08-12T23:51+02:00
+READ-ONLY only. Design Brain 0.5 active.
+Resolve reusable current ORBITA owners for availability daily projection, temporal organization membership, working/non-working day logic, settings persistence, SQLite/domain schema and print/export before any Workforce product code.
+Do not fake a Workforce runtime surface in this run.
