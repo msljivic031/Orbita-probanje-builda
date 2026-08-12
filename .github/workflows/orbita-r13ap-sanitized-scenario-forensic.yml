@@ -57,3 +57,6 @@ jobs:
       - name: Inspect current availability path safely
         shell: pwsh
         run: node ci/r13ap-people-current-path-forensic.cjs candidate
+      - name: Map availability-related JSX owners safely
+        shell: pwsh
+        run: node ci/r13ap-people-availability-source-map-forensic.cjs candidate
