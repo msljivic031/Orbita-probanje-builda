@@ -145,16 +145,18 @@ export function LjudiPersonResponsibilityHistory({
     const routeName = route.kind === "delegation" ? "Delegacija" : "Zamena";
     const direction = incoming ? `Preuzima od: ${personName(personById, peerId)}` : `Prosleđeno ka: ${personName(personById, peerId)}`;
     const endReason = route.endReason ? routeEndReasonLabel[route.endReason] : undefined;
+    const routeWorkId = route.workItemId;
+    const routeSubject = routeWorkId ? (workTitleById.get(routeWorkId) ?? routeWorkId) : "Ruta odgovornosti";
     rows.push({
       id: `route-${route.id}`,
       category: "route",
       sortAt: route.validFrom,
       dateLabel: formatOrbitaDate(route.validFrom),
       title: routeName,
-      subject: workTitleById.get(route.workItemId) ?? route.workItemId,
+      subject: routeSubject,
       detail: `${direction} · ${periodLabel(route.validFrom, route.validTo)}`,
       provenance: [route.status === "active" ? "aktivna ruta" : "završena ruta", route.routeNewAssignments ? "usmerava i nova zaduženja" : "samo pregledani Radovi", endReason, route.reasonCode].filter(Boolean).join(" · "),
-      workItemId: route.workItemId,
+      workItemId: routeWorkId,
     });
   }
 
@@ -175,17 +177,20 @@ export function LjudiPersonResponsibilityHistory({
   for (const membership of temporalTeamMemberships) {
     if (membership.personId !== personId) continue;
     const team = teamById.get(membership.teamId);
-    const unknownStart = membership.boundaryConfidence === "unknown_start";
+    const membershipStart = membership.validFrom;
+    const membershipEnd = membership.validTo;
+    const membershipSortAt = membershipEnd ?? membershipStart ?? membership.createdAt;
+    const unknownStart = membership.boundaryConfidence === "unknown_start" || !membershipStart;
     rows.push({
       id: `membership-${membership.id}`,
       category: "organization",
-      sortAt: membership.validTo ?? membership.validFrom,
-      dateLabel: unknownStart ? (membership.validTo ? `do ${formatOrbitaDate(membership.validTo)}` : "početak ?") : formatOrbitaDate(membership.validFrom),
+      sortAt: membershipSortAt,
+      dateLabel: unknownStart ? (membershipEnd ? `do ${formatOrbitaDate(membershipEnd)}` : "početak ?") : formatOrbitaDate(membershipStart),
       title: `Članstvo · ${membershipRoleText(membership.role)}`,
       subject: team?.name ?? membership.teamId,
       detail: unknownStart
-        ? `Početak nije pouzdano poznat${membership.validTo ? ` · do ${formatOrbitaDate(membership.validTo)}` : " · aktivno"}`
-        : periodLabel(membership.validFrom, membership.validTo),
+        ? `Početak nije pouzdano poznat${membershipEnd ? ` · do ${formatOrbitaDate(membershipEnd)}` : " · aktivno"}`
+        : periodLabel(membershipStart, membershipEnd),
       provenance: [membership.source, membership.reasonCode, membership.note].filter(Boolean).join(" · ") || "Sačuvan vremenski zapis članstva",
     });
   }
