@@ -1,7 +1,8 @@
 ORBITA R13AO WINDOWS PROOF
-trigger=2026-08-12T12:12:00+02:00
+trigger=2026-08-12T12:29:00+02:00
 base=R13AN exact encrypted candidate
 r13ao_source_identity=34ca534fe7382fa5df6778d89b312f3e67493cb8740684965fe012b29759cac6
 product_current=R4R21R14
 canon=A4.25
 release=false
+runtime_smoke=packaged-orbita-protocol-preload-sqlite
