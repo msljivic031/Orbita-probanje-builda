@@ -1,0 +1,2930 @@
+{
+  "generatedAt": "2026-08-12T18:36:04.494Z",
+  "scope": "public-safe bounded metadata; no source text",
+  "counts": {
+    "textFiles": 547,
+    "screenFiles": 117,
+    "modalFiles": 24,
+    "cssFiles": 64,
+    "buttonTags": 321,
+    "onClickBindings": 322,
+    "dataOrbitaActions": 51,
+    "uniqueDataOrbitaActions": 44,
+    "todoFixmeMarkers": 0,
+    "placeholderSignals": 64,
+    "findings": 342
+  },
+  "routeBuckets": {
+    "danas": 1,
+    "dokumenti": 1,
+    "first-run": 1,
+    "izvestaji": 6,
+    "kalendar": 1,
+    "ljudi": 34,
+    "oi": 2,
+    "podesavanja": 3,
+    "radovi": 68
+  },
+  "modalFiles": [
+    "src/renderer/screens/ljudi/components/LjudiArchiveModal.tsx",
+    "src/renderer/screens/ljudi/components/LjudiAvailabilityModal.tsx",
+    "src/renderer/screens/ljudi/components/LjudiPersonMoveModal.tsx",
+    "src/renderer/screens/ljudi/components/LjudiRegistryModal.tsx",
+    "src/renderer/screens/ljudi/components/LjudiTeamMembersModal.tsx",
+    "src/renderer/screens/podesavanja/PodesavanjaRulesModal.tsx",
+    "src/renderer/screens/radovi/RadCreateModal.tsx",
+    "src/renderer/screens/radovi/create/RadCreateModalAdvancedFields.tsx",
+    "src/renderer/screens/radovi/create/RadCreateModalChecklist.tsx",
+    "src/renderer/screens/radovi/create/RadCreateModalCoreFields.tsx",
+    "src/renderer/screens/radovi/create/RadCreateModalDateBoardMeta.ts",
+    "src/renderer/screens/radovi/create/RadCreateModalDatePlanner.tsx",
+    "src/renderer/screens/radovi/create/RadCreateModalDetailsSection.tsx",
+    "src/renderer/screens/radovi/create/RadCreateModalDocuments.tsx",
+    "src/renderer/screens/radovi/create/RadCreateModalFooter.tsx",
+    "src/renderer/screens/radovi/create/RadCreateModalHeader.tsx",
+    "src/renderer/screens/radovi/create/RadCreateModalPrimitives.tsx",
+    "src/renderer/screens/radovi/create/RadCreateModalResponsibility.tsx",
+    "src/renderer/screens/radovi/create/RadCreateModalShell.tsx",
+    "src/renderer/screens/radovi/workspace/HierarchicalCompletionReviewModal.tsx",
+    "src/renderer/screens/radovi/workspace/HierarchicalScheduleReviewModal.tsx",
+    "src/renderer/ui/assignment/DirectAssignmentReviewModal.tsx",
+    "src/renderer/ui/overlays/ReviewModal.tsx",
+    "src/renderer/ui/responsibility/ResponsibilityRouteReviewModal.tsx"
+  ],
+  "duplicateActionOwners": [
+    {
+      "id": "open-workspace",
+      "owners": [
+        {
+          "file": "src/renderer/screens/first-run/FirstRunScreen.tsx",
+          "line": 32
+        },
+        {
+          "file": "tooling/inspector/visual-runtime-inspector.mjs",
+          "line": 287
+        },
+        {
+          "file": "tooling/inspector/visual-runtime-inspector.mjs",
+          "line": 434
+        },
+        {
+          "file": "tooling/inspector/visual-runtime-inspector.mjs",
+          "line": 548
+        },
+        {
+          "file": "tooling/inspector/visual-runtime-inspector.mjs",
+          "line": 763
+        }
+      ]
+    },
+    {
+      "id": "calendar-today",
+      "owners": [
+        {
+          "file": "src/renderer/screens/kalendar/KalendarScreen.tsx",
+          "line": 159
+        },
+        {
+          "file": "src/renderer/styles/canonical/orbita-today-calendar-operational-premium.css",
+          "line": 384
+        }
+      ]
+    },
+    {
+      "id": "open-subwork-dossier",
+      "owners": [
+        {
+          "file": "src/renderer/screens/radovi/components/RadoviSubworkTree.tsx",
+          "line": 71
+        },
+        {
+          "file": "src/renderer/screens/radovi/components/RadoviSubworkTree.tsx",
+          "line": 104
+        }
+      ]
+    },
+    {
+      "id": "close-network-relation-composer",
+      "owners": [
+        {
+          "file": "src/renderer/screens/radovi/workspace/RadDossierGraphPanel.tsx",
+          "line": 180
+        },
+        {
+          "file": "src/renderer/screens/radovi/workspace/RadDossierGraphPanel.tsx",
+          "line": 189
+        }
+      ]
+    }
+  ],
+  "anchors": [
+    {
+      "name": "OI KPI",
+      "needle": "oi-kpi-card",
+      "hits": []
+    },
+    {
+      "name": "OI decision queue",
+      "needle": "Red odluka",
+      "hits": [
+        {
+          "file": "src/renderer/screens/oi/OiScreen.tsx",
+          "line": 133
+        }
+      ]
+    },
+    {
+      "name": "Settings appearance",
+      "needle": "Izgled aplikacije",
+      "hits": [
+        {
+          "file": "src/renderer/screens/podesavanja/PodesavanjaRulesModal.tsx",
+          "line": 73
+        },
+        {
+          "file": "src/renderer/screens/podesavanja/PodesavanjaScreen.tsx",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "name": "Radovi selected work",
+      "needle": "Izabrani Rad",
+      "hits": [
+        {
+          "file": "src/renderer/screens/radovi/workspace/RadoviSelectedWorkInspector.tsx",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "name": "People availability",
+      "needle": "person-availability-quick",
+      "hits": [
+        {
+          "file": "config/architecture/r13ab-composite-governance-evidence.json",
+          "line": 303
+        },
+        {
+          "file": "config/architecture/r13ac-composite-governance-evidence.json",
+          "line": 312
+        },
+        {
+          "file": "config/architecture/r13af-r2-composite-governance-evidence.json",
+          "line": 221
+        },
+        {
+          "file": "config/inspector/scenarios.json",
+          "line": 342
+        },
+        {
+          "file": "src/renderer/screens/ljudi/components/LjudiPersonDossier.tsx",
+          "line": 272
+        }
+      ]
+    },
+    {
+      "name": "Command palette",
+      "needle": "Ctrl+K",
+      "hits": []
+    }
+  ],
+  "findings": [
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/main/persistence/repository/workRepository.ts",
+      "line": 94,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/main/persistence/repository/workRepository.ts",
+      "line": 119,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/main/persistence/work/sqliteWorkScheduleStore.ts",
+      "line": 181,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/main/persistence/work/sqliteWorkScheduleStore.ts",
+      "line": 182,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/danas/DanasScreen.tsx",
+      "line": 255,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/dokumenti/DokumentiScreen.tsx",
+      "line": 401,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/dokumenti/DokumentiScreen.tsx",
+      "line": 500,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "duplicate-action-owner",
+      "severity": "review",
+      "file": "src/renderer/screens/first-run/FirstRunScreen.tsx",
+      "line": 32,
+      "key": "open-workspace",
+      "detail": "action id appears 5 times"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/izvestaji/IzvestajiScreen.tsx",
+      "line": 221,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/izvestaji/IzvestajiScreen.tsx",
+      "line": 222,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "duplicate-action-owner",
+      "severity": "review",
+      "file": "src/renderer/screens/kalendar/KalendarScreen.tsx",
+      "line": 159,
+      "key": "calendar-today",
+      "detail": "action id appears 2 times"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/ljudi/components/LjudiArchiveModal.tsx",
+      "line": 62,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/ljudi/components/LjudiAvailabilityModal.tsx",
+      "line": 317,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/ljudi/components/LjudiAvailabilityModal.tsx",
+      "line": 325,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/ljudi/components/LjudiAvailabilityModal.tsx",
+      "line": 350,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/ljudi/components/LjudiOrganizationRegistryForm.tsx",
+      "line": 31,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/ljudi/components/LjudiOrganizationRegistryForm.tsx",
+      "line": 60,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/ljudi/components/LjudiOrgTree.tsx",
+      "line": 150,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/ljudi/components/LjudiPersonIdentityFields.tsx",
+      "line": 25,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/ljudi/components/LjudiPersonIdentityFields.tsx",
+      "line": 38,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/ljudi/components/LjudiPersonIdentityFields.tsx",
+      "line": 61,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/ljudi/components/LjudiPersonIdentityFields.tsx",
+      "line": 76,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/ljudi/components/LjudiPersonMoveModal.tsx",
+      "line": 146,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/ljudi/components/LjudiPersonOrganizationPlacement.tsx",
+      "line": 90,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/ljudi/components/LjudiTeamMembersModal.tsx",
+      "line": 81,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/ljudi/components/LjudiTeamRegistryForm.tsx",
+      "line": 39,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/ljudi/components/LjudiTeamRegistryForm.tsx",
+      "line": 80,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/ljudi/components/PeopleIdentitySelector.tsx",
+      "line": 81,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/oi/OiScreen.tsx",
+      "line": 51,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/podesavanja/StatusLifecycleEditor.tsx",
+      "line": 61,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/podesavanja/StatusLifecycleEditor.tsx",
+      "line": 169,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/components/RadoviChecklistPanel.tsx",
+      "line": 58,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/components/RadoviChecklistPanel.tsx",
+      "line": 76,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/components/RadoviChecklistPanel.tsx",
+      "line": 97,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/components/RadoviChecklistPanel.tsx",
+      "line": 98,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "duplicate-action-owner",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/components/RadoviSubworkTree.tsx",
+      "line": 71,
+      "key": "open-subwork-dossier",
+      "detail": "action id appears 2 times"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/create/RadCreateModalAdvancedFields.tsx",
+      "line": 43,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/create/RadCreateModalAdvancedFields.tsx",
+      "line": 53,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/create/RadCreateModalChecklist.tsx",
+      "line": 30,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/create/RadCreateModalChecklist.tsx",
+      "line": 31,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/create/RadCreateModalCoreFields.tsx",
+      "line": 65,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/create/RadCreateModalCoreFields.tsx",
+      "line": 77,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/create/RadCreateModalDetailsSection.tsx",
+      "line": 81,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/create/RadCreateModalDocuments.tsx",
+      "line": 97,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/create/RadCreateModalDocuments.tsx",
+      "line": 105,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/create/RadCreateModalResponsibility.tsx",
+      "line": 160,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/dossier/edit/RadDossierBasicSection.tsx",
+      "line": 9,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/dossier/edit/RadDossierBasicSection.tsx",
+      "line": 13,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/workspace/HierarchicalCompletionReviewModal.tsx",
+      "line": 84,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/workspace/HierarchicalScheduleReviewModal.tsx",
+      "line": 223,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/workspace/RadDossierDocumentLinkPanel.tsx",
+      "line": 143,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "duplicate-action-owner",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/workspace/RadDossierGraphPanel.tsx",
+      "line": 180,
+      "key": "close-network-relation-composer",
+      "detail": "action id appears 2 times"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/workspace/RadOccurrenceSeriesPanel.tsx",
+      "line": 145,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/workspace/RadOccurrenceSeriesPanel.tsx",
+      "line": 161,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/workspace/RadoviCreateEditCommands.tsx",
+      "line": 56,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/workspace/RadoviCreateEditCommands.tsx",
+      "line": 65,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/workspace/RadoviFolderMoveCommands.tsx",
+      "line": 36,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/workspace/RadoviFolderMoveCommands.tsx",
+      "line": 64,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/workspace/RadoviPrioritySizeCommands.tsx",
+      "line": 74,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/screens/radovi/workspace/RadoviStatusDueProgressCommands.tsx",
+      "line": 100,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/global-core.css",
+      "line": 30,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/global-core.css",
+      "line": 42,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/global-core.css",
+      "line": 182,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/global-core.css",
+      "line": 183,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-dossier-modal-natural-premium.css",
+      "line": 17,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-dossier-modal-natural-premium.css",
+      "line": 47,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-dossier-modal-natural-premium.css",
+      "line": 48,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-dossier-modal-natural-premium.css",
+      "line": 71,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-dossier-modal-natural-premium.css",
+      "line": 79,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-dossier-operational-tabs.css",
+      "line": 60,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-dossier-operational-tabs.css",
+      "line": 61,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-dossier-operational-tabs.css",
+      "line": 63,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-dossier-operational-tabs.css",
+      "line": 94,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-first-run.css",
+      "line": 30,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-full-canvas-layout-packing.css",
+      "line": 36,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-full-canvas-layout-packing.css",
+      "line": 49,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-full-canvas-layout-packing.css",
+      "line": 94,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-premium-focus.css",
+      "line": 43,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-premium-focus.css",
+      "line": 57,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-premium-focus.css",
+      "line": 78,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-premium-focus.css",
+      "line": 80,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-premium-focus.css",
+      "line": 83,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-premium-focus.css",
+      "line": 97,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-premium-focus.css",
+      "line": 106,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-premium-focus.css",
+      "line": 111,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-premium-focus.css",
+      "line": 117,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-premium-focus.css",
+      "line": 126,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-premium-focus.css",
+      "line": 137,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-primitives.css",
+      "line": 55,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-primitives.css",
+      "line": 57,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-primitives.css",
+      "line": 154,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-primitives.css",
+      "line": 189,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-primitives.css",
+      "line": 233,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-primitives.css",
+      "line": 279,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-product-assembly.css",
+      "line": 17,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-product-assembly.css",
+      "line": 84,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-product-assembly.css",
+      "line": 114,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-product-assembly.css",
+      "line": 118,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-product-assembly.css",
+      "line": 133,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-product-assembly.css",
+      "line": 143,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-product-assembly.css",
+      "line": 155,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-reports-oi-operational-premium.css",
+      "line": 37,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-reports-oi-operational-premium.css",
+      "line": 127,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-reports-oi-operational-premium.css",
+      "line": 135,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-reports-oi-operational-premium.css",
+      "line": 167,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-reports-oi-operational-premium.css",
+      "line": 193,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-reports-oi-operational-premium.css",
+      "line": 273,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-reports-oi-operational-premium.css",
+      "line": 278,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 66,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 77,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 92,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 137,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 152,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 153,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 170,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 180,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 181,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 182,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 184,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 216,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 228,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 242,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 250,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 264,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 311,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 330,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 353,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 383,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 387,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 389,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 390,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-shell.css",
+      "line": 391,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-surface-integrity.css",
+      "line": 24,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-today-calendar-operational-premium.css",
+      "line": 281,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-today-calendar-operational-premium.css",
+      "line": 375,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-today-calendar-operational-premium.css",
+      "line": 451,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-today-calendar-operational-premium.css",
+      "line": 522,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-w2-s2-2a-native-documents.css",
+      "line": 183,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-work-preview.css",
+      "line": 79,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-work-preview.css",
+      "line": 129,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/orbita-work-preview.css",
+      "line": 172,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-operational-closure.css",
+      "line": 25,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-operational-closure.css",
+      "line": 273,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-operational-closure.css",
+      "line": 373,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-operational-closure.css",
+      "line": 430,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-operational-closure.css",
+      "line": 435,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-operational-closure.css",
+      "line": 438,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-premium.css",
+      "line": 157,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-premium.css",
+      "line": 158,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-premium.css",
+      "line": 228,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 36,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 55,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 177,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 302,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 457,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 471,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 495,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 520,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 524,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 529,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 563,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 637,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 695,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 706,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 778,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 785,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 796,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 822,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-visual-system-closure.css",
+      "line": 967,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-workspace-premium-harmonization.css",
+      "line": 404,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-workspace-premium-harmonization.css",
+      "line": 454,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-workspace-premium-harmonization.css",
+      "line": 480,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-workspace-premium-harmonization.css",
+      "line": 562,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-workspace-premium-harmonization.css",
+      "line": 676,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-workspace-premium-harmonization.css",
+      "line": 680,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-workspace-premium-harmonization.css",
+      "line": 692,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-workspace-recomposition.css",
+      "line": 42,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-workspace-recomposition.css",
+      "line": 56,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-workspace-recomposition.css",
+      "line": 60,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-workspace-recomposition.css",
+      "line": 76,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-workspace-recomposition.css",
+      "line": 111,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-workspace-recomposition.css",
+      "line": 141,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-workspace-recomposition.css",
+      "line": 151,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-workspace-recomposition.css",
+      "line": 256,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/people-workspace-recomposition.css",
+      "line": 355,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/canonical/report-workspace.css",
+      "line": 102,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/00-visual-reality.css",
+      "line": 14,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/00-visual-reality.css",
+      "line": 44,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/00-visual-reality.css",
+      "line": 100,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/00-visual-reality.css",
+      "line": 158,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/01-visual-reality.css",
+      "line": 266,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/02-visual-reality.css",
+      "line": 43,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/02-visual-reality.css",
+      "line": 57,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/02-visual-reality.css",
+      "line": 78,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/02-visual-reality.css",
+      "line": 129,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/02-visual-reality.css",
+      "line": 140,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/02-visual-reality.css",
+      "line": 384,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/04-visual-reality.css",
+      "line": 59,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/04-visual-reality.css",
+      "line": 93,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/04-visual-reality.css",
+      "line": 122,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/06-visual-reality.css",
+      "line": 108,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/06-visual-reality.css",
+      "line": 112,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/06-visual-reality.css",
+      "line": 116,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/06-visual-reality.css",
+      "line": 319,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/06-visual-reality.css",
+      "line": 323,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/06-visual-reality.css",
+      "line": 385,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/07-visual-reality.css",
+      "line": 71,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/07-visual-reality.css",
+      "line": 158,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/07-visual-reality.css",
+      "line": 199,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/08-visual-reality.css",
+      "line": 69,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/08-visual-reality.css",
+      "line": 280,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/08-visual-reality.css",
+      "line": 289,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/08-visual-reality.css",
+      "line": 294,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/08-visual-reality.css",
+      "line": 338,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/08-visual-reality.css",
+      "line": 350,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/09-visual-reality.css",
+      "line": 193,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/09-visual-reality.css",
+      "line": 226,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/09-visual-reality.css",
+      "line": 241,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/10-visual-reality.css",
+      "line": 80,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/10-visual-reality.css",
+      "line": 87,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/10-visual-reality.css",
+      "line": 101,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/10-visual-reality.css",
+      "line": 145,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/10-visual-reality.css",
+      "line": 156,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/10-visual-reality.css",
+      "line": 240,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/11-visual-reality.css",
+      "line": 91,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/11-visual-reality.css",
+      "line": 96,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/11-visual-reality.css",
+      "line": 189,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/12-visual-reality.css",
+      "line": 73,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/12-visual-reality.css",
+      "line": 141,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/12-visual-reality.css",
+      "line": 215,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/12-visual-reality.css",
+      "line": 281,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/13-visual-reality.css",
+      "line": 43,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/13-visual-reality.css",
+      "line": 69,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/13-visual-reality.css",
+      "line": 118,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/13-visual-reality.css",
+      "line": 124,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/15-visual-reality.css",
+      "line": 67,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/15-visual-reality.css",
+      "line": 104,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/15-visual-reality.css",
+      "line": 165,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/15-visual-reality.css",
+      "line": 173,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/15-visual-reality.css",
+      "line": 205,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/15-visual-reality.css",
+      "line": 267,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/15-visual-reality.css",
+      "line": 284,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/15-visual-reality.css",
+      "line": 296,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/15-visual-reality.css",
+      "line": 313,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/15-visual-reality.css",
+      "line": 353,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/15-visual-reality.css",
+      "line": 364,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/15-visual-reality.css",
+      "line": 394,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/17-visual-reality.css",
+      "line": 49,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/17-visual-reality.css",
+      "line": 62,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/18-visual-reality.css",
+      "line": 110,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/19-visual-reality.css",
+      "line": 304,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/20-visual-reality.css",
+      "line": 21,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/21-visual-reality.css",
+      "line": 169,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/22-visual-reality.css",
+      "line": 31,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/22-visual-reality.css",
+      "line": 194,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/23-visual-reality.css",
+      "line": 137,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/24-visual-reality.css",
+      "line": 291,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/25-visual-reality.css",
+      "line": 68,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/25-visual-reality.css",
+      "line": 78,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/25-visual-reality.css",
+      "line": 106,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/25-visual-reality.css",
+      "line": 289,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/25-visual-reality.css",
+      "line": 308,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/25-visual-reality.css",
+      "line": 343,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/26-visual-reality.css",
+      "line": 40,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/26-visual-reality.css",
+      "line": 129,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/26-visual-reality.css",
+      "line": 144,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/26-visual-reality.css",
+      "line": 244,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/27-visual-reality.css",
+      "line": 348,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/29-visual-reality.css",
+      "line": 109,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/29-visual-reality.css",
+      "line": 142,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/29-visual-reality.css",
+      "line": 175,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/31-visual-reality.css",
+      "line": 33,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/31-visual-reality.css",
+      "line": 60,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/31-visual-reality.css",
+      "line": 129,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/31-visual-reality.css",
+      "line": 133,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/31-visual-reality.css",
+      "line": 220,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/31-visual-reality.css",
+      "line": 232,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/32-visual-reality.css",
+      "line": 23,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/32-visual-reality.css",
+      "line": 80,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/32-visual-reality.css",
+      "line": 131,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/32-visual-reality.css",
+      "line": 165,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/33-visual-reality.css",
+      "line": 33,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/33-visual-reality.css",
+      "line": 41,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/33-visual-reality.css",
+      "line": 47,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/33-visual-reality.css",
+      "line": 136,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/33-visual-reality.css",
+      "line": 409,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 33,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 36,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 44,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 55,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 129,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 148,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 191,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 306,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 376,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 380,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 441,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 442,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 460,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 476,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 548,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 552,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 553,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 587,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 605,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 614,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/34-visual-reality.css",
+      "line": 642,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 170,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 179,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 208,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 235,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 474,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 596,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 834,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 1043,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 1118,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 1162,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 1428,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 1549,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 1611,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 1693,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 1976,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 2109,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 2207,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 2474,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 2495,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 2496,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 2507,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 2510,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 2538,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 2540,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 2576,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 2586,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "fixed-height-clipping-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 2591,
+      "key": "height+overflow",
+      "detail": "small fixed height near overflow:hidden"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 2661,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 2688,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "hidden-interaction-risk",
+      "severity": "review",
+      "file": "src/renderer/styles/legacy/visual-runtime/99-current-closures.css",
+      "line": 2691,
+      "key": "hidden-interaction",
+      "detail": "hidden style near interactive naming"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/ui/assignment/DirectAssignmentReviewModal.tsx",
+      "line": 127,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/ui/primitives/OrbitaDateInput.tsx",
+      "line": 80,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "src/renderer/ui/responsibility/ResponsibilityRouteReviewModal.tsx",
+      "line": 137,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "tooling/inspector/visual-runtime-inspector.mjs",
+      "line": 393,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    },
+    {
+      "kind": "placeholder-signal",
+      "severity": "review",
+      "file": "tooling/inspector/visual-runtime-inspector.mjs",
+      "line": 397,
+      "key": "placeholder",
+      "detail": "placeholder/coming-soon signal present"
+    }
+  ]
+}

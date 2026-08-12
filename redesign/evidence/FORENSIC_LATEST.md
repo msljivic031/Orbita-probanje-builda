@@ -1,0 +1,287 @@
+# ORBITA REDESIGN — PRODUCT / UX FORENSIC
+
+Generated: 2026-08-12T18:36:04.494Z
+
+## Counts
+- textFiles: 547
+- screenFiles: 117
+- modalFiles: 24
+- cssFiles: 64
+- buttonTags: 321
+- onClickBindings: 322
+- dataOrbitaActions: 51
+- uniqueDataOrbitaActions: 44
+- todoFixmeMarkers: 0
+- placeholderSignals: 64
+- findings: 342
+
+## Route buckets
+- danas: 1
+- dokumenti: 1
+- first-run: 1
+- izvestaji: 6
+- kalendar: 1
+- ljudi: 34
+- oi: 2
+- podesavanja: 3
+- radovi: 68
+
+## Known anchors
+- OI KPI: NOT FOUND
+- OI decision queue: src/renderer/screens/oi/OiScreen.tsx:133
+- Settings appearance: src/renderer/screens/podesavanja/PodesavanjaRulesModal.tsx:73, src/renderer/screens/podesavanja/PodesavanjaScreen.tsx:61
+- Radovi selected work: src/renderer/screens/radovi/workspace/RadoviSelectedWorkInspector.tsx:51
+- People availability: config/architecture/r13ab-composite-governance-evidence.json:303, config/architecture/r13ac-composite-governance-evidence.json:312, config/architecture/r13af-r2-composite-governance-evidence.json:221, config/inspector/scenarios.json:342, src/renderer/screens/ljudi/components/LjudiPersonDossier.tsx:272
+- Command palette: NOT FOUND
+
+## Review findings
+- [review] placeholder-signal — src/main/persistence/repository/workRepository.ts:94 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/main/persistence/repository/workRepository.ts:119 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/main/persistence/work/sqliteWorkScheduleStore.ts:181 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/main/persistence/work/sqliteWorkScheduleStore.ts:182 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/danas/DanasScreen.tsx:255 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/dokumenti/DokumentiScreen.tsx:401 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/dokumenti/DokumentiScreen.tsx:500 — placeholder: placeholder/coming-soon signal present
+- [review] duplicate-action-owner — src/renderer/screens/first-run/FirstRunScreen.tsx:32 — open-workspace: action id appears 5 times
+- [review] placeholder-signal — src/renderer/screens/izvestaji/IzvestajiScreen.tsx:221 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/izvestaji/IzvestajiScreen.tsx:222 — placeholder: placeholder/coming-soon signal present
+- [review] duplicate-action-owner — src/renderer/screens/kalendar/KalendarScreen.tsx:159 — calendar-today: action id appears 2 times
+- [review] placeholder-signal — src/renderer/screens/ljudi/components/LjudiArchiveModal.tsx:62 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/ljudi/components/LjudiAvailabilityModal.tsx:317 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/ljudi/components/LjudiAvailabilityModal.tsx:325 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/ljudi/components/LjudiAvailabilityModal.tsx:350 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/ljudi/components/LjudiOrganizationRegistryForm.tsx:31 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/ljudi/components/LjudiOrganizationRegistryForm.tsx:60 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/ljudi/components/LjudiOrgTree.tsx:150 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/ljudi/components/LjudiPersonIdentityFields.tsx:25 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/ljudi/components/LjudiPersonIdentityFields.tsx:38 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/ljudi/components/LjudiPersonIdentityFields.tsx:61 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/ljudi/components/LjudiPersonIdentityFields.tsx:76 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/ljudi/components/LjudiPersonMoveModal.tsx:146 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/ljudi/components/LjudiPersonOrganizationPlacement.tsx:90 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/ljudi/components/LjudiTeamMembersModal.tsx:81 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/ljudi/components/LjudiTeamRegistryForm.tsx:39 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/ljudi/components/LjudiTeamRegistryForm.tsx:80 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/ljudi/components/PeopleIdentitySelector.tsx:81 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/oi/OiScreen.tsx:51 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/podesavanja/StatusLifecycleEditor.tsx:61 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/podesavanja/StatusLifecycleEditor.tsx:169 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/components/RadoviChecklistPanel.tsx:58 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/components/RadoviChecklistPanel.tsx:76 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/components/RadoviChecklistPanel.tsx:97 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/components/RadoviChecklistPanel.tsx:98 — placeholder: placeholder/coming-soon signal present
+- [review] duplicate-action-owner — src/renderer/screens/radovi/components/RadoviSubworkTree.tsx:71 — open-subwork-dossier: action id appears 2 times
+- [review] placeholder-signal — src/renderer/screens/radovi/create/RadCreateModalAdvancedFields.tsx:43 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/create/RadCreateModalAdvancedFields.tsx:53 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/create/RadCreateModalChecklist.tsx:30 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/create/RadCreateModalChecklist.tsx:31 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/create/RadCreateModalCoreFields.tsx:65 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/create/RadCreateModalCoreFields.tsx:77 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/create/RadCreateModalDetailsSection.tsx:81 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/create/RadCreateModalDocuments.tsx:97 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/create/RadCreateModalDocuments.tsx:105 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/create/RadCreateModalResponsibility.tsx:160 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/dossier/edit/RadDossierBasicSection.tsx:9 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/dossier/edit/RadDossierBasicSection.tsx:13 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/workspace/HierarchicalCompletionReviewModal.tsx:84 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/workspace/HierarchicalScheduleReviewModal.tsx:223 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/workspace/RadDossierDocumentLinkPanel.tsx:143 — placeholder: placeholder/coming-soon signal present
+- [review] duplicate-action-owner — src/renderer/screens/radovi/workspace/RadDossierGraphPanel.tsx:180 — close-network-relation-composer: action id appears 2 times
+- [review] placeholder-signal — src/renderer/screens/radovi/workspace/RadOccurrenceSeriesPanel.tsx:145 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/workspace/RadOccurrenceSeriesPanel.tsx:161 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/workspace/RadoviCreateEditCommands.tsx:56 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/workspace/RadoviCreateEditCommands.tsx:65 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/workspace/RadoviFolderMoveCommands.tsx:36 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/workspace/RadoviFolderMoveCommands.tsx:64 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/workspace/RadoviPrioritySizeCommands.tsx:74 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/screens/radovi/workspace/RadoviStatusDueProgressCommands.tsx:100 — placeholder: placeholder/coming-soon signal present
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/global-core.css:30 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/global-core.css:42 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/global-core.css:182 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/global-core.css:183 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-dossier-modal-natural-premium.css:17 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-dossier-modal-natural-premium.css:47 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-dossier-modal-natural-premium.css:48 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-dossier-modal-natural-premium.css:71 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-dossier-modal-natural-premium.css:79 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-dossier-operational-tabs.css:60 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-dossier-operational-tabs.css:61 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-dossier-operational-tabs.css:63 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-dossier-operational-tabs.css:94 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-first-run.css:30 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-full-canvas-layout-packing.css:36 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-full-canvas-layout-packing.css:49 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-full-canvas-layout-packing.css:94 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-premium-focus.css:43 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-premium-focus.css:57 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-premium-focus.css:78 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-premium-focus.css:80 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-premium-focus.css:83 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-premium-focus.css:97 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-premium-focus.css:106 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-premium-focus.css:111 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-premium-focus.css:117 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-premium-focus.css:126 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-premium-focus.css:137 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-primitives.css:55 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-primitives.css:57 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-primitives.css:154 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-primitives.css:189 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-primitives.css:233 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-primitives.css:279 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-product-assembly.css:17 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-product-assembly.css:84 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-product-assembly.css:114 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-product-assembly.css:118 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-product-assembly.css:133 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-product-assembly.css:143 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-product-assembly.css:155 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-reports-oi-operational-premium.css:37 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-reports-oi-operational-premium.css:127 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-reports-oi-operational-premium.css:135 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-reports-oi-operational-premium.css:167 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-reports-oi-operational-premium.css:193 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-reports-oi-operational-premium.css:273 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-reports-oi-operational-premium.css:278 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:66 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:77 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:92 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:137 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:152 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:153 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:170 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:180 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:181 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:182 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:184 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:216 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:228 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:242 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:250 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:264 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:311 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:330 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-shell.css:353 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:383 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:387 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:389 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:390 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-shell.css:391 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-surface-integrity.css:24 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-today-calendar-operational-premium.css:281 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-today-calendar-operational-premium.css:375 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-today-calendar-operational-premium.css:451 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-today-calendar-operational-premium.css:522 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-w2-s2-2a-native-documents.css:183 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-work-preview.css:79 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/orbita-work-preview.css:129 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/orbita-work-preview.css:172 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-operational-closure.css:25 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-operational-closure.css:273 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/people-operational-closure.css:373 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-operational-closure.css:430 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-operational-closure.css:435 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-operational-closure.css:438 — height+overflow: small fixed height near overflow:hidden
+- [review] placeholder-signal — src/renderer/styles/canonical/people-premium.css:157 — placeholder: placeholder/coming-soon signal present
+- [review] placeholder-signal — src/renderer/styles/canonical/people-premium.css:158 — placeholder: placeholder/coming-soon signal present
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-premium.css:228 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-visual-system-closure.css:36 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-visual-system-closure.css:55 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-visual-system-closure.css:177 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/people-visual-system-closure.css:302 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-visual-system-closure.css:457 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-visual-system-closure.css:471 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/people-visual-system-closure.css:495 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/people-visual-system-closure.css:520 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/people-visual-system-closure.css:524 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/people-visual-system-closure.css:529 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/people-visual-system-closure.css:563 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-visual-system-closure.css:637 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-visual-system-closure.css:695 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-visual-system-closure.css:706 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/people-visual-system-closure.css:778 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-visual-system-closure.css:785 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/people-visual-system-closure.css:796 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-visual-system-closure.css:822 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-visual-system-closure.css:967 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-workspace-premium-harmonization.css:404 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-workspace-premium-harmonization.css:454 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-workspace-premium-harmonization.css:480 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/people-workspace-premium-harmonization.css:562 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/people-workspace-premium-harmonization.css:676 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/people-workspace-premium-harmonization.css:680 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/canonical/people-workspace-premium-harmonization.css:692 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-workspace-recomposition.css:42 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-workspace-recomposition.css:56 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-workspace-recomposition.css:60 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-workspace-recomposition.css:76 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-workspace-recomposition.css:111 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-workspace-recomposition.css:141 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-workspace-recomposition.css:151 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-workspace-recomposition.css:256 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/people-workspace-recomposition.css:355 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/canonical/report-workspace.css:102 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/00-visual-reality.css:14 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/legacy/visual-runtime/00-visual-reality.css:44 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/00-visual-reality.css:100 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/legacy/visual-runtime/00-visual-reality.css:158 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/01-visual-reality.css:266 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/legacy/visual-runtime/02-visual-reality.css:43 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/legacy/visual-runtime/02-visual-reality.css:57 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/legacy/visual-runtime/02-visual-reality.css:78 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/legacy/visual-runtime/02-visual-reality.css:129 — hidden-interaction: hidden style near interactive naming
+- [review] placeholder-signal — src/renderer/styles/legacy/visual-runtime/02-visual-reality.css:140 — placeholder: placeholder/coming-soon signal present
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/02-visual-reality.css:384 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/legacy/visual-runtime/04-visual-reality.css:59 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/04-visual-reality.css:93 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/04-visual-reality.css:122 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/legacy/visual-runtime/06-visual-reality.css:108 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/legacy/visual-runtime/06-visual-reality.css:112 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/legacy/visual-runtime/06-visual-reality.css:116 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/legacy/visual-runtime/06-visual-reality.css:319 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/legacy/visual-runtime/06-visual-reality.css:323 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/06-visual-reality.css:385 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/07-visual-reality.css:71 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/07-visual-reality.css:158 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/07-visual-reality.css:199 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/08-visual-reality.css:69 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/08-visual-reality.css:280 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/08-visual-reality.css:289 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/08-visual-reality.css:294 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/08-visual-reality.css:338 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/08-visual-reality.css:350 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/09-visual-reality.css:193 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/09-visual-reality.css:226 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/09-visual-reality.css:241 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/10-visual-reality.css:80 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/10-visual-reality.css:87 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/10-visual-reality.css:101 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/10-visual-reality.css:145 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/10-visual-reality.css:156 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/10-visual-reality.css:240 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/11-visual-reality.css:91 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/11-visual-reality.css:96 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/11-visual-reality.css:189 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/12-visual-reality.css:73 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/12-visual-reality.css:141 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/12-visual-reality.css:215 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/legacy/visual-runtime/12-visual-reality.css:281 — hidden-interaction: hidden style near interactive naming
+- [review] hidden-interaction-risk — src/renderer/styles/legacy/visual-runtime/13-visual-reality.css:43 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/13-visual-reality.css:69 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/13-visual-reality.css:118 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/13-visual-reality.css:124 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/legacy/visual-runtime/15-visual-reality.css:67 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/15-visual-reality.css:104 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/15-visual-reality.css:165 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/15-visual-reality.css:173 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/15-visual-reality.css:205 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/15-visual-reality.css:267 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/15-visual-reality.css:284 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/15-visual-reality.css:296 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/15-visual-reality.css:313 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/15-visual-reality.css:353 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/15-visual-reality.css:364 — height+overflow: small fixed height near overflow:hidden
+- [review] hidden-interaction-risk — src/renderer/styles/legacy/visual-runtime/15-visual-reality.css:394 — hidden-interaction: hidden style near interactive naming
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/17-visual-reality.css:49 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/17-visual-reality.css:62 — height+overflow: small fixed height near overflow:hidden
+- [review] fixed-height-clipping-risk — src/renderer/styles/legacy/visual-runtime/18-visual-reality.css:110 — height+overflow: small fixed height near overflow:hidden
