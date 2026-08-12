@@ -54,3 +54,6 @@ jobs:
       - name: Classify hidden People actionbar selector safely
         shell: pwsh
         run: node ci/r13ap-hidden-actionbar-selector-classifier.cjs candidate
+      - name: Inspect current availability path safely
+        shell: pwsh
+        run: node ci/r13ap-people-current-path-forensic.cjs candidate
