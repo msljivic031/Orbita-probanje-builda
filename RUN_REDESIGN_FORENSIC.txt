@@ -1,4 +1,4 @@
 ORBITA redesign encrypted forensic trigger
-2026-08-12T21:04+02:00
+2026-08-12T21:12+02:00
 Designer Brain 0.4 + ORBITA canon + function/flow/usability audit.
-Wave 2 bounded owner and accessibility forensic
+Wave 2 precision layout + accessibility owner forensic
