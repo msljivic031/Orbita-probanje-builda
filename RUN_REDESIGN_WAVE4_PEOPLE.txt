@@ -1,5 +1,6 @@
 ORBITA redesign Wave 4 People trigger
-2026-08-12T23:00+02:00
-Latest design-council continuation with all previously verified ORBITA canon/design/reference inputs.
+2026-08-12T23:02+02:00
+Retry after fail-closed JSX patcher escaping repair. Product intent unchanged.
+Use latest verified ORBITA canon/design council plus Design Brain 0.5 when physically available and all prior approved references.
 Wave 4 scope: People organization tree refinement + affected-work operational table; no new third-party dependency; 21st.dev pattern adaptation only.
 Proof must cover Period -> Zamena -> Pogođeni Radovi -> Potvrda at both 1440x900 and 1366x768.
