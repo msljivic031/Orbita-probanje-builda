@@ -1,0 +1,80 @@
+name: ORBITA Redesign Wave 6 Workforce Owner Forensic
+
+on:
+  push:
+    branches: [orbita-redesign]
+    paths: ['RUN_REDESIGN_WAVE6_WORKFORCE_FORENSIC.txt']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CI: 'true'
+  ORBITA_BRIDGE_ZIP: 'ORBITA_R13AN_PUBLIC_ENCRYPTED_CI_REPO_READY_R1_2026_08_12.zip'
+  ORBITA_BRIDGE_SHA256: 'dfe1f58a7df5c79c2d841496fd364418f98a91ed2fd6112fc0f5e0ab9c43731e'
+  ORBITA_BASE_R13AN_SHA256: '140846e9be04d3da222996fed9701771c4cb1be1c8395e766512ece153ba399a'
+  ORBITA_ENCRYPTED_SHA256: '827742a1633bd71dae1d2e1fb3dc77a95835a279a660016c8844d305341b1687'
+  ORBITA_AAD: 'ORBITA-R13AN-PUBLIC-CI-R1'
+  ORBITA_ENCRYPTED_FILE: 'bridge/ORBITA2_R14_R13AN_NATIVE_CONTENT_SIGNATURE_HARDENING_NON_PROMOTED_CANDIDATE_R2_2026_08_12.zip.aesgcm'
+  ORBITA_R13AP_SOURCE_IDENTITY: '8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704'
+
+jobs:
+  forensic:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: orbita-redesign
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Reconstruct exact current redesign baseline through Wave 4
+        shell: pwsh
+        env:
+          ORBITA_CI_AES256_KEY_B64: ${{ secrets.ORBITA_CI_AES256_KEY_B64 }}
+        run: |
+          New-Item -ItemType Directory -Force workforce-evidence | Out-Null
+          $bh=(Get-FileHash $env:ORBITA_BRIDGE_ZIP -Algorithm SHA256).Hash.ToLowerInvariant(); if($bh-ne$env:ORBITA_BRIDGE_SHA256){throw "bridge $bh"}
+          Expand-Archive $env:ORBITA_BRIDGE_ZIP bridge -Force
+          $eh=(Get-FileHash $env:ORBITA_ENCRYPTED_FILE -Algorithm SHA256).Hash.ToLowerInvariant(); if($eh-ne$env:ORBITA_ENCRYPTED_SHA256){throw "enc $eh"}
+          @'
+          const fs=require('fs'),crypto=require('crypto');const k=Buffer.from(process.env.ORBITA_CI_AES256_KEY_B64||'','base64');if(k.length!==32)throw Error('secret');const b=fs.readFileSync(process.env.ORBITA_ENCRYPTED_FILE),n=b.subarray(8,20),x=b.subarray(20),tag=x.subarray(x.length-16),ct=x.subarray(0,x.length-16),d=crypto.createDecipheriv('aes-256-gcm',k,n);d.setAAD(Buffer.from(process.env.ORBITA_AAD));d.setAuthTag(tag);const p=Buffer.concat([d.update(ct),d.final()]);const s=crypto.createHash('sha256').update(p).digest('hex');if(s!==process.env.ORBITA_BASE_R13AN_SHA256)throw Error(s);fs.writeFileSync('candidate.zip',p);
+          '@ | Set-Content decrypt.cjs -Encoding utf8
+          node decrypt.cjs
+          Expand-Archive candidate.zip candidate -Force
+          node ci/r13ao-tooling-patch.cjs candidate | Tee-Object workforce-evidence/r13ao.log
+          python ci/r13ap-transform.py candidate | Tee-Object workforce-evidence/r13ap.log
+          $p=Get-Content candidate/.orbita-code-boundary.json -Raw | ConvertFrom-Json
+          if($p.sourceDirectoryIdentitySha256-ne$env:ORBITA_R13AP_SOURCE_IDENTITY){throw 'identity mismatch'}
+          node ci/r13ar-people-availability-live-entry-repair.cjs candidate | Tee-Object workforce-evidence/r13ar.log
+          node ci/r13aq-people-availability-scenario-owner-repair.cjs candidate | Tee-Object workforce-evidence/r13aq.log
+          node ci/r13ap-visual-inspector-root-launch-patch.cjs candidate | Tee-Object workforce-evidence/root.log
+          node ci/orbita-redesign-wave1-transform.cjs candidate | Tee-Object workforce-evidence/w1.log
+          node ci/orbita-redesign-wave2-run.cjs candidate | Tee-Object workforce-evidence/w2.log
+          node ci/orbita-redesign-wave3-run.cjs candidate | Tee-Object workforce-evidence/w3.log
+          node ci/orbita-redesign-wave4-people-transform.cjs candidate | Tee-Object workforce-evidence/w4.log
+      - name: Resolve Workforce reusable owners
+        shell: pwsh
+        run: |
+          node ci/orbita-redesign-wave6-workforce-owner-forensic.cjs candidate workforce-evidence/workforce-owner-forensic.json 2>&1 | Tee-Object workforce-evidence/console.log
+          if($LASTEXITCODE-ne0){throw "workforce owner forensic $LASTEXITCODE"}
+      - name: Safety typecheck baseline
+        working-directory: candidate
+        shell: pwsh
+        run: |
+          npm ci --no-audit --no-fund 2>&1 | Tee-Object ../workforce-evidence/npm-ci.log
+          if($LASTEXITCODE-ne0){throw "npm ci $LASTEXITCODE"}
+          npm run typecheck 2>&1 | Tee-Object ../workforce-evidence/typecheck.log
+          if($LASTEXITCODE-ne0){throw "typecheck $LASTEXITCODE"}
+      - name: Upload Workforce forensic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ORBITA-REDESIGN-WAVE6-WORKFORCE-OWNER-FORENSIC
+          path: workforce-evidence
+          retention-days: 7
