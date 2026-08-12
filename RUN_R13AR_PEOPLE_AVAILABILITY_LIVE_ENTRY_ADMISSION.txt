@@ -1,0 +1,3 @@
+Trigger R13AR live People availability entry repair proof.
+Parent: exact R13AP identity 8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704.
+Target: typecheck PASS, scenario/action ownership PASS, build PASS, 18/18 canonical visual scenarios PASS, 0 failed gates.
