@@ -81,6 +81,8 @@ jobs:
           if($LASTEXITCODE-ne0){throw "flow matrix $LASTEXITCODE"}
           node ci/orbita-redesign-wave2-forensic.cjs candidate redesign-evidence/wave2-forensic.json 2>&1 | Tee-Object redesign-evidence/wave2-forensic-console.log
           if($LASTEXITCODE-ne0){throw "wave2 forensic $LASTEXITCODE"}
+          node ci/orbita-redesign-wave2-precision-forensic.cjs candidate redesign-evidence/wave2-precision.json 2>&1 | Tee-Object redesign-evidence/wave2-precision-console.log
+          if($LASTEXITCODE-ne0){throw "wave2 precision forensic $LASTEXITCODE"}
 
       - name: Validate exact current product baseline
         working-directory: candidate
