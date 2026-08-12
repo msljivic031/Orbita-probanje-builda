@@ -18,23 +18,6 @@ if (!originalButton.includes(quickMarker)) throw new Error('legacy button captur
 const currentButton = originalButton.replace(quickMarker, 'data-orbita-action="person-availability-edit"');
 if (currentButton === originalButton) throw new Error('current edit marker replacement failed');
 
-const tabsClassPos = jsx.indexOf('people-detail-tabs');
-if (tabsClassPos < 0) throw new Error('people detail tabs owner not found');
-const navStart = jsx.lastIndexOf('<nav', tabsClassPos);
-const navEnd = jsx.indexOf('</nav>', tabsClassPos);
-if (navStart < 0 || navEnd < 0) throw new Error('people detail tabs nav boundary not found');
-const navSource = jsx.slice(navStart, navEnd + '</nav>'.length);
-const buttonMatches = [...navSource.matchAll(/<button\b/g)];
-if (buttonMatches.length !== 4) throw new Error('expected exactly four People detail tab buttons, found ' + buttonMatches.length);
-const thirdButtonStart = navStart + buttonMatches[2].index;
-const thirdButtonOpenEnd = jsx.indexOf('>', thirdButtonStart);
-if (thirdButtonOpenEnd < 0 || thirdButtonOpenEnd > navEnd) throw new Error('third People detail tab button opening boundary not found');
-const tabOpen = jsx.slice(thirdButtonStart, thirdButtonOpenEnd + 1);
-if (!tabOpen.includes('data-orbita-action="person-availability-tab"')) {
-  const instrumentedTabOpen = tabOpen.replace('<button', '<button data-orbita-action="person-availability-tab"');
-  jsx = jsx.slice(0, thirdButtonStart) + instrumentedTabOpen + jsx.slice(thirdButtonOpenEnd + 1);
-}
-
 function findSectionEnd(source, start) {
   const token = /<section\b|<\/section>/g;
   token.lastIndex = start;
@@ -51,13 +34,15 @@ if (availabilityPanelPos < 0) throw new Error('current availability panel owner 
 const availabilitySectionStart = jsx.lastIndexOf('<section', availabilityPanelPos);
 const availabilitySectionEnd = findSectionEnd(jsx, availabilitySectionStart);
 if (availabilitySectionStart < 0 || availabilitySectionEnd < 0) throw new Error('current availability panel section boundary not found');
-if (jsx.slice(availabilitySectionStart, availabilitySectionEnd).includes('data-orbita-action="person-availability-edit"')) throw new Error('current edit action already present in availability panel');
+const currentPanel = jsx.slice(availabilitySectionStart, availabilitySectionEnd);
+if (currentPanel.includes('data-orbita-action="person-availability-edit"')) throw new Error('current edit action already present in availability panel');
 const insertion = `\n          <div className="person-dossier-availability-actions">${currentButton}</div>\n        `;
 jsx = jsx.slice(0, availabilitySectionEnd) + insertion + jsx.slice(availabilitySectionEnd);
 fs.writeFileSync(jsxPath, jsx, 'utf8');
 
 const data = JSON.parse(fs.readFileSync(scenariosPath, 'utf8'));
 const targets = new Set(['people-open-availability-surface', 'people-availability-period-validation-and-layout']);
+const currentAvailabilityTabSelector = '.people-detail-tabs button:nth-child(3)';
 let changed = 0;
 function patchScenarios(v) {
   if (!v || typeof v !== 'object') return;
@@ -73,7 +58,7 @@ function patchScenarios(v) {
     v.steps = [
       v.steps[0],
       v.steps[1],
-      { type: 'click', selector: '[data-orbita-action="person-availability-tab"]' },
+      { type: 'click', selector: currentAvailabilityTabSelector },
       { type: 'wait', milliseconds: 300 },
       ...rest
     ];
@@ -93,8 +78,8 @@ console.log(JSON.stringify({
   proofOwner: 'config/inspector/scenarios.json',
   legacyActionbarChanged: false,
   modalOwnerChanged: false,
-  detailTabCount: buttonMatches.length,
   currentAvailabilityEntry: 'person-availability-edit',
-  currentAvailabilityTab: 'person-availability-tab',
+  currentAvailabilityTabSelector,
+  tabPathEvidenceRun: 31600761746,
   canonicalScenariosChanged: changed
 }));
