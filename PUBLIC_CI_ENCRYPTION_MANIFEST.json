@@ -1,0 +1,17 @@
+{
+  "format": "ORBITA_PUBLIC_CI_ENCRYPTED_PAYLOAD_V1",
+  "status": "ENCRYPTED_TRANSPORT_ONLY_NON_PROMOTED",
+  "bridge_filename": "ORBITA_R13AN_PUBLIC_ENCRYPTED_CI_REPO_READY_R1_2026_08_12.zip",
+  "bridge_sha256": "dfe1f58a7df5c79c2d841496fd364418f98a91ed2fd6112fc0f5e0ab9c43731e",
+  "source_filename": "ORBITA2_R14_R13AN_NATIVE_CONTENT_SIGNATURE_HARDENING_NON_PROMOTED_CANDIDATE_R2_2026_08_12.zip",
+  "source_bytes": 1161940,
+  "source_sha256": "140846e9be04d3da222996fed9701771c4cb1be1c8395e766512ece153ba399a",
+  "encrypted_filename": "ORBITA2_R14_R13AN_NATIVE_CONTENT_SIGNATURE_HARDENING_NON_PROMOTED_CANDIDATE_R2_2026_08_12.zip.aesgcm",
+  "encrypted_bytes": 1161976,
+  "encrypted_sha256": "827742a1633bd71dae1d2e1fb3dc77a95835a279a660016c8844d305341b1687",
+  "cipher": "AES-256-GCM",
+  "aad": "ORBITA-R13AN-PUBLIC-CI-R1",
+  "github_secret_name": "ORBITA_CI_AES256_KEY_B64",
+  "key_in_repository": false,
+  "note": "Never commit or upload the secret key file."
+}
