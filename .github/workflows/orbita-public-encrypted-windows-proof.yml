@@ -119,6 +119,31 @@ jobs:
         shell: pwsh
         run: npm run package:win 2>&1 | Tee-Object -FilePath ../evidence/package-win.log
 
+      - name: Packaged orbita protocol + preload + SQLite runtime smoke
+        working-directory: candidate
+        shell: pwsh
+        env:
+          ORBITA_VISUAL_INSPECTOR: '1'
+          ORBITA_VISUAL_INSPECTOR_HIDDEN: '1'
+          ORBITA_VISUAL_INSPECTOR_HEADLESS: '1'
+          ORBITA_REMOTE_DEBUGGING_PORT: '9447'
+          ORBITA_USER_DATA_PATH: '${{ github.workspace }}\candidate\PACKAGED_RUNTIME_PROOF\user-data'
+          ORBITA_LOCAL_WORKSPACE_DATABASE_PATH: '${{ github.workspace }}\candidate\PACKAGED_RUNTIME_PROOF\data\orbita-packaged-smoke.sqlite'
+        run: |
+          New-Item -ItemType Directory -Force -Path (Split-Path $env:ORBITA_LOCAL_WORKSPACE_DATABASE_PATH) | Out-Null
+          New-Item -ItemType Directory -Force -Path $env:ORBITA_USER_DATA_PATH | Out-Null
+          $exe = (Resolve-Path 'release\win-unpacked\Orbita OI Pro.exe').Path
+          $stdout = Join-Path $env:GITHUB_WORKSPACE 'evidence\packaged-runtime.stdout.log'
+          $stderr = Join-Path $env:GITHUB_WORKSPACE 'evidence\packaged-runtime.stderr.log'
+          $proc = Start-Process -FilePath $exe -PassThru -RedirectStandardOutput $stdout -RedirectStandardError $stderr
+          "pid=$($proc.Id) exe=$exe" | Out-File ../evidence/packaged-runtime-process.txt
+          try {
+            node ../ci/packaged-runtime-smoke.cjs 2>&1 | Tee-Object -FilePath ../evidence/packaged-runtime-smoke.json
+            if ($LASTEXITCODE -ne 0) { throw "Packaged runtime smoke failed with exit $LASTEXITCODE" }
+          } finally {
+            if (-not $proc.HasExited) { Stop-Process -Id $proc.Id -Force }
+          }
+
       - name: Hash release outputs
         if: always()
         shell: pwsh
