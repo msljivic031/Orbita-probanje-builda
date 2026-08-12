@@ -45,11 +45,12 @@ for p,pairs in subs.items():
 wr('POKRENI_ORBITU.cmd',rd('POKRENI_ORBITU.cmd').replace('R13AO_','R13AP_'))
 b=j('.orbita-code-boundary.json');b['developmentSuccessor']={'lineage':'R13AP','kind':'NON_PROMOTED_SANDBOXED_PRELOAD_CJS_BUNDLE_CANDIDATE','predecessor':'R13AO_NON_PROMOTED','incorporatesEvidenceWave':'R13AO_WINDOWS_BUILD_PACKAGE_RUNTIME_PASS_PLUS_SANDBOX_BUNDLED_PRELOAD_FEASIBILITY_PASS','promotion':'FORBIDDEN_UNTIL_EXACT_R13AP_WINDOWS_AND_VISUAL_GATES_PASS'};b['protectedTruth']['src']='414 FILES; R13AP adds sandbox:true in window owner; domain/business/UI semantics otherwise unchanged from R13AO';b['protectedTruth']['windowsFullCheck']='R13AP EXACT RERUN_REQUIRED; R13AO predecessor PASS';b['protectedTruth']['productionBuild']='R13AP NOT_RUN; predecessor R13AO PASS';b['protectedTruth']['windowsPackage']='R13AP NOT_RUN; predecessor R13AO PASS'
 ex=set(b.get('generatedRootsExcluded',[]));fs=[]
-for q in sorted(r.rglob('*')):
+for q in r.rglob('*'):
  if not q.is_file():continue
  relp=q.relative_to(r).as_posix()
  if relp=='.orbita-code-boundary.json' or relp.split('/')[0] in ex:continue
  dat=q.read_bytes();fs.append({'path':relp,'bytes':len(dat),'sha256':hashlib.sha256(dat).hexdigest()})
+fs.sort(key=lambda x:x['path'])
 id=hashlib.sha256(''.join(f"{x['path']}\t{x['bytes']}\t{x['sha256']}\n" for x in fs).encode()).hexdigest();b['files']=fs;b['sourceDirectoryIdentitySha256']=id;wj('.orbita-code-boundary.json',b)
 print(json.dumps({'head':'R13AP_NON_PROMOTED','identity':id,'files':len(fs)}))
 if id!='8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704':raise SystemExit('identity mismatch')
