@@ -54,3 +54,6 @@ jobs:
       - name: Emit sanitized current availability owner map
         shell: pwsh
         run: node ci/r13aq-availability-owner-forensic.cjs candidate
+      - name: Emit sanitized dossier wiring map
+        shell: pwsh
+        run: node ci/r13aq-dossier-wiring-forensic.cjs candidate
