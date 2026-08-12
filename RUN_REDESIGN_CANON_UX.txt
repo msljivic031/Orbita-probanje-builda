@@ -1,0 +1,4 @@
+ORBITA redesign canon-to-UX concordance trigger
+2026-08-12T21:52+02:00
+Scope: full product canon -> user intent -> UI owner -> action -> proof map.
+Designer Brain 0.4 authority. No promotion from this run.
