@@ -60,3 +60,6 @@ jobs:
       - name: Map availability-related JSX owners safely
         shell: pwsh
         run: node ci/r13ap-people-availability-source-map-forensic.cjs candidate
+      - name: Map current availability render anchors safely
+        shell: pwsh
+        run: node ci/r13ap-people-availability-render-anchor-forensic.cjs candidate
