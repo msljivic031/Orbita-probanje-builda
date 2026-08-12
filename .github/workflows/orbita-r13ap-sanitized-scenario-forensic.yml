@@ -51,3 +51,6 @@ jobs:
       - name: Emit public-safe sanitized scenario metadata only
         shell: pwsh
         run: node ci/r13ap-sanitized-people-scenario-forensic.cjs candidate
+      - name: Classify hidden People actionbar selector safely
+        shell: pwsh
+        run: node ci/r13ap-hidden-actionbar-selector-classifier.cjs candidate
