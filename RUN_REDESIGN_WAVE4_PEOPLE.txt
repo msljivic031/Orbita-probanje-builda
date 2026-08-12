@@ -1,6 +1,6 @@
 ORBITA redesign Wave 4 People trigger
-2026-08-12T23:05+02:00
-Retry after deterministic active-cascade owner repair. Product intent unchanged.
-Design Brain 0.5 ACTIVE and physically loaded from Library; preserve ORBITA product/design truth priority.
+2026-08-12T23:08+02:00
+Retry after normalized CSS selector matching repair; multiline selector formatting no longer creates false missing-owner failures.
+Design Brain 0.5 ACTIVE; ORBITA product/design truth remains higher authority than external patterns.
 Wave 4 scope: People organization tree refinement + affected-work operational table; no new third-party dependency; 21st.dev pattern adaptation only.
 Proof must cover Period -> Zamena -> Pogođeni Radovi -> Potvrda at both 1440x900 and 1366x768.
