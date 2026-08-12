@@ -1,3 +1,4 @@
 ORBITA redesign Rad dossier forensic trigger
-2026-08-12T21:58+02:00
+2026-08-12T22:03+02:00
 Scope: Rad creation, dossier, status, responsibility, subwork, dependency, documents, calendar, network, commands.
+Wave 3 bounded UI snippet extraction enabled.
