@@ -1,0 +1,4 @@
+ORBITA redesign Wave 3 trigger
+2026-08-12T22:07+02:00
+Canon-first Rad dossier natural workflow: direct operational facts, progressive New Rad, restrained navigation.
+Required: typecheck/build + 18/18 at 1440 and 1366 + zero unlabeled + human screenshot review.
