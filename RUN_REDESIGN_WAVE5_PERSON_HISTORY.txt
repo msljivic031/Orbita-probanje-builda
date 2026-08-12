@@ -1,6 +1,6 @@
 ORBITA redesign Wave 5 Person History trigger
-2026-08-12T23:42+02:00
-Retry after fail-closed transform-format repair: Person history TSX now comes from deterministic template instead of nested Node template interpolation.
+2026-08-12T23:47+02:00
+Retry after type-safe truth repair: ResponsibilityRoute may have no workItemId; TemporalTeamMembership may have unknown validFrom.
+No fake Rad link and no fabricated historical start date. Persisted record timestamp is used only as a stable sort anchor when interval start is unknown.
 Design Brain 0.5 active; product intent unchanged.
-Scope: one persisted evidence-backed chronological Person ledger in existing owner.
 Preserve Wave 4 deep absence proof and require Person history runtime capture at 1440x900 + 1366x768.
