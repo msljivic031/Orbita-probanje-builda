@@ -1,5 +1,5 @@
 ORBITA redesign People/Organization/absence forensic trigger
-2026-08-12T23:10+02:00
-Read-only semantic audit under Design Brain 0.5.
-Targets: Person dossier, organization, availability, delegation/substitution signals, responsibility assignment lifecycle, completion evidence, availability/organization temporal sources and current Person history projection.
+2026-08-12T23:16+02:00
+Read-only semantic union audit under Design Brain 0.5.
+Resolve exact ResponsibilityAssignment source/end-reason, ResponsibilityRoute kind/status/end-reason, PersonAvailabilityEvent kind/availability and related temporal values before Wave 5 timeline implementation.
 No People product mutation in this run.
