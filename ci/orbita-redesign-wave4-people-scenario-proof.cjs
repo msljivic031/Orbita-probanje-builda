@@ -9,15 +9,15 @@ const step2=target.steps.findIndex(s=>s.type==='assertAttribute'&&s.selector==='
 if(step2<0)throw Error('step2 assertion missing');
 const existing=target.steps.some(s=>s.type==='assertAttribute'&&s.selector==='[data-orbita-modal="person-availability"]'&&String(s.value)==='4');
 if(!existing){
-  const insertAt=step2+2; // after existing step-2 capture
+  const insertAt=step2+2;
   target.steps.splice(insertAt,0,
     {type:'clickText',text:'Prikaži pogođene Radove'},
     {type:'wait',milliseconds:350},
-    {type:'assertAttribute',selector:'[data-orbita-modal="person-availability"]',attribute:'data-step',value:'3'},
+    {type:'assertAttribute',selector:'[data-orbita-modal="person-availability"]',value:'3'},
     {type:'capture'},
     {type:'clickText',text:'Pregledaj potvrdu'},
     {type:'wait',milliseconds:220},
-    {type:'assertAttribute',selector:'[data-orbita-modal="person-availability"]',attribute:'data-step',value:'4'},
+    {type:'assertAttribute',selector:'[data-orbita-modal="person-availability"]',value:'4'},
     {type:'capture'}
   );
 }
