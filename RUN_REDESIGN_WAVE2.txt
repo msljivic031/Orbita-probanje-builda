@@ -1,4 +1,5 @@
 ORBITA isolated redesign Wave 2
-2026-08-12T21:18+02:00
+2026-08-12T21:21+02:00
 Radovi hierarchy + OI content safety + known a11y closure.
 Required: typecheck/build + 18/18 + zero UNLABELED + human screenshot review.
+Patcher quoting repair retest.
