@@ -1,10 +1,10 @@
-name: ORBITA R13AN Public Encrypted Windows Proof
+name: ORBITA R13AO Public Encrypted Windows Proof
 
 on:
   push:
     branches: [main]
     paths:
-      - 'RUN_WINDOWS_PROOF.txt'
+      - 'RUN_WINDOWS_PROOF_R13AO.txt'
   workflow_dispatch:
 
 permissions:
@@ -15,14 +15,15 @@ env:
   CSC_IDENTITY_AUTO_DISCOVERY: 'false'
   ORBITA_BRIDGE_ZIP: 'ORBITA_R13AN_PUBLIC_ENCRYPTED_CI_REPO_READY_R1_2026_08_12.zip'
   ORBITA_BRIDGE_SHA256: 'dfe1f58a7df5c79c2d841496fd364418f98a91ed2fd6112fc0f5e0ab9c43731e'
-  ORBITA_SOURCE_SHA256: '140846e9be04d3da222996fed9701771c4cb1be1c8395e766512ece153ba399a'
+  ORBITA_BASE_R13AN_SHA256: '140846e9be04d3da222996fed9701771c4cb1be1c8395e766512ece153ba399a'
   ORBITA_ENCRYPTED_SHA256: '827742a1633bd71dae1d2e1fb3dc77a95835a279a660016c8844d305341b1687'
   ORBITA_AAD: 'ORBITA-R13AN-PUBLIC-CI-R1'
   ORBITA_ENCRYPTED_FILE: 'bridge/ORBITA2_R14_R13AN_NATIVE_CONTENT_SIGNATURE_HARDENING_NON_PROMOTED_CANDIDATE_R2_2026_08_12.zip.aesgcm'
+  ORBITA_R13AO_SOURCE_IDENTITY: '34ca534fe7382fa5df6778d89b312f3e67493cb8740684965fe012b29759cac6'
 
 jobs:
   windows-proof:
-    name: Windows x64 exact encrypted-candidate proof
+    name: Windows x64 R13AO exact patched-source proof
     runs-on: windows-latest
     timeout-minutes: 60
     steps:
@@ -34,61 +35,64 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Verify and unpack public bridge
+      - name: Prepare evidence directory
+        shell: pwsh
+        run: New-Item -ItemType Directory -Force -Path evidence | Out-Null
+
+      - name: Verify and unpack public encrypted bridge
         shell: pwsh
         run: |
           $bridgeHash = (Get-FileHash $env:ORBITA_BRIDGE_ZIP -Algorithm SHA256).Hash.ToLowerInvariant()
-          Write-Host "Bridge SHA256=$bridgeHash"
+          "Bridge SHA256=$bridgeHash" | Tee-Object -FilePath evidence/bridge-sha256.txt
           if ($bridgeHash -ne $env:ORBITA_BRIDGE_SHA256) { throw "Bridge SHA mismatch: $bridgeHash" }
           Expand-Archive -LiteralPath $env:ORBITA_BRIDGE_ZIP -DestinationPath bridge -Force
           $encHash = (Get-FileHash $env:ORBITA_ENCRYPTED_FILE -Algorithm SHA256).Hash.ToLowerInvariant()
-          Write-Host "Encrypted payload SHA256=$encHash"
+          "Encrypted payload SHA256=$encHash" | Tee-Object -FilePath evidence/encrypted-payload-sha256.txt
           if ($encHash -ne $env:ORBITA_ENCRYPTED_SHA256) { throw "Encrypted payload SHA mismatch: $encHash" }
 
-      - name: Decrypt authenticated R13AN payload
+      - name: Decrypt authenticated exact R13AN base
         shell: pwsh
         env:
           ORBITA_CI_AES256_KEY_B64: ${{ secrets.ORBITA_CI_AES256_KEY_B64 }}
         run: |
-          if ([string]::IsNullOrWhiteSpace($env:ORBITA_CI_AES256_KEY_B64)) {
-            throw 'Missing required repository secret ORBITA_CI_AES256_KEY_B64'
-          }
+          if ([string]::IsNullOrWhiteSpace($env:ORBITA_CI_AES256_KEY_B64)) { throw 'Missing required repository secret ORBITA_CI_AES256_KEY_B64' }
           @'
-          const fs = require('fs');
-          const crypto = require('crypto');
-          const src = process.env.ORBITA_ENCRYPTED_FILE;
-          const key = Buffer.from(process.env.ORBITA_CI_AES256_KEY_B64, 'base64');
-          if (key.length !== 32) throw new Error(`Invalid AES key length ${key.length}; expected 32 bytes`);
-          const buf = fs.readFileSync(src);
-          const magic = buf.subarray(0, 8).toString('ascii');
-          if (magic !== 'ORBAGCM1') throw new Error(`Invalid encrypted payload magic: ${magic}`);
-          const nonce = buf.subarray(8, 20);
-          const body = buf.subarray(20);
-          if (body.length < 17) throw new Error('Encrypted payload is too short');
-          const tag = body.subarray(body.length - 16);
-          const ciphertext = body.subarray(0, body.length - 16);
-          const decipher = crypto.createDecipheriv('aes-256-gcm', key, nonce);
-          decipher.setAAD(Buffer.from(process.env.ORBITA_AAD, 'utf8'));
-          decipher.setAuthTag(tag);
-          const plain = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
-          fs.writeFileSync('candidate.zip', plain);
-          const sha = crypto.createHash('sha256').update(plain).digest('hex');
-          console.log(`Decrypted candidate SHA256=${sha}`);
-          if (sha !== process.env.ORBITA_SOURCE_SHA256) throw new Error(`Source SHA mismatch: ${sha}`);
-          '@ | Set-Content -Path decrypt-orbita.cjs -Encoding utf8
-          node decrypt-orbita.cjs
+          const fs=require('fs'), crypto=require('crypto');
+          const key=Buffer.from(process.env.ORBITA_CI_AES256_KEY_B64,'base64');
+          if(key.length!==32) throw new Error('Invalid AES key length');
+          const buf=fs.readFileSync(process.env.ORBITA_ENCRYPTED_FILE);
+          if(buf.subarray(0,8).toString('ascii')!=='ORBAGCM1') throw new Error('Invalid encrypted payload magic');
+          const nonce=buf.subarray(8,20), body=buf.subarray(20), tag=body.subarray(body.length-16), ciphertext=body.subarray(0,body.length-16);
+          const decipher=crypto.createDecipheriv('aes-256-gcm',key,nonce); decipher.setAAD(Buffer.from(process.env.ORBITA_AAD,'utf8')); decipher.setAuthTag(tag);
+          const plain=Buffer.concat([decipher.update(ciphertext),decipher.final()]);
+          const sha=crypto.createHash('sha256').update(plain).digest('hex');
+          console.log(`R13AN base SHA256=${sha}`); if(sha!==process.env.ORBITA_BASE_R13AN_SHA256) throw new Error(`Base source SHA mismatch: ${sha}`);
+          fs.writeFileSync('candidate.zip',plain);
+          '@ | Set-Content decrypt-orbita.cjs -Encoding utf8
+          node decrypt-orbita.cjs 2>&1 | Tee-Object -FilePath evidence/decrypt-base.log
           Expand-Archive -LiteralPath candidate.zip -DestinationPath candidate -Force
 
-      - name: Capture runner and source identity
+      - name: Apply deterministic R13AO tooling-only successor patch
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force -Path evidence | Out-Null
+          node ci/r13ao-tooling-patch.cjs candidate 2>&1 | Tee-Object -FilePath evidence/r13ao-patch.log
+          @'
+          const fs=require('fs');
+          const b=JSON.parse(fs.readFileSync('candidate/.orbita-code-boundary.json','utf8'));
+          console.log(`R13AO source identity=${b.sourceDirectoryIdentitySha256}`);
+          if(b.developmentSuccessor?.lineage!=='R13AO') throw new Error('R13AO lineage not applied');
+          if(b.sourceDirectoryIdentitySha256!==process.env.ORBITA_R13AO_SOURCE_IDENTITY) throw new Error(`R13AO source identity mismatch: ${b.sourceDirectoryIdentitySha256}`);
+          '@ | Set-Content verify-r13ao.cjs -Encoding utf8
+          node verify-r13ao.cjs 2>&1 | Tee-Object -FilePath evidence/r13ao-source-identity.txt
+
+      - name: Capture runner identity
+        shell: pwsh
+        run: |
           "runner_os=$env:RUNNER_OS" | Out-File evidence/runner.txt
           "runner_arch=$env:RUNNER_ARCH" | Out-File evidence/runner.txt -Append
           node --version | Out-File evidence/node-version.txt
           npm --version | Out-File evidence/npm-version.txt
-          Get-FileHash candidate.zip -Algorithm SHA256 | Format-List | Out-File evidence/candidate-zip-sha256.txt
-          Get-FileHash $env:ORBITA_ENCRYPTED_FILE -Algorithm SHA256 | Format-List | Out-File evidence/encrypted-payload-sha256.txt
+          Get-FileHash candidate.zip -Algorithm SHA256 | Format-List | Out-File evidence/r13an-base-zip-sha256.txt
 
       - name: Install exact dependencies
         working-directory: candidate
@@ -119,17 +123,14 @@ jobs:
         if: always()
         shell: pwsh
         run: |
-          if (Test-Path candidate/release) {
-            Get-ChildItem candidate/release -File -Recurse | Get-FileHash -Algorithm SHA256 | Format-Table -AutoSize | Out-File evidence/release-sha256.txt
-          } else {
-            'candidate/release not present' | Out-File evidence/release-sha256.txt
-          }
+          if (Test-Path candidate/release) { Get-ChildItem candidate/release -File -Recurse | Get-FileHash -Algorithm SHA256 | Format-Table -AutoSize | Out-File evidence/release-sha256.txt }
+          else { 'candidate/release not present' | Out-File evidence/release-sha256.txt }
 
       - name: Upload proof evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ORBITA-R13AN-PUBLIC-ENCRYPTED-WINDOWS-PROOF-EVIDENCE
+          name: ORBITA-R13AO-PUBLIC-ENCRYPTED-WINDOWS-PROOF-EVIDENCE
           path: evidence
           retention-days: 7
 
@@ -137,6 +138,6 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: ORBITA-R13AN-WINDOWS-X64-PACKAGES
+          name: ORBITA-R13AO-WINDOWS-X64-PACKAGES
           path: candidate/release
           retention-days: 7
