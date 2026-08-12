@@ -77,6 +77,8 @@ jobs:
           if($LASTEXITCODE-ne0){throw "owner forensic $LASTEXITCODE"}
           node ci/orbita-redesign-owner-locator.cjs candidate redesign-evidence/first-wave-owners.json 2>&1 | Tee-Object redesign-evidence/owner-locator-console.log
           if($LASTEXITCODE-ne0){throw "owner locator $LASTEXITCODE"}
+          node ci/orbita-redesign-flow-matrix.cjs candidate redesign-evidence/flow-matrix.json 2>&1 | Tee-Object redesign-evidence/flow-matrix-console.log
+          if($LASTEXITCODE-ne0){throw "flow matrix $LASTEXITCODE"}
 
       - name: Validate exact current product baseline
         working-directory: candidate
