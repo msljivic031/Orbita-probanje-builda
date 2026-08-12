@@ -24,11 +24,11 @@ if (dossier.includes('data-orbita-action="person-availability-quick"')) {
 }
 
 // 1) Extend the live dossier contract with exactly one availability action callback.
-const propLine = exactlyOne(dossier, /^\s*onOpenWorkDossier:\s*\(workItemId:\s*string\)\s*=>\s*void;\s*$/m, 'dossier prop anchor');
+const propLine = exactlyOne(dossier, /^\s*onOpenWorkDossier\s*:\s*\(workItemId\s*:\s*string\)\s*=>\s*void\s*[,;]?\s*$/m, 'dossier prop anchor');
 dossier = dossier.slice(0, propLine.index + propLine[0].length) + '\n  onOpenAvailability: () => void;' + dossier.slice(propLine.index + propLine[0].length);
 
 // 2) Destructure the new callback next to the existing dossier action callback.
-const destructureLine = exactlyOne(dossier, /^\s*onOpenWorkDossier,\s*$/m, 'dossier destructure anchor');
+const destructureLine = exactlyOne(dossier, /^\s*onOpenWorkDossier\s*,?\s*$/m, 'dossier destructure anchor');
 dossier = dossier.slice(0, destructureLine.index + destructureLine[0].length) + '\n  onOpenAvailability,' + dossier.slice(destructureLine.index + destructureLine[0].length);
 
 // 3) Put the real availability command in the current Dostupnost tab header.
