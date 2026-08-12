@@ -3,31 +3,31 @@ import json, re, hashlib, sys
 
 r = Path(sys.argv[1]).resolve()
 R13AP_ID = '8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704'
+CURRENT_AVAILABILITY_TAB_SELECTOR = '.people-detail-tabs button:nth-child(3)'
 
 def rd(p): return (r / p).read_text(encoding='utf-8')
 def wr(p, s):
     with (r / p).open('w', encoding='utf-8', newline='\n') as f: f.write(s)
 def j(p): return json.loads(rd(p))
 def wj(p, o): wr(p, json.dumps(o, ensure_ascii=False, indent=2) + '\n')
-def rep(p, a, b):
-    s = rd(p)
-    if a not in s: raise SystemExit(f'missing pattern {p}: {a[:100]}')
-    wr(p, s.replace(a, b))
 
 boundary = j('.orbita-code-boundary.json')
 if boundary.get('sourceDirectoryIdentitySha256') != R13AP_ID:
     raise SystemExit('formalize requires exact R13AP predecessor ledger before R13AQ patches')
 
 jsx = rd('src/renderer/screens/ljudi/LjudiScreen.tsx')
-if 'data-orbita-action="person-availability-tab"' not in jsx or 'data-orbita-action="person-availability-edit"' not in jsx:
-    raise SystemExit('R13AQ People availability reachability patch is not present')
+if 'data-orbita-action="person-availability-edit"' not in jsx:
+    raise SystemExit('R13AQ current People availability edit entry is not present')
+scenarios = rd('config/inspector/scenarios.json')
+if CURRENT_AVAILABILITY_TAB_SELECTOR not in scenarios or 'person-availability-edit' not in scenarios:
+    raise SystemExit('R13AQ People canonical scenario rebind is not present')
 inspector = rd('tooling/inspector/visual-runtime-inspector.mjs')
 if 'electron dist-electron/main/main.js' in inspector:
     raise SystemExit('R13AQ app-root inspector repair is not present')
 
 pkg = j('package.json')
 pkg['description'] = ('Orbita OI Pro ORBITA 2 authoritative product identity R4R21R14 with non-promoted R13AQ visual-runtime and People availability reachability repair successor over R13AP. '
-    'R13AQ preserves the R13AP sandbox:true bundled CommonJS preload.cjs boundary, repairs the canonical visual inspector to launch Electron from the app root, restores a visible current Dostupnost-pane entry to the existing availability modal without reviving the hidden legacy actionbar, and rebinds the two canonical People availability scenarios to the current UI path. '
+    'R13AQ preserves the R13AP sandbox:true bundled CommonJS preload.cjs boundary, repairs the canonical visual inspector to launch Electron from the app root, restores a visible current Dostupnost-pane entry to the existing availability modal without reviving the hidden legacy actionbar, and rebinds the two canonical People availability scenarios to the physically proven current third-tab UI path. '
     'Exact R13AQ Windows dependency/typecheck/governance/build/package/runtime plus full visual admission is required before any promotion. Product current remains R4R21R14, Canon A4.25, release=false.')
 wj('package.json', pkg)
 
@@ -57,6 +57,8 @@ truth['visualRepairCandidate'] = {
     'head': 'R13AQ_NON_PROMOTED',
     'predecessorVisualRun': 31598481795,
     'predecessorFailure': 'R13AP launch repair exposed two required People availability reachability scenario failures',
+    'availabilityPathDiagnosticRun': 31600761746,
+    'currentAvailabilityTabSelector': CURRENT_AVAILABILITY_TAB_SELECTOR,
     'inspectorLaunchOwner': 'tooling/inspector/visual-runtime-inspector.mjs',
     'peopleOwner': 'src/renderer/screens/ljudi/LjudiScreen.tsx',
     'scenarioOwner': 'config/inspector/scenarios.json',
@@ -151,11 +153,11 @@ boundary['developmentSuccessor'] = {
     'lineage': 'R13AQ',
     'kind': 'NON_PROMOTED_VISUAL_INSPECTOR_APP_ROOT_AND_PEOPLE_AVAILABILITY_REACHABILITY_REPAIR_CANDIDATE',
     'predecessor': 'R13AP_NON_PROMOTED',
-    'incorporatesEvidenceWave': 'R13AP_EXACT_WINDOWS_PASS_RUN_31590050913_PLUS_VISUAL_FAIL_RUN_31598481795_ROOT_CAUSE_REPAIR',
+    'incorporatesEvidenceWave': 'R13AP_EXACT_WINDOWS_PASS_RUN_31590050913_PLUS_VISUAL_FAIL_RUN_31598481795_PLUS_AVAILABILITY_PATH_DIAGNOSTIC_RUN_31600761746',
     'promotion': 'FORBIDDEN_UNTIL_EXACT_R13AQ_WINDOWS_VISUAL_AND_MIE_GATES_PASS'
 }
 src_count = sum(1 for q in (r / 'src').rglob('*') if q.is_file())
-boundary['protectedTruth']['src'] = f'{src_count} FILES; R13AQ changes only the current People availability reachability/instrumentation path in product src; all unrelated domain semantics preserved from R13AP'
+boundary['protectedTruth']['src'] = f'{src_count} FILES; R13AQ changes only the current People availability reachability path in product src; all unrelated domain semantics preserved from R13AP'
 boundary['protectedTruth']['windowsFullCheck'] = 'R13AQ EXACT RERUN_REQUIRED; predecessor R13AP PASS RUN 31590050913'
 boundary['protectedTruth']['productionBuild'] = 'R13AQ NOT_RUN; predecessor R13AP PASS RUN 31590050913'
 boundary['protectedTruth']['windowsPackage'] = 'R13AQ NOT_RUN; predecessor R13AP PASS RUN 31590050913'
