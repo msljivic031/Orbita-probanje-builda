@@ -1,0 +1,11 @@
+const fs=require('fs');
+const path=require('path');
+const root=path.resolve(process.argv[2]||'candidate');
+const file=path.join(root,'tooling/inspector/visual-runtime-inspector.mjs');
+let s=fs.readFileSync(file,'utf8');
+const from="startProcess(electronExecutable, [path.join(root, 'dist-electron', 'main', 'main.js')], { cwd: root, env: electronEnv }, 'electron.log');";
+const to="startProcess(electronExecutable, [root], { cwd: root, env: electronEnv }, 'electron.log');";
+if(!s.includes(from)) throw new Error('Expected visual inspector Electron launch owner not found');
+s=s.replace(from,to);
+fs.writeFileSync(file,s,'utf8');
+console.log(JSON.stringify({state:'PATCHED_FOR_FEASIBILITY_ONLY',productSrcChanged:false,owner:'tooling/inspector/visual-runtime-inspector.mjs',launch:'electron <app-root>'}));
