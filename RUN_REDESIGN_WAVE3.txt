@@ -1,5 +1,5 @@
 ORBITA redesign Wave 3 trigger
-2026-08-12T22:10+02:00
+2026-08-12T22:12+02:00
+UNCHANGED product candidate retry after transient Electron binary fetch failure in CI.
 Canon-first Rad dossier natural workflow: direct operational facts, progressive New Rad, restrained navigation.
-Deterministic source-anchor repair applied.
 Required: typecheck/build + 18/18 at 1440 and 1366 + zero unlabeled + human screenshot review.
