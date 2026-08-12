@@ -1,0 +1,17 @@
+const fs=require('fs'),path=require('path');
+const root=path.resolve(process.argv[2]||'candidate');
+const out=path.resolve(process.argv[3]||'redesign-evidence/wave2-forensic.json');
+const rel=p=>path.relative(root,p).replaceAll('\\','/');
+const read=r=>fs.readFileSync(path.join(root,r),'utf8');
+function linesAround(file, needles, radius=12){const s=read(file),ls=s.split(/\r?\n/),hits=[];for(const needle of needles){ls.forEach((t,i)=>{if(t.includes(needle)){const a=Math.max(0,i-radius),b=Math.min(ls.length,i+radius+1);hits.push({needle,line:i+1,start:a+1,end:b,text:ls.slice(a,b).map((x,j)=>`${a+j+1}: ${x}`).join('\n')})}})}return hits}
+const all=[];function walk(d){if(!fs.existsSync(d))return;for(const e of fs.readdirSync(d,{withFileTypes:true})){if(['node_modules','dist','build','out','.git'].includes(e.name))continue;const p=path.join(d,e.name);if(e.isDirectory())walk(p);else if(/\.(tsx?|css)$/.test(e.name))all.push(p)}}walk(root);
+function cssBlocks(needles){const hits=[];for(const p of all.filter(x=>x.endsWith('.css'))){const s=fs.readFileSync(p,'utf8');for(const needle of needles){let i=0;while((i=s.indexOf(needle,i))>=0){const a=s.lastIndexOf('}',i)+1,b=s.indexOf('}',i);if(b<0)break;const block=s.slice(a,b+1).trim();if(block.length<8000)hits.push({needle,file:rel(p),line:s.slice(0,a).split(/\r?\n/).length,block});i+=needle.length}}}return hits}
+function sourceSearch(needles){const hits=[];for(const p of all.filter(x=>/\.tsx?$/.test(x))){const s=fs.readFileSync(p,'utf8');for(const needle of needles){let i=0;while((i=s.indexOf(needle,i))>=0){const line=s.slice(0,i).split(/\r?\n/).length;const ls=s.split(/\r?\n/),a=Math.max(0,line-10),b=Math.min(ls.length,line+11);hits.push({needle,file:rel(p),line,start:a+1,end:b,text:ls.slice(a,b).map((x,j)=>`${a+j+1}: ${x}`).join('\n')});i+=needle.length}}}return hits}
+const report={audit:'ORBITA_REDESIGN_WAVE2_BOUNDED_FORENSIC',
+ radovi:{component:linesAround('src/renderer/screens/radovi/workspace/RadoviWorkTable.tsx',['radovi-list-head-with-action','radovi-work-row-shell','radovi-work-row-select','radovi-work-name','radovi-row-open-dossier','STATUS','NAZIV'],18),css:cssBlocks(['.radovi-list-head-with-action','.radovi-work-row-shell','.radovi-work-row-select','.radovi-work-name','.radovi-row-open-dossier'])},
+ oi:{component:linesAround('src/renderer/screens/oi/OiScreen.tsx',['oi-kpi-card','oi-signal-card','oi-focus-meta','oi-decision-orbit','oi-row'],16),css:cssBlocks(['.oi-kpi-card','.oi-kpi-card__summary','.oi-focus-meta','.oi-decision-orbit','.oi-signal-card','.oi-row'])},
+ settings:{component:sourceSearch(['Izgled aplikacije','settings-rules-modal-head','Statusi rada']),css:cssBlocks(['.settings-rules-modal-head','.settings-rules-modal','.settings-status','.settings-rule'])},
+ accessibility:{reports:sourceSearch(['type="checkbox"','type=\"checkbox\"']),people:sourceSearch(['Arhiviraj strukturu']),settingsStatus:sourceSearch(['Statusi rada'])}
+};
+fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,JSON.stringify(report,null,2));
+console.log(JSON.stringify({radoviComponent:report.radovi.component.length,radoviCss:report.radovi.css.length,oiComponent:report.oi.component.length,oiCss:report.oi.css.length,settingsSource:report.settings.component.length,reportsCheckbox:report.accessibility.reports.length,peopleArchive:report.accessibility.people.length},null,2));
