@@ -1,0 +1,22 @@
+name: Public Windows Runner Smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'PUBLIC_RUNNER_SMOKE.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - name: Prove public Windows runner starts
+        shell: pwsh
+        run: |
+          Write-Host "ORBITA public CI Windows runner smoke PASS"
+          Write-Host "RUNNER_OS=$env:RUNNER_OS"
+          Write-Host "RUNNER_ARCH=$env:RUNNER_ARCH"
