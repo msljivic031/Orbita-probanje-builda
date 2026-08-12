@@ -4,7 +4,7 @@ const read=r=>fs.readFileSync(path.join(root,r),'utf8').replace(/\r\n/g,'\n');
 const write=(r,s)=>fs.writeFileSync(path.join(root,r),s.replace(/\r\n/g,'\n'),'utf8');
 function replaceExact(file,from,to,label){let s=read(file);const n=s.split(from).length-1;if(n!==1)throw Error(`${label}: expected 1, got ${n}`);write(file,s.replace(from,to));}
 function blocks(source,selector){const out=[];let at=0;while((at=source.indexOf(selector,at))>=0){const open=source.indexOf('{',at);if(open<0)break;if(source.slice(at,open).trim()!==selector){at+=selector.length;continue}let depth=0,end=-1;for(let i=open;i<source.length;i++){if(source[i]==='{')depth++;else if(source[i]==='}'){depth--;if(depth===0){end=i+1;break}}}if(end<0)throw Error(`unterminated ${selector}`);out.push({at,open,end,body:source.slice(open+1,end-1)});at=end}return out}
-function setBlock(file,selector,body,label){let s=read(file);const b=blocks(s,selector);if(b.length!==1)throw Error(`${label}: ${selector} blocks=${b.length}`);const x=b[0];write(file,s.slice(0,x.open+1)+'\n'+body.trim()+'\n'+s.slice(x.end-1));}
+function setBlock(file,selector,body,label){let s=read(file);const b=blocks(s,selector);if(!b.length)throw Error(`${label}: ${selector} blocks=0`);const x=b[b.length-1];write(file,s.slice(0,x.open+1)+'\n'+body.trim()+'\n'+s.slice(x.end-1));console.log(JSON.stringify({owner:file,selector,cascadeBlocks:b.length,edited:'last-active'}));}
 function insertBefore(file,anchor,extra,label){let s=read(file);if(s.includes(extra.trim()))return;const i=s.indexOf(anchor);if(i<0)throw Error(`${label}: anchor missing`);write(file,s.slice(0,i)+extra.trim()+'\n\n'+s.slice(i));}
 
 const modal='src/renderer/screens/ljudi/components/LjudiAvailabilityModal.tsx';
