@@ -1,5 +1,5 @@
-ORBITA redesign People/Organization/absence forensic trigger
-2026-08-12T23:16+02:00
-Read-only semantic union audit under Design Brain 0.5.
-Resolve exact ResponsibilityAssignment source/end-reason, ResponsibilityRoute kind/status/end-reason, PersonAvailabilityEvent kind/availability and related temporal values before Wave 5 timeline implementation.
-No People product mutation in this run.
+ORBITA redesign People/Workforce forensic trigger
+2026-08-12T23:31+02:00
+Read-only audit under Design Brain 0.5.
+Resolve exact physical Workforce capability: monthly Person×day sheet, month/year scope, legend/token source, weekend/non-working semantics, history and export/print signals.
+Also preserve prior Person history semantic evidence. No product mutation in this run.
