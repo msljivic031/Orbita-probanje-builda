@@ -9,3 +9,4 @@ s=s.replace(re,'<strong>Dopuni po potrebi</strong>\n        <span>Svaka stavka o
 fs.writeFileSync(file,s.replace(/\r\n/g,'\n'),'utf8');
 process.argv[2]=root;
 require('./orbita-redesign-wave3-transform.cjs');
+require('./orbita-redesign-wave3-cascade-repair.cjs');
