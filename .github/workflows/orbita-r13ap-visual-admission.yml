@@ -53,6 +53,10 @@ jobs:
           python ci/r13ap-transform.py candidate | Tee-Object evidence/r13ap-transform.log
           $p=Get-Content candidate/.orbita-code-boundary.json -Raw | ConvertFrom-Json; "identity=$($p.sourceDirectoryIdentitySha256)" | Tee-Object evidence/r13ap-identity.txt
           if($p.sourceDirectoryIdentitySha256-ne$env:ORBITA_R13AP_SOURCE_IDENTITY){throw "identity $($p.sourceDirectoryIdentitySha256)"}
+      - name: Apply visual inspector app-root launch feasibility repair
+        shell: pwsh
+        run: |
+          node ci/r13ap-visual-inspector-root-launch-patch.cjs candidate 2>&1 | Tee-Object evidence/visual-inspector-root-launch-patch.log
       - name: Install exact dependencies
         working-directory: candidate
         shell: pwsh
