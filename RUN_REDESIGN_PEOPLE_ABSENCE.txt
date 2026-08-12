@@ -1,0 +1,4 @@
+ORBITA redesign People/Organization/absence forensic trigger
+2026-08-12T22:22+02:00
+Read-only capability map on Wave 3 candidate: Person dossier, organization, availability, conflict, delegation, substitution, affected-work review, responsibility history, workforce sheet.
+No product mutation in this run.
