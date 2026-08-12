@@ -1,0 +1,6 @@
+ORBITA R13AQ FORMAL SOURCE GOVERNANCE ADMISSION
+trigger=2026-08-12T15:39:00+02:00
+predecessor=R13AP_NON_PROMOTED
+predecessor_identity=8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704
+promotion=false
+release=false
