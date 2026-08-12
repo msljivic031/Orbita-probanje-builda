@@ -1,0 +1,13 @@
+const fs=require('fs');const path=require('path');const root=path.resolve(process.argv[2]||'candidate');
+const jsxPath='src/renderer/screens/ljudi/LjudiScreen.tsx';const cssPath='src/renderer/styles/canonical/people-operational-closure.css';
+const jsx=fs.readFileSync(path.join(root,jsxPath),'utf8');const css=fs.readFileSync(path.join(root,cssPath),'utf8');
+const out={state:'PASS',jsxPath,cssPath,tab:{},quickAction:{},hiddenRule:{}};
+const navIdx=jsx.indexOf('people-detail-tabs');if(navIdx<0)throw Error('tabs missing');const nav=jsx.slice(navIdx,navIdx+5000);
+out.tab.labels=['Sada','Radovi','Dostupnost','Istorija'].map(x=>({label:x,present:nav.includes(x)}));
+const dIdx=nav.indexOf('Dostupnost');const around=dIdx>=0?nav.slice(Math.max(0,dIdx-1000),Math.min(nav.length,dIdx+1000)):'';
+out.tab.availabilityLabelPresent=dIdx>=0;
+out.tab.nearbyTokens={availability:/availability/i.test(around),dostupnost:/Dostupnost/.test(around),setActive:/set[A-Z][A-Za-z0-9_]*\s*\(/.test(around),onClick:/onClick\s*=/.test(around),dataAction:/data-orbita-action/.test(around)};
+out.tab.literalStateHints=[...around.matchAll(/['"]([a-zA-Z][a-zA-Z0-9_-]{2,30})['"]/g)].map(m=>m[1]).filter(x=>/avail|dost|people|person|now|work|history/i.test(x)).slice(0,20);
+const qIdx=jsx.indexOf('person-availability-quick');if(qIdx<0)throw Error('quick action missing');const q=jsx.slice(Math.max(0,qIdx-1200),Math.min(jsx.length,qIdx+1800));out.quickAction.present=true;out.quickAction.nearbyTokens={onClick:/onClick\s*=/.test(q),availability:/availability/i.test(q),modal:/modal/i.test(q),setOpen:/set[A-Z][A-Za-z0-9_]*(?:Open|Modal)[A-Za-z0-9_]*\s*\(/.test(q)};out.quickAction.literalStateHints=[...q.matchAll(/['"]([a-zA-Z][a-zA-Z0-9_-]{2,30})['"]/g)].map(m=>m[1]).filter(x=>/avail|dost|status|absence|modal/i.test(x)).slice(0,20);
+for(const m of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)){const sel=m[1].trim(),body=m[2];if(!sel.includes('people-context-actionbar')||!/display\s*:\s*none(?:\s*!important)?/i.test(body))continue;const pseudos=[...sel.matchAll(/:([a-zA-Z-]+)/g)].map(x=>x[1]);const classes=[...sel.matchAll(/\.([a-zA-Z0-9_-]+)/g)].map(x=>x[1]);out.hiddenRule={found:true,pseudos,classes:classes.map(c=>c==='people-context-actionbar'?'PEOPLE_CONTEXT_ACTIONBAR':'OTHER_STATE_CLASS'),classCount:classes.length,usesHas:pseudos.includes('has'),usesNot:pseudos.includes('not'),usesEmpty:pseudos.includes('empty'),usesHover:pseudos.includes('hover'),usesFocus:pseudos.some(x=>x.startsWith('focus'))};break;}
+if(!out.hiddenRule.found)throw Error('hidden rule missing');console.log(JSON.stringify(out,null,2));
