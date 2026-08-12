@@ -58,11 +58,13 @@ jobs:
           node ci/orbita-redesign-wave2-run.cjs candidate | Tee-Object workforce-evidence/w2.log
           node ci/orbita-redesign-wave3-run.cjs candidate | Tee-Object workforce-evidence/w3.log
           node ci/orbita-redesign-wave4-people-transform.cjs candidate | Tee-Object workforce-evidence/w4.log
-      - name: Resolve Workforce reusable owners
+      - name: Resolve Workforce reusable owners and bounded contracts
         shell: pwsh
         run: |
           node ci/orbita-redesign-wave6-workforce-owner-forensic.cjs candidate workforce-evidence/workforce-owner-forensic.json 2>&1 | Tee-Object workforce-evidence/console.log
           if($LASTEXITCODE-ne0){throw "workforce owner forensic $LASTEXITCODE"}
+          node ci/orbita-redesign-wave6-workforce-bounded-source-forensic.cjs candidate workforce-evidence/workforce-bounded-source.json 2>&1 | Tee-Object workforce-evidence/bounded-source-console.log
+          if($LASTEXITCODE-ne0){throw "workforce bounded forensic $LASTEXITCODE"}
       - name: Safety typecheck baseline
         working-directory: candidate
         shell: pwsh
