@@ -22,9 +22,9 @@ env:
 
 jobs:
   diagnostic:
-    name: Windows R13AP visible availability path diagnostic
+    name: Windows R13AP bounded availability path diagnostic
     runs-on: windows-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -57,6 +57,9 @@ jobs:
       - name: Apply inspector app-root runtime repair
         shell: pwsh
         run: node ci/r13ap-visual-inspector-root-launch-patch.cjs candidate 2>&1 | Tee-Object evidence/app-root-repair.log
+      - name: Restrict diagnostic to the two failed People scenarios
+        shell: pwsh
+        run: node ci/r13ap-target-two-people-scenarios.cjs candidate 2>&1 | Tee-Object evidence/two-scenario-filter.log
       - name: Apply diagnostic-only visible availability tab scenario patch
         shell: pwsh
         run: node ci/r13ap-people-availability-tab-diagnostic-patch.cjs candidate 2>&1 | Tee-Object evidence/availability-tab-diagnostic-patch.log
@@ -68,11 +71,11 @@ jobs:
         working-directory: candidate
         shell: pwsh
         run: npm run build 2>&1 | Tee-Object ../evidence/build.log
-      - name: Run visual inspector diagnostic
+      - name: Run bounded visual inspector diagnostic
         working-directory: candidate
         shell: pwsh
         run: |
-          node tooling/inspector/visual-runtime-inspector.mjs --output "$env:GITHUB_WORKSPACE\PEOPLE_AVAILABILITY_DIAGNOSTIC" --width 1440 --height 900 --max-actions 180 --max-depth 3 --max-states 160 2>&1 | Tee-Object ../evidence/diagnostic-console.log
+          node tooling/inspector/visual-runtime-inspector.mjs --output "$env:GITHUB_WORKSPACE\PEOPLE_AVAILABILITY_DIAGNOSTIC" --width 1440 --height 900 --max-actions 30 --max-depth 1 --max-states 24 2>&1 | Tee-Object ../evidence/diagnostic-console.log
           $code=$LASTEXITCODE
           if(Test-Path "$env:GITHUB_WORKSPACE\PEOPLE_AVAILABILITY_DIAGNOSTIC\MANIFEST.json"){
             $m=Get-Content "$env:GITHUB_WORKSPACE\PEOPLE_AVAILABILITY_DIAGNOSTIC\MANIFEST.json" -Raw | ConvertFrom-Json
