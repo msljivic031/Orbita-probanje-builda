@@ -1,5 +1,6 @@
 ORBITA R13AP VISUAL RUNTIME ADMISSION
-trigger=2026-08-12T13:22:00+02:00
+trigger=2026-08-12T14:49:00+02:00
+mode=app-root-launch-feasibility-repair
 expected_identity=8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704
 viewport=1440x900
 canonical_scenarios=18
