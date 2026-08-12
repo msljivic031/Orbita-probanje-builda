@@ -1,0 +1,21 @@
+const fs=require('fs'),path=require('path');
+const root=path.resolve(process.argv[2]||'candidate'),out=path.resolve(process.argv[3]||'rad-dossier-evidence.json');
+function walk(d,o=[]){if(!fs.existsSync(d))return o;for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(e.isDirectory()){if(!['node_modules','dist','build'].includes(e.name))walk(p,o)}else if(/\.(tsx?|jsx?|css)$/.test(e.name))o.push(p)}return o}
+const files=walk(path.join(root,'src'));const rel=p=>path.relative(root,p).replaceAll('\\','/');
+const needles=['Novi Rad','Izabrani Rad','Dossier','Dosije','Odgovorn','Status','Podrad','Subwork','Zavis','Dependency','Mrež','Network','Dokument','Kalendar','Rok','Prioritet','Istor','History','Copy','Kopir','Move','Premesti','Archive','Arhiv','Delete','Obri','Duplicate','Dupl','Relate','Povež','Link'];
+const result={audit:'ORBITA_RAD_DOSSIER_UX_FORENSIC_V1',files:[],actions:[],surfaceIndex:[],cssOwners:[]};
+for(const f of files){const r=rel(f);if(!/(radovi|work|dossier|modal|inspector|network|calendar|document|people|responsib|status)/i.test(r))continue;let s;try{s=fs.readFileSync(f,'utf8')}catch{continue};const matched=needles.filter(n=>s.toLowerCase().includes(n.toLowerCase()));if(!matched.length&&!/data-orbita-action/.test(s))continue;const item={file:r,matched,actions:[],headings:[],handlers:[],components:[]};
+ for(const m of s.matchAll(/data-orbita-action\s*=\s*["'`]([^"'`]+)["'`]/g))item.actions.push(m[1]);
+ for(const m of s.matchAll(/<(?:h[1-6]|legend|strong)[^>]*>([^<>{]{2,120})<\//g)){const x=m[1].replace(/\s+/g,' ').trim();if(needles.some(n=>x.toLowerCase().includes(n.toLowerCase())))item.headings.push(x)}
+ for(const m of s.matchAll(/(?:const|function)\s+(handle[A-Z][A-Za-z0-9_]*|open[A-Z][A-Za-z0-9_]*|close[A-Z][A-Za-z0-9_]*|save[A-Z][A-Za-z0-9_]*|delete[A-Z][A-Za-z0-9_]*|archive[A-Z][A-Za-z0-9_]*|restore[A-Z][A-Za-z0-9_]*)/g))item.handlers.push(m[1]);
+ for(const m of s.matchAll(/<([A-Z][A-Za-z0-9]+)\b/g)){if(/Modal|Dialog|Drawer|Inspector|Dossier|Picker|Menu|Network|Table|Panel/.test(m[1]))item.components.push(m[1])}
+ item.actions=[...new Set(item.actions)].slice(0,100);item.headings=[...new Set(item.headings)].slice(0,60);item.handlers=[...new Set(item.handlers)].slice(0,100);item.components=[...new Set(item.components)].slice(0,80);result.files.push(item);
+ for(const a of item.actions)result.actions.push({id:a,file:r});
+}
+result.files.sort((a,b)=>b.matched.length-a.matched.length||a.file.localeCompare(b.file));
+result.actions=[...new Map(result.actions.map(x=>[x.id+'|'+x.file,x])).values()];
+const surfaceNeedles=['radovi-work-row','radovi-selected','dossier','work-dossier','rad-create','modal','network','dependency','status','responsibility'];
+for(const f of files.filter(x=>x.endsWith('.css'))){let s;try{s=fs.readFileSync(f,'utf8')}catch{continue};for(const n of surfaceNeedles){const re=new RegExp(`([^{}]*\\.${n.replace(/[.*+?^${}()|[\\]\\]/g,'\\$&')}[\\w-]*[^{}]*)\\{([^{}]*)\\}`,'gi');for(const m of s.matchAll(re)){const decl=m[2].split(';').map(x=>x.trim()).filter(Boolean).filter(x=>/display|grid|flex|width|height|min-|max-|overflow|gap|padding|margin|position|color|background|border|font|line-height|align|justify/.test(x)).slice(0,24);if(decl.length)result.cssOwners.push({file:rel(f),selector:m[1].replace(/\s+/g,' ').trim().slice(0,220),decl});if(result.cssOwners.length>260)break}if(result.cssOwners.length>260)break}if(result.cssOwners.length>260)break}
+const keyFiles=result.files.slice(0,45);for(const item of keyFiles){let s=fs.readFileSync(path.join(root,item.file),'utf8');for(const needle of item.matched.slice(0,10)){const i=s.toLowerCase().indexOf(needle.toLowerCase());if(i<0)continue;const before=s.slice(0,i).split(/\r?\n/).length;const snippet=s.slice(Math.max(0,i-550),Math.min(s.length,i+900)).replace(/\r?\n/g,' ').replace(/\s+/g,' ').slice(0,1400);result.surfaceIndex.push({file:item.file,line:before,needle,snippet});}}
+fs.writeFileSync(out,JSON.stringify(result,null,2));
+console.log(JSON.stringify({files:result.files.length,actions:result.actions.length,surfaces:result.surfaceIndex.length,cssOwners:result.cssOwners.length,top:result.files.slice(0,15).map(x=>({file:x.file,matched:x.matched.length,actions:x.actions.length}))},null,2));
