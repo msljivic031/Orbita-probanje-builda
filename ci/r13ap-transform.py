@@ -1,8 +1,9 @@
 from pathlib import Path
 import json,re,hashlib,sys
 r=Path(sys.argv[1]).resolve()
-def rd(p):return (r/p).read_text()
-def wr(p,s):(r/p).write_text(s)
+def rd(p):return (r/p).read_text(encoding='utf-8')
+def wr(p,s):
+ with (r/p).open('w',encoding='utf-8',newline='\n') as f:f.write(s)
 def j(p):return json.loads(rd(p))
 def wj(p,o):wr(p,json.dumps(o,ensure_ascii=False,indent=2)+'\n')
 def rep(p,a,b):
