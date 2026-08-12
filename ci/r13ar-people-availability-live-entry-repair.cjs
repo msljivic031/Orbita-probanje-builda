@@ -7,10 +7,11 @@ if (!root) throw new Error('candidate root required');
 
 function read(rel) { return fs.readFileSync(path.join(root, rel), 'utf8'); }
 function write(rel, text) { fs.writeFileSync(path.join(root, rel), text.replace(/\r\n/g, '\n'), 'utf8'); }
-function exactlyOne(text, re, label) {
-  const matches = [...text.matchAll(new RegExp(re.source, re.flags.includes('g') ? re.flags : re.flags + 'g'))];
-  if (matches.length !== 1) throw new Error(`${label}: expected 1 match, got ${matches.length}`);
-  return matches[0];
+function uniqueLine(lines, predicate, label) {
+  const indexes = [];
+  lines.forEach((line, index) => { if (predicate(line, index)) indexes.push(index); });
+  if (indexes.length !== 1) throw new Error(`${label}: expected 1 line, got ${indexes.length}`);
+  return indexes[0];
 }
 
 const dossierPath = 'src/renderer/screens/ljudi/components/LjudiPersonDossier.tsx';
@@ -23,13 +24,21 @@ if (dossier.includes('data-orbita-action="person-availability-quick"')) {
   throw new Error('live dossier already owns person-availability-quick');
 }
 
-// 1) Extend the live dossier contract with exactly one availability action callback.
-const propLine = exactlyOne(dossier, /^\s*onOpenWorkDossier\s*:\s*\(workItemId\s*:\s*string\)\s*=>\s*void\s*[,;]?\s*$/m, 'dossier prop anchor');
-dossier = dossier.slice(0, propLine.index + propLine[0].length) + '\n  onOpenAvailability: () => void;' + dossier.slice(propLine.index + propLine[0].length);
+// 1) Extend the live dossier contract. Use structural line discovery rather than assuming arrow/method syntax.
+let lines = dossier.split('\n');
+const exportIndex = uniqueLine(lines, line => line.includes('export function LjudiPersonDossier'), 'dossier export anchor');
+const propIndex = uniqueLine(lines.slice(0, exportIndex), line => line.includes('onOpenWorkDossier') && line.includes('workItemId') && line.includes('string'), 'dossier prop anchor');
+lines.splice(propIndex + 1, 0, '  onOpenAvailability: () => void;');
+dossier = lines.join('\n');
 
-// 2) Destructure the new callback next to the existing dossier action callback.
-const destructureLine = exactlyOne(dossier, /^\s*onOpenWorkDossier\s*,?\s*$/m, 'dossier destructure anchor');
-dossier = dossier.slice(0, destructureLine.index + destructureLine[0].length) + '\n  onOpenAvailability,' + dossier.slice(destructureLine.index + destructureLine[0].length);
+// 2) Destructure the callback in the component parameter list.
+lines = dossier.split('\n');
+const exportIndex2 = uniqueLine(lines, line => line.includes('export function LjudiPersonDossier'), 'dossier export anchor after prop');
+const returnIndex = lines.findIndex((line, index) => index > exportIndex2 && /\breturn\s*\(/.test(line));
+if (returnIndex < 0) throw new Error('dossier return anchor missing');
+const destructureIndex = uniqueLine(lines.slice(exportIndex2, returnIndex), line => line.trim().startsWith('onOpenWorkDossier') && !line.includes('workItemId'), 'dossier destructure anchor') + exportIndex2;
+lines.splice(destructureIndex + 1, 0, '  onOpenAvailability,');
+dossier = lines.join('\n');
 
 // 3) Put the real availability command in the current Dostupnost tab header.
 const pillToken = 'people-availability-pill';
@@ -40,16 +49,16 @@ if (pillClose < 0) throw new Error('availability pill closing span missing');
 const insertion = `\n          <button\n            className="primary-action"\n            data-orbita-action="person-availability-quick"\n            type="button"\n            onClick={onOpenAvailability}\n          >\n            Status / odsustvo\n          </button>`;
 dossier = dossier.slice(0, pillClose + '</span>'.length) + insertion + dossier.slice(pillClose + '</span>'.length);
 
-// 4) Wire the live dossier to the existing single modal owner.
+// 4) Wire the current live dossier to the existing single modal owner.
 const invocationStart = screen.indexOf('<LjudiPersonDossier');
 if (invocationStart < 0) throw new Error('LjudiPersonDossier invocation missing');
 const invocationEnd = screen.indexOf('/>', invocationStart);
 if (invocationEnd < 0) throw new Error('LjudiPersonDossier invocation closing missing');
 const invocation = screen.slice(invocationStart, invocationEnd);
 if (invocation.includes('onOpenAvailability=')) throw new Error('dossier invocation already wired');
-screen = screen.slice(0, invocationEnd) + '  onOpenAvailability={() => openAvailabilityModal(selectedPerson)}\n          ' + screen.slice(invocationEnd);
+screen = screen.slice(0, invocationEnd) + 'onOpenAvailability={() => openAvailabilityModal(selectedPerson)}\n          ' + screen.slice(invocationEnd);
 
-// 5) Remove the stale hidden command-focus button so the action has one live UI owner.
+// 5) Migrate ownership away from the stale hidden command-focus button.
 const legacyRe = /\n\s*<button\s+className="primary-action"\s+data-orbita-action="person-availability-quick"[\s\S]*?<\/button>/g;
 const legacyMatches = [...screen.matchAll(legacyRe)];
 if (legacyMatches.length !== 1) throw new Error(`legacy quick action: expected 1 match, got ${legacyMatches.length}`);
