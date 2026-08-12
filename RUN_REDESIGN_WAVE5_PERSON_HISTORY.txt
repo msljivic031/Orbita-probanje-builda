@@ -1,7 +1,6 @@
 ORBITA redesign Wave 5 Person History trigger
-2026-08-12T23:37+02:00
-Design Brain 0.5 active.
-Scope: replace capped split Person history boxes with one persisted evidence-backed chronological ledger inside existing owner.
-Sources: ResponsibilityAssignment, WorkCompletionRecord, ResponsibilityRoute, PersonAvailabilityEvent, TemporalTeamMembership; EffectiveResponsibilityProjection stays explicitly projection-only.
-Preserve Wave 4 deep absence proof and add required Person history runtime capture at 1440x900 + 1366x768.
-No third-party code dependency; 21st timeline used as pattern inspiration only.
+2026-08-12T23:42+02:00
+Retry after fail-closed transform-format repair: Person history TSX now comes from deterministic template instead of nested Node template interpolation.
+Design Brain 0.5 active; product intent unchanged.
+Scope: one persisted evidence-backed chronological Person ledger in existing owner.
+Preserve Wave 4 deep absence proof and require Person history runtime capture at 1440x900 + 1366x768.
