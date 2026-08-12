@@ -1,1 +1,2 @@
 Trigger sanitized current R13AP People availability owner forensic.
+Attempt 2: correct current component paths + quick-action visibility metadata.
