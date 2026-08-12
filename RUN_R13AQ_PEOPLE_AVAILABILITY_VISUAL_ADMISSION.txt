@@ -1,0 +1,3 @@
+Trigger R13AQ People availability scenario-owner repair full Windows visual admission.
+Parent: exact R13AP identity 8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704.
+Required target: 18/18 canonical scenarios PASS, 0 required failures, 0 failed gates.
