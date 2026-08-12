@@ -1,0 +1,11 @@
+const fs=require('fs'),path=require('path');
+const root=path.resolve(process.argv[2]||'candidate');
+const file=path.join(root,'src/renderer/screens/radovi/create/RadCreateModalCoreFields.tsx');
+let s=fs.readFileSync(file,'utf8');
+const re=/<strong>Dopuni po potrebi<\/strong>\s*<span>Svaka stavka otvara svoju sekciju\. Nema duplih polja\.<\/span>/g;
+const hits=s.match(re)||[];
+if(hits.length!==1)throw Error(`Wave3 progressive-copy anchor expected 1, got ${hits.length}`);
+s=s.replace(re,'<strong>Dopuni po potrebi</strong>\n        <span>Svaka stavka otvara svoju sekciju. Nema duplih polja.</span>');
+fs.writeFileSync(file,s.replace(/\r\n/g,'\n'),'utf8');
+process.argv[2]=root;
+require('./orbita-redesign-wave3-transform.cjs');
