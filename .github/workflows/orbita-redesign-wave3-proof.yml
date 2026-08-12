@@ -75,7 +75,7 @@ jobs:
       - name: Apply canon-first Rad dossier Wave 3
         shell: pwsh
         run: |
-          node ci/orbita-redesign-wave3-transform.cjs candidate 2>&1 | Tee-Object evidence/wave3.log
+          node ci/orbita-redesign-wave3-run.cjs candidate 2>&1 | Tee-Object evidence/wave3.log
           if($LASTEXITCODE-ne0){throw "wave3 $LASTEXITCODE"}
       - name: Install dependencies
         working-directory: candidate
