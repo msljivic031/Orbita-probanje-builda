@@ -1,5 +1,5 @@
 ORBITA redesign People/Organization/absence forensic trigger
-2026-08-12T22:44+02:00
-Read-only Wave 4 capability + bounded owner map on repaired Wave 3 candidate.
-Targets: Person dossier, organization tree, registry, availability, replacement, affected-work review, conflict, delegation/substitution, responsibility history, workforce signals.
+2026-08-12T23:10+02:00
+Read-only semantic audit under Design Brain 0.5.
+Targets: Person dossier, organization, availability, delegation/substitution signals, responsibility assignment lifecycle, completion evidence, availability/organization temporal sources and current Person history projection.
 No People product mutation in this run.
