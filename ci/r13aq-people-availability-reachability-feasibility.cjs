@@ -18,26 +18,25 @@ if (!originalButton.includes(quickMarker)) throw new Error('legacy button captur
 const currentButton = originalButton.replace(quickMarker, 'data-orbita-action="person-availability-edit"');
 if (currentButton === originalButton) throw new Error('current edit marker replacement failed');
 
-function findSectionEnd(source, start) {
-  const token = /<section\b|<\/section>/g;
-  token.lastIndex = start;
-  let depth = 0;
-  for (let m; (m = token.exec(source)); ) {
-    if (m[0].startsWith('</')) depth -= 1; else depth += 1;
-    if (depth === 0) return m.index;
-  }
-  return -1;
-}
+const modalOwnerPos = jsx.indexOf('person-availability-modal');
+if (modalOwnerPos < 0 || modalOwnerPos <= markerPos) throw new Error('existing availability modal owner not found after legacy trigger');
 
-const availabilityPanelPos = jsx.indexOf('person-dossier-availability-panel');
-if (availabilityPanelPos < 0) throw new Error('current availability panel owner not found');
-const availabilitySectionStart = jsx.lastIndexOf('<section', availabilityPanelPos);
-const availabilitySectionEnd = findSectionEnd(jsx, availabilitySectionStart);
-if (availabilitySectionStart < 0 || availabilitySectionEnd < 0) throw new Error('current availability panel section boundary not found');
-const currentPanel = jsx.slice(availabilitySectionStart, availabilitySectionEnd);
-if (currentPanel.includes('data-orbita-action="person-availability-edit"')) throw new Error('current edit action already present in availability panel');
-const insertion = `\n          <div className="person-dossier-availability-actions">${currentButton}</div>\n        `;
-jsx = jsx.slice(0, availabilitySectionEnd) + insertion + jsx.slice(availabilitySectionEnd);
+const renderNeedle = 'availabilityCards.map(';
+const renderPositions = [];
+for (let p = jsx.indexOf(renderNeedle); p >= 0; p = jsx.indexOf(renderNeedle, p + renderNeedle.length)) renderPositions.push(p);
+const eligibleRenderPositions = renderPositions.filter((p) => p > markerPos && p < modalOwnerPos);
+if (eligibleRenderPositions.length !== 1) throw new Error(`expected exactly one current availabilityCards render between trigger and modal; found ${eligibleRenderPositions.length} eligible of ${renderPositions.length} total`);
+const renderPos = eligibleRenderPositions[0];
+const jsxExpressionStart = jsx.lastIndexOf('{', renderPos);
+if (jsxExpressionStart < markerPos || jsxExpressionStart > renderPos) throw new Error('availabilityCards render JSX expression boundary not found');
+const expressionPrefix = jsx.slice(jsxExpressionStart, renderPos);
+if (!/^\{\s*$/.test(expressionPrefix)) throw new Error('availabilityCards render is not a direct JSX child expression');
+const localWindow = jsx.slice(Math.max(markerPos, jsxExpressionStart - 1800), Math.min(modalOwnerPos, renderPos + 1800));
+if (!/availabilitySummaryText|availabilityPeriod/.test(localWindow)) throw new Error('availabilityCards render is not adjacent to current availability summary/period owner');
+if (localWindow.includes('data-orbita-action="person-availability-edit"')) throw new Error('current availability edit action already present near current render owner');
+
+const insertion = `\n        <div className="people-availability-edit-action">${currentButton}</div>\n        `;
+jsx = jsx.slice(0, jsxExpressionStart) + insertion + jsx.slice(jsxExpressionStart);
 fs.writeFileSync(jsxPath, jsx, 'utf8');
 
 const data = JSON.parse(fs.readFileSync(scenariosPath, 'utf8'));
@@ -78,6 +77,8 @@ console.log(JSON.stringify({
   proofOwner: 'config/inspector/scenarios.json',
   legacyActionbarChanged: false,
   modalOwnerChanged: false,
+  renderAnchor: 'UNIQUE_AVAILABILITY_CARDS_MAP_BETWEEN_LEGACY_TRIGGER_AND_MODAL',
+  renderAnchorEligibleCount: eligibleRenderPositions.length,
   currentAvailabilityEntry: 'person-availability-edit',
   currentAvailabilityTabSelector,
   tabPathEvidenceRun: 31600761746,
