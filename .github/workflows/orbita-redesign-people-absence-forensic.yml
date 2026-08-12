@@ -58,11 +58,13 @@ jobs:
           node ci/orbita-redesign-wave1-transform.cjs candidate | Tee-Object people-evidence/w1.log
           node ci/orbita-redesign-wave2-run.cjs candidate | Tee-Object people-evidence/w2.log
           node ci/orbita-redesign-wave3-run.cjs candidate | Tee-Object people-evidence/w3.log
-      - name: Extract People absence responsibility capability map
+      - name: Extract People absence responsibility capability and owner maps
         shell: pwsh
         run: |
           node ci/orbita-redesign-people-absence-forensic.cjs candidate people-evidence/people-absence-forensic.json 2>&1 | Tee-Object people-evidence/console.log
           if($LASTEXITCODE-ne0){throw "people forensic $LASTEXITCODE"}
+          node ci/orbita-redesign-wave4-people-ui-snippets.cjs candidate people-evidence/wave4-people-ui-snippets.json 2>&1 | Tee-Object people-evidence/wave4-ui-console.log
+          if($LASTEXITCODE-ne0){throw "people snippets $LASTEXITCODE"}
       - name: Safety check reconstructed candidate
         working-directory: candidate
         shell: pwsh
