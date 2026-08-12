@@ -58,7 +58,7 @@ jobs:
           node ci/orbita-redesign-wave1-transform.cjs candidate | Tee-Object people-evidence/w1.log
           node ci/orbita-redesign-wave2-run.cjs candidate | Tee-Object people-evidence/w2.log
           node ci/orbita-redesign-wave3-run.cjs candidate | Tee-Object people-evidence/w3.log
-      - name: Extract People capability, owner and Person-history semantic maps
+      - name: Extract People, Person-history and Workforce physical maps
         shell: pwsh
         run: |
           node ci/orbita-redesign-people-absence-forensic.cjs candidate people-evidence/people-absence-forensic.json 2>&1 | Tee-Object people-evidence/console.log
@@ -67,6 +67,8 @@ jobs:
           if($LASTEXITCODE-ne0){throw "people snippets $LASTEXITCODE"}
           node ci/orbita-redesign-wave5-person-history-semantic-forensic.cjs candidate people-evidence/person-history-semantic.json 2>&1 | Tee-Object people-evidence/person-history-console.log
           if($LASTEXITCODE-ne0){throw "person history forensic $LASTEXITCODE"}
+          node ci/orbita-redesign-workforce-forensic.cjs candidate people-evidence/workforce-forensic.json 2>&1 | Tee-Object people-evidence/workforce-console.log
+          if($LASTEXITCODE-ne0){throw "workforce forensic $LASTEXITCODE"}
       - name: Safety check reconstructed candidate
         working-directory: candidate
         shell: pwsh
