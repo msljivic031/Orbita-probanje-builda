@@ -1,2 +1,2 @@
 Trigger R13AS visual owner forensic over exact successful R13AR feasibility successor.
-Targets: OI KPI/decision queue, Settings appearance modal, Radovi workspace whitespace.
+Attempt 2: targeted structure + exact CSS blocks for OI KPI/decision queue, Settings appearance modal header, Radovi table packing.
