@@ -62,6 +62,8 @@ jobs:
         run: |
           node ci/orbita-redesign-rad-dossier-forensic.cjs candidate rad-evidence/rad-dossier-forensic.json 2>&1 | Tee-Object rad-evidence/rad-dossier-console.log
           if($LASTEXITCODE-ne0){throw "rad forensic $LASTEXITCODE"}
+          node ci/orbita-redesign-wave3-ui-snippets.cjs candidate rad-evidence/wave3-ui-snippets.json 2>&1 | Tee-Object rad-evidence/wave3-ui-snippets-console.log
+          if($LASTEXITCODE-ne0){throw "wave3 snippets $LASTEXITCODE"}
       - name: Safety check current redesign candidate
         working-directory: candidate
         shell: pwsh
