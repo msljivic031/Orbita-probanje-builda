@@ -34,7 +34,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Reconstruct Wave 2 candidate
+      - name: Reconstruct Wave 3 candidate
         shell: pwsh
         env:
           ORBITA_CI_AES256_KEY_B64: ${{ secrets.ORBITA_CI_AES256_KEY_B64 }}
@@ -57,13 +57,16 @@ jobs:
           node ci/r13ap-visual-inspector-root-launch-patch.cjs candidate | Tee-Object rad-evidence/root.log
           node ci/orbita-redesign-wave1-transform.cjs candidate | Tee-Object rad-evidence/w1.log
           node ci/orbita-redesign-wave2-run.cjs candidate | Tee-Object rad-evidence/w2.log
-      - name: Extract bounded Rad dossier owner map
+          node ci/orbita-redesign-wave3-run.cjs candidate | Tee-Object rad-evidence/w3.log
+      - name: Extract bounded Rad dossier owner map and active cascade
         shell: pwsh
         run: |
           node ci/orbita-redesign-rad-dossier-forensic.cjs candidate rad-evidence/rad-dossier-forensic.json 2>&1 | Tee-Object rad-evidence/rad-dossier-console.log
           if($LASTEXITCODE-ne0){throw "rad forensic $LASTEXITCODE"}
           node ci/orbita-redesign-wave3-ui-snippets.cjs candidate rad-evidence/wave3-ui-snippets.json 2>&1 | Tee-Object rad-evidence/wave3-ui-snippets-console.log
           if($LASTEXITCODE-ne0){throw "wave3 snippets $LASTEXITCODE"}
+          node ci/orbita-redesign-wave3-cascade-forensic.cjs candidate rad-evidence/wave3-cascade-forensic.json 2>&1 | Tee-Object rad-evidence/wave3-cascade-console.log
+          if($LASTEXITCODE-ne0){throw "cascade forensic $LASTEXITCODE"}
       - name: Safety check current redesign candidate
         working-directory: candidate
         shell: pwsh
