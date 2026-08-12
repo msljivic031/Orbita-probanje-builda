@@ -1,4 +1,4 @@
 ORBITA redesign encrypted forensic trigger
-2026-08-12T20:58+02:00
-Designer Brain 0.4 + ORBITA canon + full function/flow/usability baseline.
-function-flow matrix v2 canonical binding
+2026-08-12T21:04+02:00
+Designer Brain 0.4 + ORBITA canon + function/flow/usability audit.
+Wave 2 bounded owner and accessibility forensic
