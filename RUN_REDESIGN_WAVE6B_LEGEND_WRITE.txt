@@ -1,5 +1,5 @@
-ORBITA redesign Wave 6B append-only legend write proof V5
-2026-08-13T09:47+02:00
-Retest identical W6B legend write semantics after replacing brittle sqlite_master SQL rewriting with the physically proven A4.18 explicit history_events rebuild pattern. All helpers are isolated on orbita-redesign; public CI main remains restored at 44d1d65818fb9975096905ee23b7158e4efab9dd.
-Required unchanged: product/write/security transforms and static gates; typecheck/build; D historic seed -> AV first effective version -> A2 later version; two semantic history rows; append-only SQL UPDATE blocked; backdate blocked; actor required; fresh Workspace hydration; existing repository/IPC/preload/security path.
+ORBITA redesign Wave 6B append-only legend write proof V6
+2026-08-13T09:52+02:00
+Retest identical W6B write semantics after fixing the proof fixture only: the temporary empty SQLite proof database now creates its actor through the existing createDemoPersonRuntime before invoking the production legend writer. The production actor guard remains unchanged and required.
+Required unchanged: A4.18-based A4.19 history migration; product/write/security gates; typecheck/build; D historic seed -> AV first effective version -> A2 later version; two workforce_legend_changed rows; append-only UPDATE blocked; backdate blocked; fresh Workspace hydration; existing repository/IPC/preload/security path.
 Settings UI and W6B visual/human PASS remain separate. FAIL closed.
