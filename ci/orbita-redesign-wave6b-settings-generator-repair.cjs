@@ -1,0 +1,10 @@
+const fs=require('fs'),path=require('path');
+const file=path.resolve(__dirname,'orbita-redesign-wave6b-legend-settings-transform.cjs');
+let s=fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n');
+const from="{entry.effectiveFrom ? ` · važi od ${new Date(entry.effectiveFrom).toLocaleDateString('sr-RS')}` : ''}";
+const to="{entry.effectiveFrom ? ' · važi od ' + new Date(entry.effectiveFrom).toLocaleDateString('sr-RS') : ''}";
+const count=s.split(from).length-1;
+if(count!==1) throw new Error(`W6B Settings generator nested-template repair expected 1, got ${count}`);
+s=s.replace(from,to);
+fs.writeFileSync(file,s,'utf8');
+console.log(JSON.stringify({state:'W6B_SETTINGS_GENERATOR_REPAIR_APPLIED',owner:'ci/orbita-redesign-wave6b-legend-settings-transform.cjs',repair:'remove nested TSX template literal from generator body; generated product semantics unchanged'},null,2));
