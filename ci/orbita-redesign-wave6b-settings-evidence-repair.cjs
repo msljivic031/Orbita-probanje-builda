@@ -4,7 +4,7 @@ const root=path.resolve(process.argv[2]||'candidate');
 const legendFile=path.join(root,'src/renderer/screens/podesavanja/WorkforceLegendSettings.tsx');
 let legend=fs.readFileSync(legendFile,'utf8').replace(/\r\n/g,'\n');
 const rowFrom='<article className="settings-rule-row" key={entry.kind} data-orbita-workforce-legend-kind={entry.kind}>';
-const rowTo='<article className="settings-rule-row" key={entry.kind} data-orbita-workforce-legend-kind={entry.kind} data-orbita-workforce-legend-token={entry.token} data-orbita-workforce-legend-source={entry.source} data-orbita-workforce-legend-effective-from={entry.effectiveFrom ?? \'\'}>';
+const rowTo='<article className="settings-rule-row" key={entry.kind} data-orbita-workforce-legend-kind={entry.kind} data-orbita-workforce-legend-token={entry.token} data-orbita-workforce-legend-source={entry.source} data-orbita-workforce-legend-effective-from={entry.source === \'persisted\' && entry.provenance === \'system_default_v1\' ? \'\' : entry.effectiveFrom ?? \'\'}>';
 if(!legend.includes(rowTo)){
   const n=legend.split(rowFrom).length-1;
   if(n!==1)throw Error(`Settings legend evidence row anchor expected 1, got ${n}`);
@@ -23,4 +23,4 @@ if(!settings.includes(sectionEvidence)){
 }
 fs.writeFileSync(settingsFile,settings,'utf8');
 
-console.log(JSON.stringify({state:'W6B_SETTINGS_EVIDENCE_REPAIR_APPLIED',owners:['src/renderer/screens/podesavanja/WorkforceLegendSettings.tsx','src/renderer/screens/podesavanja/PodesavanjaScreen.tsx'],productSemanticsChanged:false,evidenceAttributes:['kind','token','source','effective-from','settings-section'],truth:'Settings section navigation is selected by stable semantic section id, never by dynamic version-count text.'},null,2));
+console.log(JSON.stringify({state:'W6B_SETTINGS_EVIDENCE_REPAIR_APPLIED',owners:['src/renderer/screens/podesavanja/WorkforceLegendSettings.tsx','src/renderer/screens/podesavanja/PodesavanjaScreen.tsx'],productSemanticsChanged:false,evidenceAttributes:['kind','token','source','visible-effective-from','settings-section'],truth:['Settings section navigation uses stable semantic section id','system_default_v1 persistence sentinel remains internal and is not exposed as user-effective evidence date']},null,2));
