@@ -1,5 +1,5 @@
 ORBITA redesign Wave 6 Workforce preimplementation forensic
-2026-08-12T23:56+02:00
-READ-ONLY only. Design Brain 0.5 active.
-Deepen owner proof with bounded contracts for availability precedence/active-on-date, temporal membership active-at-date, working/non-working rules, People workspace mode, Settings, semantic history and report export infrastructure.
-Do not fake or implement a Workforce runtime surface in this run.
+2026-08-13T07:26+02:00
+READ-ONLY product forensic. Design Brain 0.5 active.
+Resolve remaining pre-code contracts without publishing private source snippets: exact active-at membership behavior, executable first/last-workday materialization candidates, holiday/non-working owner truth, existing write/actor permission boundary, People/Settings insertion anchors, versioned legend persistence gap, and real print/export engine truth.
+Emit semantic facts only in the new precode-contract artifact. Do not fake or implement a Workforce runtime surface in this run.
