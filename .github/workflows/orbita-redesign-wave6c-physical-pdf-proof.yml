@@ -50,6 +50,13 @@ jobs:
           npm run check:inspector-schema 2>&1 | Tee-Object ../evidence-w6c-c2c/schema.log; if($LASTEXITCODE-ne0){throw 'schema'}
           npm run check:action-coverage 2>&1 | Tee-Object ../evidence-w6c-c2c/action-coverage.log; if($LASTEXITCODE-ne0){throw 'action coverage'}
           npm run build 2>&1 | Tee-Object ../evidence-w6c-c2c/build.log; if($LASTEXITCODE-ne0){throw 'build'}
+      - name: Prewarm Electron runtime
+        working-directory: candidate
+        shell: pwsh
+        timeout-minutes: 10
+        run: |
+          npx electron --version 2>&1 | Tee-Object ../evidence-w6c-c2c/electron-runtime.log
+          if($LASTEXITCODE-ne0){throw 'electron runtime prewarm'}
       - name: Produce and verify physical canonical PDF
         shell: pwsh
         env:
