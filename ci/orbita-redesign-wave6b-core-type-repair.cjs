@@ -5,6 +5,11 @@ const write=(r,s)=>fs.writeFileSync(path.join(root,r),s.replace(/\r\n/g,'\n'),'u
 function replaceExact(file,from,to,label){const s=read(file),n=s.split(from).length-1;if(n!==1)throw Error(`${label}: expected 1, got ${n}`);write(file,s.replace(from,to));}
 const legend='src/domain/people/workforceLegend.ts';
 let s=read(legend);
+const effectiveTypeFrom='export type EffectiveWorkforceLegendEntry = WorkforceLegendSeed & {';
+const effectiveTypeTo="export type EffectiveWorkforceLegendEntry = Omit<WorkforceLegendSeed, 'provenance'> & {\n  provenance: WorkforceLegendProvenance;";
+const effectiveTypeCount=s.split(effectiveTypeFrom).length-1;
+if(effectiveTypeCount!==1)throw Error(`effective legend provenance type boundary expected 1, got ${effectiveTypeCount}`);
+s=s.replace(effectiveTypeFrom,effectiveTypeTo);
 let count=0;
 s=s.replace(/const latest = candidates\.at\(-1\);/g,()=>{count++;return 'const latest = candidates[candidates.length - 1];';});
 s=s.replace(/const latest = allForKind\.at\(-1\);/g,()=>{count++;return 'const latest = allForKind[allForKind.length - 1];';});
@@ -33,4 +38,4 @@ w=w.replace("from '../people/workforceLegend';","from '../people/workforceLegend
 const n=w.split('workforceLegendVersions: WorkforceLegendVersion[];').length-1;if(n!==1)throw Error(`fixture-compatible persisted legend field: expected 1, got ${n}`);
 w=w.replace('workforceLegendVersions: WorkforceLegendVersion[];','workforceLegendVersions?: WorkforceLegendVersion[];');
 write(workspace,w);
-console.log(JSON.stringify({state:'W6B_CORE_TYPE_REPAIR_APPLIED',productSemanticsChanged:true,repairs:['replace Array.at for current TS target','preserve EffectiveWorkforceLegendEntry literal union','preserve latest persisted provenance instead of falling back to system provenance','keep persisted system_default_v1 1970 sentinel inside resolution/persistence and omit it from effective UI projection','allow legacy fixtures to omit persisted legend while repository hydration supplies it','use explicit .js extensions for NodeNext-reachable domain type imports'],owners:[legend,workspace],truth:'Real user versions retain user provenance and real effective dates; only the deterministic system seed sentinel is hidden from historical UI data.'},null,2));
+console.log(JSON.stringify({state:'W6B_CORE_TYPE_REPAIR_APPLIED',productSemanticsChanged:true,repairs:['preserve strict system seed type while allowing effective persisted user provenance','replace Array.at for current TS target','preserve EffectiveWorkforceLegendEntry literal union','preserve latest persisted provenance instead of falling back to system provenance','keep persisted system_default_v1 1970 sentinel inside resolution/persistence and omit it from effective UI projection','allow legacy fixtures to omit persisted legend while repository hydration supplies it','use explicit .js extensions for NodeNext-reachable domain type imports'],owners:[legend,workspace],truth:'System seed remains system_default_v1-only; effective entries can truthfully carry user provenance and real effective dates.'},null,2));
