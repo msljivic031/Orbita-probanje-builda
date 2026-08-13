@@ -1,0 +1,13 @@
+const fs=require('fs'),path=require('path');
+const root=path.resolve(process.argv[2]||'candidate');
+const read=r=>fs.readFileSync(path.join(root,r),'utf8').replace(/\r\n/g,'\n');
+const component='src/renderer/screens/ljudi/components/LjudiWorkforceSheet.tsx';
+const host='src/renderer/screens/ljudi/LjudiScreen.tsx';
+const c=read(component),h=read(host);
+for(const token of ['WorkforceOutputRequest','workspaceId: workspace.id','organizationId','unitIds: [...scopeTeamIds]','personIds: scopePeople.map((person) => person.id)','scopeLabel','monthKey','window.orbita.exportWorkforcePdf(outputRequest)','window.orbita.printWorkforce(outputRequest)','data-orbita-workforce-output="export-pdf"','data-orbita-workforce-output="print"','Izvezi PDF','Štampaj','outputBusy !== null','role="status"','aria-live="polite"'])if(!c.includes(token))throw Error('W6C renderer output invariant missing '+token);
+for(const forbidden of ['new Blob','URL.createObjectURL','filePath','targetPath','html:','snapshot:','download='])if(c.includes(forbidden))throw Error('W6C renderer output forbidden local/fake path '+forbidden);
+if((c.match(/data-orbita-workforce-output="export-pdf"/g)||[]).length!==1)throw Error('W6C export selector owner count');
+if((c.match(/data-orbita-workforce-output="print"/g)||[]).length!==1)throw Error('W6C print selector owner count');
+if(!h.includes('organizationId={selectedOrganization.id}'))throw Error('W6C organization scope id not forwarded');
+if((h.match(/organizationId=\{selectedOrganization\.id\}/g)||[]).length!==1)throw Error('W6C organization scope id owner count');
+console.log(JSON.stringify({state:'PASS',gate:'W6C_RENDERER_OUTPUT_BINDING',truth:['single existing Workforce component owns output commands','typed canonical request only','native bridge methods only','busy duplicate prevention','accessible live status','organization id truth forwarded','no Blob/download/local path/renderer snapshot']},null,2));
