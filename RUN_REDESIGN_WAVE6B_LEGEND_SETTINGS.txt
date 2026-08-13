@@ -1,5 +1,5 @@
-ORBITA redesign Wave 6B legend Settings type/build proof V3
-2026-08-13T10:04+02:00
-Retest identical Settings product binding after making the generator clone the exact balanced updateDemoOrganization useCallback statement instead of assuming which callback follows it. Nested TSX template escaping repair remains active.
-Required unchanged: existing PodesavanjaScreen root, PeopleWorkspaceActions/App chain, current actor and workspace write lock reused; save/archive append effective versions only; static ownership gate; typecheck/build.
-Visual/runtime interaction proof remains next. FAIL closed.
+ORBITA redesign Wave 6B legend Settings type/build proof V4
+2026-08-13T10:16+02:00
+Retest the Settings binding against the physically proven action owner. The prior forensic established that useOrganizationCommandActions is composition-only and the concrete update owner is useOrganizationRegistryActions. V4 adds updateWorkforceLegend there, preserves the Settings route, reuses the existing bridge/write-state/Workspace-refresh/fail-closed behavior, and leaves the aggregator as spread composition only.
+Also admit the month-spanning visible legend repair so a mid-month rename exposes every effective token actually used during that month.
+Required: existing PodesavanjaScreen root, PeopleWorkspaceActions/App chain, current actor and workspace write lock reused; static ownership gates; typecheck/build. Visual/runtime interaction proof remains next. FAIL closed.
