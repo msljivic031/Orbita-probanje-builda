@@ -3,7 +3,9 @@ name: ORBITA Redesign Wave 6C Physical PDF Proof
 on:
   push:
     branches: [orbita-redesign]
-    paths: ['RUN_REDESIGN_WAVE6C_PHYSICAL_PDF.txt']
+    paths:
+      - 'RUN_REDESIGN_WAVE6C_PHYSICAL_PDF.txt'
+      - '.github/workflows/orbita-redesign-wave6c-physical-pdf-proof.yml'
   workflow_dispatch:
 
 permissions:
