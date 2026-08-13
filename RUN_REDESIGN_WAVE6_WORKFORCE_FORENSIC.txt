@@ -1,6 +1,5 @@
-ORBITA redesign Wave 6B exact result/plumbing forensic V3
-2026-08-13T09:12+02:00
-READ-ONLY structural forensic. Design Brain 0.5 active.
-Keep the already proven W6B owner/write/security contracts and add one final structural result/plumbing contract before product mutation.
-Resolve the exact type carried by WorkspaceWriteBridgeResult.write, the existing organization runtime/repository read-after-write shape, sqliteWorkspaceReader aggregate return contract, updateDemoOrganization IPC/preload/App plumbing, Settings render insertion point, and admissible existing HistoryEventType candidates.
-Structural metadata only; no private source snippets and no product mutation.
+ORBITA redesign Wave 6B bounded implementation context V4
+2026-08-13T09:15+02:00
+READ-ONLY bounded forensic. Design Brain 0.5 active.
+Preserve all proven W6B owner/result/write/security contracts and add narrowly bounded implementation windows only for the exact existing owners that W6B must extend: history type/A4.18 history migration, Workspace aggregate, WorkspaceWriteBridgeResult, sqliteWorkspaceReader, organization repository convention, repository IPC/preload chain, appState/App action binding, and Settings renderActiveSection.
+This is the final pre-mutation context pass; do not expose the full source tree and do not mutate product code in this run.
