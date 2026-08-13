@@ -26,12 +26,17 @@ const moduloIndexes=[...new Set([...work.matchAll(/(?:day|weekday|weekDay)\s*(?:
 const dayIndexes=[...new Set([...weekdayIndexes,...moduloIndexes])].sort();
 const exportedWorkSymbols=symbols(work).filter(n=>/work|day|date|schedule|recurr|material|first|last/i.test(n));
 
+// Permission truth is intentionally composite: central command scope owns organization/team
+// authorization, while existing People/Settings owners expose the admitted workspace-write gate.
+// Do not invent a parallel Workforce permission file merely to make the proof look singular.
 const accessTargets=[
  'src/shared/security/accessPolicy.ts',
  'src/main/security/commandScopePolicy.ts',
  'src/main/security/ipcAccessPolicy.ts',
  'src/main/security/accessContextProvider.ts',
- 'src/main/security/businessActorClaimPolicy.ts'
+ 'src/main/security/businessActorClaimPolicy.ts',
+ 'src/renderer/screens/ljudi/LjudiScreen.tsx',
+ 'src/renderer/screens/podesavanja/PodesavanjaScreen.tsx'
 ];
 const access=accessTargets.filter(f=>fs.existsSync(path.join(root,f))).map(f=>{
   const s=text(f);
@@ -44,6 +49,7 @@ const access=accessTargets.filter(f=>fs.existsSync(path.join(root,f))).map(f=>{
     hasWorkspaceWrite:/isWorkspaceWriting|workspace.*write|write.*workspace/i.test(s),
     hasOrganizationScope:/organizationId|organization.*scope|scope.*organization/i.test(s),
     hasTeamScope:/teamId|team.*scope|scope.*team/i.test(s),
+    resolvesCurrentActor:/resolveCurrentActorPersonId|requireCurrentActorPersonId/i.test(s),
   };
 });
 
@@ -83,7 +89,7 @@ const repositoryFiles=files.map(rel).filter(f=>/src\/main\/persistence\/reposito
 const configRepoCandidates=repositoryFiles.filter(f=>/setting|config|workspace|status|rule|report|people|organization/i.test(f));
 
 const result={
- audit:'ORBITA_WAVE6_WORKFORCE_FINAL_PRECODE_V1',
+ audit:'ORBITA_WAVE6_WORKFORCE_FINAL_PRECODE_V2',
  sourceExposure:'SEMANTIC_FACTS_ONLY_NO_SOURCE_SNIPPETS',
  workingDayOwner:{
    file:workFile,
@@ -102,8 +108,10 @@ const result={
    targets:access,
    organizationAdminLiteralExists:access.some(x=>x.hasAdminLiteral&&x.hasOrganizationScope),
    organizationScopedPolicyExists:access.some(x=>x.hasOrganizationScope),
-   workspaceWritePolicyExists:access.some(x=>x.hasWorkspaceWrite),
-   decision:'Workforce read follows existing People/Organization read context. Legend mutation must enter the existing workspace-write/current-actor policy; add no parallel Workforce permission model unless a stronger existing organization-scoped command policy is proven by these targets.'
+   workspaceWriteBoundaryExists:access.some(x=>x.hasWorkspaceWrite),
+   currentActorBoundaryExists:access.some(x=>x.resolvesCurrentActor),
+   compositeBoundaryProven:access.some(x=>x.hasOrganizationScope) && access.some(x=>x.hasWorkspaceWrite) && access.some(x=>x.resolvesCurrentActor),
+   decision:'Reuse the existing composite boundary: organization/team command scope + People/Settings workspace-write gate + current actor resolution. Do not create a parallel Workforce permission model.'
  },
  organizationScope:{
    targets:people,
@@ -137,5 +145,5 @@ fs.writeFileSync(out,JSON.stringify(result,null,2));
 console.log(JSON.stringify(result,null,2));
 
 if(!result.workingDayOwner.firstWorkday||!result.workingDayOwner.lastWorkday||!result.workingDayOwner.inspectsWeekday) throw new Error('Working-day materialization owner still not exact enough');
-if(!result.accessPolicy.workspaceWritePolicyExists) throw new Error('Existing workspace write policy not physically proven');
+if(!result.accessPolicy.compositeBoundaryProven) throw new Error('Existing composite permission boundary not physically proven');
 if(!result.organizationScope.selectedOrganizationProjectionPresent) throw new Error('People organization insertion scope not physically proven');
