@@ -1,0 +1,10 @@
+const fs=require('fs'),path=require('path');
+const root=path.resolve(process.argv[2]||'candidate');
+const file=path.join(root,'src/renderer/screens/podesavanja/WorkforceLegendSettings.tsx');
+let s=fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n');
+const from='<article className="settings-rule-row" key={entry.kind} data-orbita-workforce-legend-kind={entry.kind}>';
+const to='<article className="settings-rule-row" key={entry.kind} data-orbita-workforce-legend-kind={entry.kind} data-orbita-workforce-legend-token={entry.token} data-orbita-workforce-legend-source={entry.source} data-orbita-workforce-legend-effective-from={entry.effectiveFrom ?? \'\'}>';
+const n=s.split(from).length-1;if(n!==1)throw Error(`Settings legend evidence row anchor expected 1, got ${n}`);
+s=s.replace(from,to);
+fs.writeFileSync(file,s,'utf8');
+console.log(JSON.stringify({state:'W6B_SETTINGS_EVIDENCE_REPAIR_APPLIED',owner:'src/renderer/screens/podesavanja/WorkforceLegendSettings.tsx',productSemanticsChanged:false,evidenceAttributes:['kind','token','source','effective-from']},null,2));
