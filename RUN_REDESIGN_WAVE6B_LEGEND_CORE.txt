@@ -1,0 +1,5 @@
+ORBITA redesign Wave 6B legend core proof V1
+2026-08-13T09:18+02:00
+Apply exact R13AP reconstruction + admitted redesign through W6A, then W6B A4.19 versioned legend core.
+Required: deterministic 7-row system seed, idempotent ensure, append-only SQL enforcement, one Workspace hydration path, per-day as-of legend resolution, month-visible legend resolution, typecheck and build.
+This run deliberately does not claim write/Settings/permission/W6B PASS yet. FAIL closed.
