@@ -11,7 +11,7 @@ const replaceOnce=(from,to,label)=>{
 };
 
 const repairs=[];
-const fixedTemplate="{entry.effectiveFrom ? ' · važi od ' + new Date(entry.effectiveFrom).toLocaleDateString('sr-RS') : ''}";
+const fixedTemplate="{entry.effectiveFrom && !(entry.source === 'persisted' && entry.provenance === 'system_default_v1') ? ' · važi od ' + new Date(entry.effectiveFrom).toLocaleDateString('sr-RS') : ''}";
 if(!s.includes(fixedTemplate)){
   const startMarker='{entry.effectiveFrom ?';
   const endMarker='}</span><strong>{entry.token}';
@@ -23,8 +23,12 @@ if(!s.includes(fixedTemplate)){
   const current=s.slice(start,end+1);
   if(!current.includes("new Date(entry.effectiveFrom).toLocaleDateString('sr-RS')")) throw new Error('W6B Settings effectiveFrom expression changed outside admitted semantic shape');
   s=s.slice(0,start)+fixedTemplate+s.slice(end+1);
-  repairs.push('normalize generated effective-date expression without nested template literal');
+  repairs.push('normalize effective-date expression and suppress technical system-default sentinel date');
 }
+
+const sourceLabelFrom="function sourceLabel(entry: EffectiveWorkforceLegendEntry) {\n  if (entry.source === 'persisted') return 'Verzionisana postavka';\n  if (entry.source === 'archived_fallback') return 'Arhivirana · sistemski fallback';\n  return 'Sistemska početna vrednost';\n}";
+const sourceLabelTo="function sourceLabel(entry: EffectiveWorkforceLegendEntry) {\n  if (entry.source === 'archived_fallback') return 'Arhivirana · sistemski fallback';\n  if (entry.source === 'persisted' && entry.provenance === 'system_default_v1') return 'Sistemska početna vrednost';\n  if (entry.source === 'persisted') return 'Verzionisana postavka';\n  return 'Sistemska početna vrednost';\n}";
+if(replaceOnce(sourceLabelFrom,sourceLabelTo,'W6B Settings system-seed provenance label repair')) repairs.push('present persisted system seed as system initial value, not as a user version');
 
 const callbackText=`  const updateWorkforceLegend = useCallback(async (request: UpdateWorkforceLegendRequest): Promise<void> => {
     const attemptAt = new Date().toISOString();
@@ -88,6 +92,6 @@ if(!s.includes(cascadeMarker)){
   repairs.push('extend generated Settings transform with physically discovered renderer API owner while preserving existing ambient/Vite reference semantics + AppShell People action binding');
 }
 
-for(const required of [fixedTemplate,registryMarker,jsxAnchorTo,cascadeMarker])if(!s.includes(required))throw new Error('W6B repair invariant missing: '+required);
+for(const required of [fixedTemplate,sourceLabelTo,registryMarker,jsxAnchorTo,cascadeMarker])if(!s.includes(required))throw new Error('W6B repair invariant missing: '+required);
 fs.writeFileSync(file,s,'utf8');
-console.log(JSON.stringify({state:'W6B_SETTINGS_GENERATOR_REPAIR_APPLIED',owner:'ci/orbita-redesign-wave6b-legend-settings-transform.cjs',repairs,alreadyAdmittedParts:repairs.length===0,physicalOwner:'src/renderer/app/state/useOrganizationRegistryActions.ts',settingsHostOwner:'unique <PodesavanjaScreen host',typeBindingOwnerDiscovery:'unique Window/orbita/updateDemoOrganization declaration owner',rules:['idempotent','physical renderer API type owner discovery','extend existing persistence import instead of prepending a new import so Vite triple-slash/ambient semantics stay intact','clone proven updateDemoOrganization request/return signature','every AppShell organization JSX sink receives Workforce writer','no optional-contract weakening','no parallel product owner','fail closed on ambiguous owner'],generatedProductBindingChanged:true},null,2));
+console.log(JSON.stringify({state:'W6B_SETTINGS_GENERATOR_REPAIR_APPLIED',owner:'ci/orbita-redesign-wave6b-legend-settings-transform.cjs',repairs,alreadyAdmittedParts:repairs.length===0,physicalOwner:'src/renderer/app/state/useOrganizationRegistryActions.ts',settingsHostOwner:'unique <PodesavanjaScreen host',typeBindingOwnerDiscovery:'unique Window/orbita/updateDemoOrganization declaration owner',humanTruthRepair:'system_default_v1 persisted seed is presented as system initial value and its 1970 sentinel is never rendered as a user-effective date',rules:['idempotent','physical renderer API type owner discovery','extend existing persistence import instead of prepending a new import so Vite triple-slash/ambient semantics stay intact','clone proven updateDemoOrganization request/return signature','every AppShell organization JSX sink receives Workforce writer','no optional-contract weakening','no parallel product owner','fail closed on ambiguous owner'],generatedProductBindingChanged:true},null,2));
