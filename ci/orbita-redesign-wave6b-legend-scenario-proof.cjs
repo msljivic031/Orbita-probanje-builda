@@ -29,11 +29,25 @@ if(settingsIndex+1!==peopleIndex)throw Error('settings-appearance must execute i
 
 settings.allowMutation=true;
 settings.allowFormInput=true;
+
+// The baseline appearance scenario opens a real modal and historically tried to leave it with Escape.
+// W6B evidence must not capture or mutate Workforce underneath that overlay. Replace the unique
+// baseline Escape close with the actual accessible close control and prove the dialog is gone.
+const escapeIndexes=[];
+settings.steps.forEach((step,index)=>{if(step&&step.type==='press'&&step.key==='Escape')escapeIndexes.push(index);});
+if(escapeIndexes.length!==1)throw Error(`settings appearance Escape close owner expected 1, got ${escapeIndexes.length}`);
+const escapeIndex=escapeIndexes[0];
+settings.steps.splice(
+  escapeIndex,
+  1,
+  {type:'click',selector:'button[aria-label="Zatvori"]'},
+  {type:'wait',milliseconds:180},
+  {type:'assertHidden',selector:'[role="dialog"][aria-label="Izgled aplikacije"]'}
+);
+
 const settingsMarker='settings-workforce-legend-after-save';
 if(!settings.steps.some(step=>step.type==='capture'&&step.label===settingsMarker)){
   settings.steps.push(
-    {type:'click',selector:'button[aria-label="Zatvori"]'},
-    {type:'wait',milliseconds:180},
     {type:'click',selector:'[data-orbita-settings-section="workforce"]'},
     {type:'wait',milliseconds:250},
     {type:'assertVisible',selector:'[data-orbita-workforce-legend-settings="ready"]'},
@@ -81,4 +95,4 @@ if(!people.steps.some(step=>step.type==='capture'&&step.label===peopleMarker)){
 }
 
 fs.writeFileSync(file,JSON.stringify(doc,null,2)+'\n');
-console.log(JSON.stringify({scenarios:[settings.id,people.id],executionOrder:'settings-appearance -> people-select-person',routeLaw:{settings:'podesavanja-only captures',people:'ljudi-only captures'},required:{settings:settings.required,people:people.required},settingsActions:['settings-workforce-legend-save','settings-workforce-legend-archive'],captures:['settings-workforce-legend-before','settings-workforce-legend-after-save','settings-workforce-legend-after-archive','people-workforce-legend-current-versioned','people-workforce-legend-previous-stable'],truth:['appearance modal is physically closed through its real accessible close control before Workforce evidence','Settings persists AV version and field_work archive through visible real UI before People projection scenario runs','no cross-route capture inside a canonical scenario','reopening Workforce resets to current month; current proves D and AV, previous preserves D and hides AV','strict canonical route invariant remains intact']},null,2));
+console.log(JSON.stringify({scenarios:[settings.id,people.id],executionOrder:'settings-appearance -> people-select-person',routeLaw:{settings:'podesavanja-only captures',people:'ljudi-only captures'},required:{settings:settings.required,people:people.required},settingsActions:['settings-workforce-legend-save','settings-workforce-legend-archive'],captures:['settings-workforce-legend-before','settings-workforce-legend-after-save','settings-workforce-legend-after-archive','people-workforce-legend-current-versioned','people-workforce-legend-previous-stable'],truth:['appearance modal close is rebound to its real accessible control and must be hidden before Workforce evidence','Settings persists AV version and field_work archive through visible real UI before People projection scenario runs','no cross-route capture inside a canonical scenario','reopening Workforce resets to current month; current proves D and AV, previous preserves D and hides AV','strict canonical route invariant remains intact']},null,2));
