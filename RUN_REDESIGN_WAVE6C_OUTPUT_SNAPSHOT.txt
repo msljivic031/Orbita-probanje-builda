@@ -1,0 +1,3 @@
+ORBITA redesign Wave 6C output snapshot C1 proof
+2026-08-13T19:44+02:00
+Reconstruct exact R13AP + admitted redesign through W6B. Add exactly one pure deterministic WorkforceOutputSnapshot owner that reuses canonical monthly rows and resolves legend meaning for every ISO day. Require explicit workspace/organization/unit scope, YYYY-MM, generatedAt, all person/day cells, unknown_start preservation and the no-holiday-invention statement. No Electron, file IO, print, PDF, renderer Blob or fake output in C1. Gate + npm ci + typecheck + inspector schema + action coverage + build must PASS. W6C/full Wave6 are not admitted by this C1 proof alone.
