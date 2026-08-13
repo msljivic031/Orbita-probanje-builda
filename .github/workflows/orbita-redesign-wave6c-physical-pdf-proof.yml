@@ -1,0 +1,79 @@
+name: ORBITA Redesign Wave 6C Physical PDF Proof
+
+on:
+  push:
+    branches: [orbita-redesign]
+    paths: ['RUN_REDESIGN_WAVE6C_PHYSICAL_PDF.txt']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CI: 'true'
+  CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+  ORBITA_BRIDGE_ZIP: 'ORBITA_R13AN_PUBLIC_ENCRYPTED_CI_REPO_READY_R1_2026_08_12.zip'
+  ORBITA_BRIDGE_SHA256: 'dfe1f58a7df5c79c2d841496fd364418f98a91ed2fd6112fc0f5e0ab9c43731e'
+  ORBITA_BASE_R13AN_SHA256: '140846e9be04d3da222996fed9701771c4cb1be1c8395e766512ece153ba399a'
+  ORBITA_ENCRYPTED_SHA256: '827742a1633bd71dae1d2e1fb3dc77a95835a279a660016c8844d305341b1687'
+  ORBITA_AAD: 'ORBITA-R13AN-PUBLIC-CI-R1'
+  ORBITA_ENCRYPTED_FILE: 'bridge/ORBITA2_R14_R13AN_NATIVE_CONTENT_SIGNATURE_HARDENING_NON_PROMOTED_CANDIDATE_R2_2026_08_12.zip.aesgcm'
+  ORBITA_R13AP_SOURCE_IDENTITY: '8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704'
+
+jobs:
+  proof:
+    name: Windows Workforce Wave 6C Physical PDF C2c
+    runs-on: windows-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: orbita-redesign
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Reconstruct exact admitted candidate through C2b
+        shell: pwsh
+        env:
+          ORBITA_CI_AES256_KEY_B64: ${{ secrets.ORBITA_CI_AES256_KEY_B64 }}
+        run: |
+          ./ci/orbita-redesign-wave6c-reconstruct-c2b.ps1 -EvidenceDir evidence-w6c-c2c
+      - name: Typecheck schema action coverage build
+        working-directory: candidate
+        shell: pwsh
+        run: |
+          npm ci --no-audit --no-fund 2>&1 | Tee-Object ../evidence-w6c-c2c/npm-ci.log; if($LASTEXITCODE-ne0){throw 'npm ci'}
+          npm run typecheck 2>&1 | Tee-Object ../evidence-w6c-c2c/typecheck.log; if($LASTEXITCODE-ne0){throw 'typecheck'}
+          npm run check:inspector-schema 2>&1 | Tee-Object ../evidence-w6c-c2c/schema.log; if($LASTEXITCODE-ne0){throw 'schema'}
+          npm run check:action-coverage 2>&1 | Tee-Object ../evidence-w6c-c2c/action-coverage.log; if($LASTEXITCODE-ne0){throw 'action coverage'}
+          npm run build 2>&1 | Tee-Object ../evidence-w6c-c2c/build.log; if($LASTEXITCODE-ne0){throw 'build'}
+      - name: Produce and verify physical canonical PDF
+        shell: pwsh
+        env:
+          ELECTRON_DISABLE_SECURITY_WARNINGS: 'true'
+        run: |
+          Copy-Item ci/orbita-redesign-wave6c-physical-pdf-proof.mjs candidate/.w6c-physical-pdf-proof.mjs -Force
+          $evidence=(Resolve-Path evidence-w6c-c2c).Path
+          $target=Join-Path $evidence 'ORBITA-WORKFORCE-CANONICAL-PROOF.pdf'
+          $result=Join-Path $evidence 'physical-pdf-proof.json'
+          Push-Location candidate
+          npx electron ./.w6c-physical-pdf-proof.mjs $target $result 2>&1 | Tee-Object ../evidence-w6c-c2c/physical-pdf-console.log
+          $code=$LASTEXITCODE
+          Pop-Location
+          if($code-ne0){throw "physical PDF proof $code"}
+          $proof=Get-Content $result -Raw | ConvertFrom-Json
+          if($proof.state-ne'PASS'){throw "physical PDF proof state $($proof.state)"}
+          if(-not(Test-Path $target)){throw 'physical PDF file missing'}
+          $physical=(Get-FileHash $target -Algorithm SHA256).Hash.ToLowerInvariant()
+          if($physical-ne$proof.sha256){throw "physical PDF hash mismatch $physical"}
+          if((Get-Item $target).Length-ne$proof.bytes){throw 'physical PDF byte count mismatch'}
+      - name: Upload physical W6C PDF evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ORBITA-REDESIGN-WAVE6C-PHYSICAL-PDF-C2C-EVIDENCE
+          path: evidence-w6c-c2c
+          retention-days: 7
