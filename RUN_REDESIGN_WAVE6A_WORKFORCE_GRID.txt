@@ -1,0 +1,7 @@
+ORBITA redesign Wave 6A Workforce monthly projection trigger
+2026-08-13T08:00+02:00
+Apply exact proven lineage through Wave 5, then the private-authority mirrored Wave 6A Workforce grid patch.
+Prove real People/Organization entry, month navigation, availability range-event projection, temporal membership/as-of scope, unknown_start honesty, Saturday/Sunday working-day owner reuse, sticky Person column, keyboard focusable horizontal grid and cell accessible names.
+Do not claim full Wave 6 PASS. Persisted/versioned legend settings and real Print/Export remain mandatory later subwaves.
+Require npm ci, typecheck, inspector schema, action coverage, build, 18/18 canonical scenarios at 1440x900 and 1366x768, Workforce captures, physical PNG dimensions/hash and human screenshot review.
+FAIL closed; repair and retest actual owner if anything fails.
