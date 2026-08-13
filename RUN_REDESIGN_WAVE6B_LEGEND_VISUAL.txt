@@ -1,0 +1,6 @@
+ORBITA redesign Wave 6B full runtime visual proof V1
+2026-08-13T10:29+02:00
+Reconstruct exact R13AP + admitted redesign through W6A, then apply current W6B core/write/security/Settings state.
+Real canonical Settings scenario must directly: save available D -> AV, verify persisted Settings token, archive field_work and verify archived_fallback, navigate to real People/Organization Workforce, prove current month exposes D + AV meanings, prove previous month preserves D and hides AV.
+Require direct action coverage for both new Settings actions, typecheck/build, strict 18/18 canonical admission at physical 1440x900 and 1366x768, and cross-viewport/current-vs-previous physical PNG hash/dimension gates.
+No fake route, no renderer-only persistence, no print/export claim. FAIL closed.
