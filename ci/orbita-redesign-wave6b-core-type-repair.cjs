@@ -13,6 +13,11 @@ const mapFrom='  return DEFAULT_WORKFORCE_LEGEND.map((fallback) => {';
 const mapTo='  return DEFAULT_WORKFORCE_LEGEND.map((fallback): EffectiveWorkforceLegendEntry => {';
 if(!s.includes(mapFrom))throw Error('typed legend map anchor missing');
 s=s.replace(mapFrom,mapTo);
+const persistedProjectionFrom="      source: 'persisted',\n      effectiveFrom: latest.effectiveFrom,";
+const persistedProjectionTo="      source: 'persisted',\n      effectiveFrom: latest.provenance === 'system_default_v1' ? undefined : latest.effectiveFrom,";
+const projectionCount=s.split(persistedProjectionFrom).length-1;
+if(projectionCount!==1)throw Error(`persisted legend projection sentinel boundary expected 1, got ${projectionCount}`);
+s=s.replace(persistedProjectionFrom,persistedProjectionTo);
 if(!s.includes("from './personTypes';"))throw Error('personTypes import anchor missing');
 s=s.replace("from './personTypes';","from './personTypes.js';");
 write(legend,s);
@@ -23,4 +28,4 @@ w=w.replace("from '../people/workforceLegend';","from '../people/workforceLegend
 const n=w.split('workforceLegendVersions: WorkforceLegendVersion[];').length-1;if(n!==1)throw Error(`fixture-compatible persisted legend field: expected 1, got ${n}`);
 w=w.replace('workforceLegendVersions: WorkforceLegendVersion[];','workforceLegendVersions?: WorkforceLegendVersion[];');
 write(workspace,w);
-console.log(JSON.stringify({state:'W6B_CORE_TYPE_REPAIR_APPLIED',productSemanticsChanged:false,repairs:['replace Array.at for current TS target','preserve EffectiveWorkforceLegendEntry literal union','allow legacy fixtures to omit persisted legend while repository hydration supplies it','use explicit .js extensions for NodeNext-reachable domain type imports'],owners:[legend,workspace]},null,2));
+console.log(JSON.stringify({state:'W6B_CORE_TYPE_REPAIR_APPLIED',productSemanticsChanged:true,repairs:['replace Array.at for current TS target','preserve EffectiveWorkforceLegendEntry literal union','keep persisted system_default_v1 1970 sentinel inside resolution/persistence and omit it from effective UI projection','allow legacy fixtures to omit persisted legend while repository hydration supplies it','use explicit .js extensions for NodeNext-reachable domain type imports'],owners:[legend,workspace],truth:'Real user and archive effective dates remain available; only the deterministic system seed sentinel is not exposed as historical effective UI data.'},null,2));
