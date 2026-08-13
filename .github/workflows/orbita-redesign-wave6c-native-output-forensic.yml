@@ -85,6 +85,8 @@ jobs:
         run: |
           node ci/orbita-redesign-wave6c-native-output-forensic.cjs candidate evidence-w6c/wave6c-native-output-forensic.json 2>&1 | Tee-Object evidence-w6c/native-output-console.log
           if($LASTEXITCODE-ne0){throw "W6C native output forensic $LASTEXITCODE"}
+          node ci/orbita-redesign-wave6c-ipc-shape-forensic.cjs candidate evidence-w6c/wave6c-ipc-shape.json 2>&1 | Tee-Object evidence-w6c/ipc-shape-console.log
+          if($LASTEXITCODE-ne0){throw "W6C IPC shape forensic $LASTEXITCODE"}
       - name: Safety typecheck
         working-directory: candidate
         shell: pwsh
