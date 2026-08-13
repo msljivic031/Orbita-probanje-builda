@@ -5,18 +5,18 @@ const file=path.join(root,screen);
 if(!fs.existsSync(file))throw new Error('DokumentiScreen owner missing');
 let s=fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n');
 function once(from,to,label){if(s.includes(to))return;if(!s.includes(from))throw new Error(label+' anchor missing');const n=s.split(from).length-1;if(n!==1)throw new Error(label+' owner count '+n);s=s.replace(from,to);}
+function regexOnce(re,to,label,admittedToken){if(admittedToken&&s.includes(admittedToken))return;const matches=[...s.matchAll(re)];if(matches.length!==1)throw new Error(label+' owner count '+matches.length);s=s.replace(re,to);}
 once('<strong>Fajl → managed kopija → SHA-256 → biblioteka → Rad</strong>','<strong>Uvoz sa jasnim kontekstom</strong>','import hierarchy');
-once('<span>Rad</span><select aria-label="Rad za dokument"','<span>Poveži sa Radom</span><select aria-label="Rad za dokument"','Rad consequence label');
-once('<span>Uloga dokumenta</span><select aria-label="Uloga dokumenta"','<span>Uloga veze</span><select aria-label="Uloga dokumenta"','role consequence label');
+regexOnce(/(<label[^>]*>\s*<span>)Rad(<\/span>\s*<select[^>]*aria-label="Rad za dokument")/g,'$1Poveži sa Radom$2','Rad consequence label','Poveži sa Radom');
+regexOnce(/(<label[^>]*>\s*<span>)Uloga dokumenta(<\/span>\s*<select[^>]*aria-label="Uloga dokumenta")/g,'$1Uloga veze$2','role consequence label','Uloga veze');
 const actionAnchor='<div className="documents-import-actions">';
 if(!s.includes('className="documents-import-consequence"')){
- if(!s.includes(actionAnchor))throw new Error('import actions anchor missing');
+ const n=s.split(actionAnchor).length-1;if(n!==1)throw new Error('import actions anchor count '+n);
  const consequence='<div className="documents-import-consequence" role="note" aria-label="Posledica uvoza"><span>Pre potvrde</span><strong>Dokument će biti povezan sa izabranim Radom.</strong><small>Proverite Rad i ulogu veze. Managed kopija i SHA-256 nastaju tek nakon uspešnog native uvoza.</small></div>';
  s=s.replace(actionAnchor,consequence+actionAnchor);
 }
-once('>Izaberi fajl i uvezi</button>','>Izaberi fajl i potvrdi uvoz</button>','native import button copy');
+regexOnce(/>\s*Izaberi fajl i uvezi\s*<\/button>/g,'>Izaberi fajl i potvrdi uvoz</button>','native import button copy','Izaberi fajl i potvrdi uvoz');
 fs.writeFileSync(file,s,'utf8');
-
 function walk(dir){const out=[];for(const e of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())out.push(...walk(p));else out.push(p);}return out;}
 const cssFiles=walk(path.join(root,'src','renderer','styles')).filter(f=>f.endsWith('.css'));
 const visualMarker='/* ORBITA W7A DOCUMENTS VISUAL ARCHITECTURE */';
