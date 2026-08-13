@@ -1,5 +1,4 @@
-ORBITA redesign Wave 6B bounded implementation context V4
-2026-08-13T09:15+02:00
+ORBITA redesign Wave 6B exact renderer action-hook forensic V5
+2026-08-13T10:08+02:00
 READ-ONLY bounded forensic. Design Brain 0.5 active.
-Preserve all proven W6B owner/result/write/security contracts and add narrowly bounded implementation windows only for the exact existing owners that W6B must extend: history type/A4.18 history migration, Workspace aggregate, WorkspaceWriteBridgeResult, sqliteWorkspaceReader, organization repository convention, repository IPC/preload chain, appState/App action binding, and Settings renderActiveSection.
-This is the final pre-mutation context pass; do not expose the full source tree and do not mutate product code in this run.
+All backend W6B owner/write/security contracts are already proven. Resolve only the exact current source shape of `src/renderer/app/state/useOrganizationCommandActions.ts`, especially the real updateDemoOrganization callback declaration/name/body, its window.orbita call, workspace write-state handling, Workspace refresh and returned action binding. No product mutation. This exists only to eliminate guessing in Settings binding.
