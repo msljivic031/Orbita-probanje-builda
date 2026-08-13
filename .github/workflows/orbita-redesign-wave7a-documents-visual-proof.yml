@@ -5,6 +5,7 @@ on:
     branches: [orbita-redesign]
     paths:
       - 'ci/orbita-redesign-wave7a-documents-visual-architecture-transform.cjs'
+      - 'ci/orbita-redesign-wave7a-documents-row-flow-repair.cjs'
       - 'ci/orbita-redesign-wave7a-documents-visual-architecture-gate.cjs'
       - 'ci/orbita-redesign-wave7a-documents-visual-evidence-gate.cjs'
       - '.github/workflows/orbita-redesign-wave7a-documents-visual-proof.yml'
@@ -54,6 +55,8 @@ jobs:
         run: |
           node ci/orbita-redesign-wave7a-documents-visual-architecture-transform.cjs candidate 2>&1 | Tee-Object evidence-wave7a/w7a-transform.log
           if($LASTEXITCODE-ne0){throw 'W7A transform'}
+          node ci/orbita-redesign-wave7a-documents-row-flow-repair.cjs candidate 2>&1 | Tee-Object evidence-wave7a/w7a-row-flow-repair.log
+          if($LASTEXITCODE-ne0){throw 'W7A row flow repair'}
           node ci/orbita-redesign-wave7a-documents-visual-architecture-gate.cjs candidate 2>&1 | Tee-Object evidence-wave7a/w7a-gate.log
           if($LASTEXITCODE-ne0){throw 'W7A gate'}
       - name: Typecheck schema action coverage build
