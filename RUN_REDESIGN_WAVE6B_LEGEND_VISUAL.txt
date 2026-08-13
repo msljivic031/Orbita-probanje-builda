@@ -1,7 +1,8 @@
-ORBITA redesign Wave 6B full runtime visual proof V7
-2026-08-13T18:55+02:00
-Reconstruct exact R13AP + admitted redesign through W6A, then apply latest W6B core/write/security/Settings/scenario state.
-Human truth: close the real Izgled aplikacije modal before Workforce evidence. Persisted system_default_v1 may retain the internal 1970 sentinel strictly for deterministic as-of resolution, but user-facing Settings/People projection and visible-effective evidence must not expose that sentinel as historical effective data. Real user/archive effective dates remain truthful.
-Settings persists available D -> AV and field_work archive through the real append-only IPC path. People proves period-correct current D+AV and previous D-without-AV without cross-route captures or redundant current-month clicks.
-Require npm ci, typecheck, inspector schema, action coverage, production build, strict 18/18 canonical admission at 1440x900 and 1366x768, viewport evidence, artifact, and physical human screenshot review. No weakened admission, fake history, fake print or fake export. FAIL closed.
-LATEST_HEAD_RETEST=9fcb991905d02cde6d6b7314d11a4071f84e31cd
+ORBITA redesign Wave 6B full runtime visual proof V9
+2026-08-13T19:12+02:00
+Reconstruct exact R13AP + admitted redesign through W6A, then apply current W6B core/write/security/Settings/scenario state.
+Human truth: close the real Izgled aplikacije modal before Workforce evidence. The persisted system_default_v1 seed may retain its internal 1970 sentinel only for deterministic as-of resolution; no user-facing Settings/People evidence may expose it as historical user-effective data.
+Critical provenance admission: a real D -> AV save must remain source=persisted + provenance=user, retain a real visible effective date, and visibly render as Verziona postavka rather than Sistemska početna vrednost. Physical viewport gate must reject false provenance presentation at both 1440x900 and 1366x768.
+Settings persists available D -> AV and field_work archive through the real append-only IPC path. People proves period-correct current D+AV and previous D-without-AV without cross-route capture.
+Require npm ci, typecheck, inspector schema, action coverage, production build, strict 18/18 canonical admission at 1440x900 and 1366x768, hardened physical viewport evidence, artifact, and physical human screenshot review. No weakened admission, fake history, fake print or fake export. FAIL closed.
+LATEST_HEAD_RETEST=f8b1f753e2eb81a874975f52872f7124f9516f13
