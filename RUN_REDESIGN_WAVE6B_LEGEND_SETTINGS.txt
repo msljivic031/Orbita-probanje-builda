@@ -1,5 +1,5 @@
-ORBITA redesign Wave 6B legend Settings type/build proof V1
-2026-08-13T09:56+02:00
-Apply exact redesign through W6A + W6B core/write/security, then extend the existing PodesavanjaScreen and existing PeopleWorkspaceActions/App route with versioned Workforce legend editing.
-Required: no parallel Settings or permission system; current actor reused; workspace write lock reused; save/archive append effective versions only; static Settings ownership gate; typecheck/build.
-Visual/runtime interaction proof is next and is not claimed by this run. FAIL closed.
+ORBITA redesign Wave 6B legend Settings type/build proof V2
+2026-08-13T10:00+02:00
+Retest the identical Settings product binding after proof-generator syntax repair only. The nested TSX template literal in the transform body is converted to equivalent string concatenation before syntax-check; generated product semantics remain unchanged.
+Required unchanged: existing PodesavanjaScreen root, PeopleWorkspaceActions/App chain, current actor and workspace write lock reused; save/archive append effective versions only; static ownership gate; typecheck/build.
+Visual/runtime interaction proof remains next. FAIL closed.
