@@ -62,7 +62,7 @@ function normalizeRequest(request: WorkforceOutputRequest): WorkforceOutputReque
 function assertReferences(workspace: Workspace, request: WorkforceOutputRequest) {
   if(workspace.id!==request.workspaceId) throw new Error('Workforce output workspaceId does not match canonical workspace');
   const peopleById=new Map(workspace.people.map((person)=>[person.id,person]));
-  const teamsById=new Map(workspace.teams.map((team)=>[team.id,team]));
+  const teamsById=new Map(workspace.organizationTeams.map((team)=>[team.id,team]));
   const organizationsById=new Map(workspace.organizations.map((organization)=>[organization.id,organization]));
   for(const id of request.personIds) if(!peopleById.has(id)) throw new Error('Unknown Workforce output personId: '+id);
   for(const id of request.unitIds) if(!teamsById.has(id)) throw new Error('Unknown Workforce output unitId: '+id);
@@ -151,4 +151,4 @@ if(!rt.includes('exportWorkforcePdf:')){
 }
 write(rendererTypes,rt);
 
-console.log(JSON.stringify({state:'W6C_NATIVE_BRIDGE_IMPLEMENTED_NOT_ADMITTED',owners:{contract,command,ipc,allow,access,critical,preload,rendererTypes},channels:['orbita:exportWorkforcePdf','orbita:printWorkforce'],truth:['renderer request contains scope/month/IDs only, never HTML or snapshot','main rehydrates canonical SQLite Workspace before building output snapshot','person/unit/organization references validated against canonical workspace','output channels mirror getDemoWorkspace read access class','explicit IPC critical-field validation','save dialog stays in existing ipcRegistry owner','raw local target path is not returned through preload','existing safeInvoke/preload/global renderer API owners extended','no repository mutation owner used'],notYetClaimed:['renderer Workforce buttons','physical PDF artifact proof','print runtime proof','W6C PASS']},null,2));
+console.log(JSON.stringify({state:'W6C_NATIVE_BRIDGE_IMPLEMENTED_NOT_ADMITTED',owners:{contract,command,ipc,allow,access,critical,preload,rendererTypes},channels:['orbita:exportWorkforcePdf','orbita:printWorkforce'],truth:['renderer request contains scope/month/IDs only, never HTML or snapshot','main rehydrates canonical SQLite Workspace before building output snapshot','person/organizationTeam/organization references validated against canonical workspace','output channels mirror getDemoWorkspace read access class','explicit IPC critical-field validation','save dialog stays in existing ipcRegistry owner','raw local target path is not returned through preload','existing safeInvoke/preload/global renderer API owners extended','no repository mutation owner used'],notYetClaimed:['renderer Workforce buttons','physical PDF artifact proof','print runtime proof','W6C PASS']},null,2));
