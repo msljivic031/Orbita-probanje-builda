@@ -1,6 +1,6 @@
-ORBITA redesign Wave 6B Workforce legend persistence binding forensic
-2026-08-13T08:08+02:00
-READ-ONLY semantic product forensic. Design Brain 0.5 active.
-Keep all proven Wave 6 pre-code truth, then physically bind the new versioned Workforce legend capability to the current incremental SQLite schema pattern, organization/workspace repositories, IPC/preload bridge, existing Settings owner, workspace-write/current-actor authorization and semantic-history provenance.
-Require one history-safe legend truth family with stable ID, token, display name, semantic category, order, active/archive and effective/as-of meaning. Rename/edit must never rewrite historic meaning.
-Do not publish private source snippets. Do not create a parallel Settings, permissions or history system. No product mutation in this run.
+ORBITA redesign Wave 6 forensic continuation
+2026-08-13T08:24+02:00
+READ-ONLY semantic forensic. Design Brain 0.5 active.
+Physically resolve the inspector direct-action coverage contract after W6A compiler/schema PASS but action-coverage FAIL for `people-open-workforce`. Identify an inspector-supported scenario step shape that directly exercises the existing data-orbita-action and is recognized by check-action-coverage. Do not hide the action in an explicit disposition.
+In the same reconstructed source, resolve the exact W6B legend insertion contracts across Workspace fields, incremental schema ensure order, repository functions, IPC/preload API, App/action binding and existing Settings mutation boundary.
+Emit metadata only; no private source snippets and no product mutation in this run.
