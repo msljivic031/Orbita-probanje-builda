@@ -1,6 +1,6 @@
-ORBITA redesign Wave 6 Workforce final preimplementation forensic
-2026-08-13T07:44+02:00
+ORBITA redesign Wave 6 Workforce final preimplementation forensic V2
+2026-08-13T07:52+02:00
 READ-ONLY product forensic. Design Brain 0.5 active.
-Close the remaining pre-code facts with semantic-only evidence: exact current workSchedule working-day owner, Saturday/Sunday semantics, absence of holiday truth, existing access/organization policy boundaries, selected-organization projection anchors, Settings/schema/repository insertion patterns, and any real native file/print owner.
-Do not publish private source snippets. Do not implement a fake Workforce surface in this run.
-PASS of this forensic authorizes product implementation only after canon-first private read is also complete.
+Repair only the forensic permission gate: prove the actual composite authorization boundary across central organization/team command scope plus existing People/Settings isWorkspaceWriting and current-actor resolution. Do not invent a singular Workforce permission owner.
+Retain all prior physical facts: workSchedule is the working-day owner; Saturday/Sunday semantics exist; no holiday truth exists; selected organization/team projection is the renderer scope; legend requires new versioned persistence; no admitted print/export engine exists.
+Do not publish private source snippets. No fake Workforce UI. PASS authorizes product implementation against existing owners while raw-canon full-text infrastructure remains separately fail-closed.
