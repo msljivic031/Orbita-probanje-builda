@@ -65,6 +65,8 @@ jobs:
           if($LASTEXITCODE-ne0){throw "workforce owner forensic $LASTEXITCODE"}
           node ci/orbita-redesign-wave6-workforce-bounded-source-forensic.cjs candidate workforce-evidence/workforce-bounded-source.json 2>&1 | Tee-Object workforce-evidence/bounded-source-console.log
           if($LASTEXITCODE-ne0){throw "workforce bounded forensic $LASTEXITCODE"}
+          node ci/orbita-redesign-wave6-workforce-precode-contract.cjs candidate workforce-evidence/workforce-precode-contract.json 2>&1 | Tee-Object workforce-evidence/precode-contract-console.log
+          if($LASTEXITCODE-ne0){throw "workforce precode contract $LASTEXITCODE"}
       - name: Safety typecheck baseline
         working-directory: candidate
         shell: pwsh
