@@ -1,6 +1,5 @@
-ORBITA redesign Wave 6B append-only legend write proof V3
-2026-08-13T09:39+02:00
-Retest identical W6B legend write semantics after exact runtime A4.19 history-table rename repair.
-V2 passed product/write transforms, static gates, security policy, typecheck and build. Runtime failed because sqlite_master returned a quoted history_events table name after prior A4.18 rename and A4.19 only matched the unquoted CREATE TABLE form. V3 accepts quoted/unquoted source names and fails closed if the replacement does not actually rename the temporary table before exec.
-Required unchanged: D historic seed -> AV first effective version -> A2 later version; two semantic history rows; append-only SQL UPDATE blocked; backdate blocked; actor required; fresh Workspace read; existing repository/IPC/preload/security path.
+ORBITA redesign Wave 6B append-only legend write proof V4
+2026-08-13T09:43+02:00
+Retest identical W6B legend write semantics with the quoted-history migration repair now physically present on the isolated orbita-redesign branch. Public CI main was restored to its original SHA before this run.
+Required unchanged: product/write/security transforms and gates; typecheck/build; D historic seed -> AV first effective version -> A2 later version; two semantic history rows; append-only SQL UPDATE blocked; backdate blocked; actor required; fresh Workspace hydration; existing repository/IPC/preload/security path.
 Settings UI and W6B visual/human PASS remain separate. FAIL closed.
