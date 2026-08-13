@@ -27,11 +27,13 @@ const nodeNextImports=[
 ];
 const repairedNodeNext=[];
 for(const [from,to] of nodeNextImports){
-  if(m.includes(to))continue;
-  const n=m.split(from).length-1;
-  if(n!==1)throw new Error(`Workforce monthly NodeNext import boundary ${from}: expected 1, got ${n}`);
-  m=m.replace(from,to);
-  repairedNodeNext.push(to);
+  const count=m.split(from).length-1;
+  if(count>0){
+    m=m.split(from).join(to);
+    repairedNodeNext.push({to,count});
+    continue;
+  }
+  if(!m.includes(to))throw new Error(`Workforce monthly NodeNext import boundary missing both forms: ${from}`);
 }
 write(monthly,m);
 const component='src/renderer/screens/ljudi/components/LjudiWorkforceSheet.tsx';
