@@ -80,6 +80,7 @@ jobs:
           node ci/orbita-redesign-wave6b-core-contract-gate.cjs candidate 2>&1 | Tee-Object evidence-w6b/core-gate.log; if($LASTEXITCODE-ne0){throw 'core gate'}
           node ci/orbita-redesign-wave6b-legend-write-transform.cjs candidate 2>&1 | Tee-Object evidence-w6b/write.log; if($LASTEXITCODE-ne0){throw 'write'}
           node ci/orbita-redesign-wave6b-legend-write-gate.cjs candidate 2>&1 | Tee-Object evidence-w6b/write-gate.log; if($LASTEXITCODE-ne0){throw 'write gate'}
+          node ci/orbita-redesign-wave6b-settings-generator-repair.cjs 2>&1 | Tee-Object evidence-w6b/settings-generator-repair.log; if($LASTEXITCODE-ne0){throw 'settings generator repair'}
           node --check ci/orbita-redesign-wave6b-legend-settings-transform.cjs; if($LASTEXITCODE-ne0){throw 'settings syntax'}
           node ci/orbita-redesign-wave6b-legend-settings-transform.cjs candidate 2>&1 | Tee-Object evidence-w6b/settings.log; if($LASTEXITCODE-ne0){throw 'settings'}
           node ci/orbita-redesign-wave6b-settings-evidence-repair.cjs candidate 2>&1 | Tee-Object evidence-w6b/settings-evidence.log; if($LASTEXITCODE-ne0){throw 'settings evidence'}
