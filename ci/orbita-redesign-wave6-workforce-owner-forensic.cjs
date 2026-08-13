@@ -2,6 +2,7 @@ const fs=require('fs'),path=require('path');
 const root=path.resolve(process.argv[2]||'candidate'),out=path.resolve(process.argv[3]||'workforce-owner-forensic.json');
 const sourceRoots=['src','electron','config'];
 const files=[];function walk(d){if(!fs.existsSync(d))return;for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(e.isDirectory())walk(p);else if(/\.(ts|tsx|js|mjs|cjs|css|json|sql)$/.test(e.name))files.push(p)}}for(const r of sourceRoots)walk(path.join(root,r));
+const rel=p=>path.relative(root,p).replaceAll('\\','/');
 const domains={
  availability:['PersonAvailabilityEvent','availabilityEvents','getPersonAvailability','effective availability','startsAt','endsAt'],
  temporalMembership:['TemporalTeamMembership','temporalTeamMemberships','validFrom','boundaryConfidence'],
@@ -15,14 +16,46 @@ const domains={
 };
 function count(s,term){let n=0,at=0,low=s.toLowerCase(),q=term.toLowerCase();while((at=low.indexOf(q,at))>=0){n++;at+=Math.max(q.length,1)}return n}
 const hits=[];
-for(const f of files){const s=fs.readFileSync(f,'utf8');const matched={};let total=0;for(const [domain,terms] of Object.entries(domains)){let n=0;for(const t of terms)n+=count(s,t);if(n){matched[domain]=n;total+=n}}if(total)hits.push({file:path.relative(root,f).replaceAll('\\','/'),total,matched});}
+for(const f of files){const s=fs.readFileSync(f,'utf8');const matched={};let total=0;for(const [domain,terms] of Object.entries(domains)){let n=0;for(const t of terms)n+=count(s,t);if(n){matched[domain]=n;total+=n}}if(total)hits.push({file:rel(f),total,matched});}
 hits.sort((a,b)=>b.total-a.total||a.file.localeCompare(b.file));
 const focus=hits.filter(x=>/people|ljudi|availability|temporal|organization|calendar|kalendar|setting|podesavanja|report|izvest|export|print|sqlite|repository|migration|date/i.test(x.file)).slice(0,180);
 const exact=[];
 const symbolRe=/(?:export\s+)?(?:class|function|const|type|interface)\s+([A-Za-z0-9_]+)/g;
 for(const item of focus){if(!/\.(ts|tsx|js|mjs|cjs)$/.test(item.file))continue;const s=fs.readFileSync(path.join(root,item.file),'utf8');const symbols=[...s.matchAll(symbolRe)].map(m=>m[1]).filter(n=>/availability|membership|organization|calendar|working|holiday|export|print|report|repository|setting|date/i.test(n));if(symbols.length)exact.push({file:item.file,symbols:[...new Set(symbols)].slice(0,80)});}
 const schema=[];
-for(const f of files.filter(f=>/\.sql$|migration|schema/i.test(f))){const s=fs.readFileSync(f,'utf8');for(const m of s.matchAll(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?["'`]?([A-Za-z0-9_]+)/gi)){const table=m[1];if(/people|person|team|availability|membership|setting|config|calendar|workforce|legend/i.test(table))schema.push({file:path.relative(root,f).replaceAll('\\','/'),table});}}
+for(const f of files.filter(f=>/\.sql$|migration|schema/i.test(f))){const s=fs.readFileSync(f,'utf8');for(const m of s.matchAll(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?["'`]?([A-Za-z0-9_]+)/gi)){const table=m[1];if(/people|person|team|availability|membership|setting|config|calendar|workforce|legend/i.test(table))schema.push({file:rel(f),table});}}
+
+const readRel=file=>{const p=path.join(root,file);return fs.existsSync(p)?fs.readFileSync(p,'utf8').replace(/\r\n/g,'\n'):'';};
+const exportedSymbols=s=>[...s.matchAll(/(?:export\s+)?(?:async\s+)?(?:function|class|const|type|interface|enum)\s+([A-Za-z_$][\w$]*)/g)].map(m=>m[1]);
+const imports=s=>[...s.matchAll(/from\s+['"]([^'"]+)['"]/g)].map(m=>m[1]);
+const stringFormats=s=>[...new Set([...s.matchAll(/['"`]([^'"`]*(?:csv|xlsx|xls|pdf|html|print)[^'"`]*)['"`]/gi)].map(m=>m[1]).filter(v=>v.length<=120))].slice(0,40);
+const channelNames=s=>[...new Set([...s.matchAll(/['"`](orbita:[A-Za-z0-9:_-]+)['"`]/g)].map(m=>m[1]))].sort();
+const sourceFiles=files.map(rel);
+const filesMatching=re=>sourceFiles.filter(file=>re.test(readRel(file))).sort();
+const outputContractFiles=[
+ 'src/domain/reports/reportExport.ts',
+ 'src/domain/reports/reportExportPlan.ts',
+ 'src/domain/reports/reportExportScope.ts',
+ 'src/shared/contracts/report/reportExport.ts',
+ 'src/shared/contracts/persistence/persistenceTypes.ts'
+].filter(file=>readRel(file));
+const nativeOwnerFiles=[
+ 'src/main/persistence/documents/documentStorage.ts',
+ 'src/main/ipc/ipcRegistry.ts',
+ 'src/main/ipc/repositoryIpcHandlers.ts',
+ 'src/shared/security/channelAllowlist.ts',
+ 'src/preload/orbitaApi.ts',
+ 'src/preload/preload.ts'
+].filter(file=>readRel(file));
+const contractFacts=outputContractFiles.map(file=>{const s=readRel(file);return {file,exportedSymbols:exportedSymbols(s).filter(n=>/report|export|format|section|plan|output|file|artifact|scope/i.test(n)).slice(0,80),formatSignals:stringFormats(s),imports:imports(s).filter(i=>/report|export|file|electron|node|persistence/i.test(i)).slice(0,40)};});
+const nativeFacts=nativeOwnerFiles.map(file=>{const s=readRel(file);return {file,exportedSymbols:exportedSymbols(s).filter(n=>/document|storage|ipc|handler|channel|api|preload|file|path|save|write|print|export/i.test(n)).slice(0,100),channels:channelNames(s),imports:imports(s).filter(i=>/electron|node:fs|node:path|security|persistence|repository|contract/i.test(i)).slice(0,60),writesPhysicalFile:/\bwriteFileSync\b|\bwriteFile\s*\(|fs\.promises\.writeFile|createWriteStream\s*\(/.test(s),copiesPhysicalFile:/\bcopyFileSync\b|\bcopyFile\s*\(/.test(s),createsDirectory:/\bmkdirSync\b|\bmkdir\s*\(/.test(s),usesContextBridge:/contextBridge/.test(s),usesSafeInvoke:/safeInvoke\s*</.test(s)||/safeInvoke\s*\(/.test(s),usesIpcHandle:/ipcMain\.handle\s*\(/.test(s),usesBrowserWindow:/\bBrowserWindow\b/.test(s),usesDialog:/\bdialog\b/.test(s),usesShell:/\bshell\b/.test(s),usesWebContentsPrint:/webContents\.print\s*\(/.test(s),usesPrintToPDF:/printToPDF\s*\(/.test(s)};});
+const physicalWriters=filesMatching(/\bwriteFileSync\b|\bwriteFile\s*\(|fs\.promises\.writeFile|createWriteStream\s*\(/);
+const printFiles=filesMatching(/webContents\.print\s*\(|printToPDF\s*\(|window\.print\s*\(/);
+const saveDialogFiles=filesMatching(/showSaveDialog\s*\(/);
+const browserWindowFiles=filesMatching(/\bBrowserWindow\b/);
+const shellFiles=filesMatching(/\bshell\.(?:openPath|openExternal|showItemInFolder)\s*\(/);
+const reportFormatFiles=filesMatching(/\b(?:csv|xlsx|xls|pdf)\b/i);
+
 const verdict={
  hasDedicatedWorkforceOwner:focus.some(x=>/workforce|attendance|timesheet/i.test(x.file)),
  availabilityOwnerCandidates:focus.filter(x=>x.matched.availability).slice(0,30).map(x=>x.file),
@@ -32,7 +65,22 @@ const verdict={
  exportPrintCandidates:focus.filter(x=>x.matched.exportPrint).slice(0,40).map(x=>x.file),
  persistenceCandidates:focus.filter(x=>x.matched.persistence).slice(0,40).map(x=>x.file),
  schemaTables:schema,
+ outputRuntime:{
+   contractFacts,
+   nativeFacts,
+   physicalWriterFiles:physicalWriters.slice(0,80),
+   printFiles:printFiles.slice(0,80),
+   saveDialogFiles:saveDialogFiles.slice(0,80),
+   browserWindowFiles:browserWindowFiles.slice(0,80),
+   shellOutputFiles:shellFiles.slice(0,80),
+   reportFormatSignalFiles:reportFormatFiles.slice(0,80),
+   hasAnyNativeWriter:physicalWriters.length>0,
+   hasExistingPrintPath:printFiles.length>0,
+   hasExistingSaveDialog:saveDialogFiles.length>0,
+   hasExistingBrowserWindow:browserWindowFiles.length>0,
+   rule:'Semantic capability inventory only. Existing generic file writes do not admit Workforce Export; W6C must reuse the existing IPC/security/preload boundary and prove a standalone period-correct output artifact plus a real print path.'
+ },
  rule:'This is owner discovery only. Presence does not prove Workforce runtime closure.'
 };
-fs.writeFileSync(out,JSON.stringify({audit:'ORBITA_WAVE6_WORKFORCE_OWNER_FORENSIC',verdict,exactSymbols:exact,focus},null,2));
+fs.writeFileSync(out,JSON.stringify({audit:'ORBITA_WAVE6_WORKFORCE_OWNER_FORENSIC_V2_OUTPUT_RUNTIME',sourceExposure:'SEMANTIC_FACTS_ONLY_NO_SOURCE_SNIPPETS',verdict,exactSymbols:exact,focus},null,2));
 console.log(JSON.stringify(verdict,null,2));
