@@ -1,7 +1,9 @@
 ORBITA redesign Wave 5 Person History trigger
-2026-08-13T07:26+02:00
-Proof-harness retest after physical human-review evidence failure: prior 1440x900 and 1366x768 Person History PNG captures were byte-identical and physically 1164x695 despite manifest viewport labels.
+2026-08-13T07:36+02:00
+Proof-harness retest v2 after forensic repair against the actual CDP capture owner.
+Prior evidence remains rejected: old 1440x900 and 1366x768 Person History PNG captures were byte-identical and physically 1164x695 despite manifest labels.
 Product intent and product transforms remain unchanged.
-Apply proof-only Chromium viewport emulation before scenario execution and require a physical PNG dimension/hash gate: 1440x900 must be 1440x900, 1366x768 must be 1366x768, and cross-viewport history captures must not be byte-identical.
-Preserve Wave 4 and Wave 5 semantic truth: no fake Rad link, no fabricated unknown-start date, current projection remains distinct from persisted history.
-Design Brain 0.5 active. FAIL closed; human PASS only after newly valid screenshots are physically reviewed.
+Proof-only viewport emulation is now injected no later than the first canonical Page.captureScreenshot call, with runtime innerWidth/innerHeight readback and a physical PNG dimension/hash gate.
+1440x900 must physically be 1440x900; 1366x768 must physically be 1366x768; cross-viewport Person History captures must differ.
+Preserve semantic truth: no fake Rad link, no fabricated unknown-start date, current projection remains distinct from persisted history.
+FAIL closed; human PASS only after newly valid screenshots are physically reviewed.
