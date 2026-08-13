@@ -8,7 +8,7 @@ const files=[];
 const rel=p=>path.relative(root,p).replaceAll('\\','/');
 const symbols=s=>[...s.matchAll(/(?:export\s+)?(?:async\s+)?(?:function|const|type|interface|class)\s+([A-Za-z_$][\w$]*)/g)].map(m=>m[1]);
 const fnShape=(s,name)=>{const m=new RegExp(`(?:export\\s+)?(?:async\\s+)?function\\s+${name}\\s*\\(([^)]*)\\)(?:\\s*:\\s*([^\\{=>\\n]+))?`).exec(s);return m?{parameterCount:m[1].trim()?m[1].split(',').length:0,hasExplicitReturnType:Boolean(m[2]),async:/async\s+function/.test(m[0])}:null;};
-const owner=(file)=>{const s=read(file);return{file,symbols:symbols(s),electronImports:[...s.matchAll(/from\s+['"]electron['"]/g)].length,hasBrowserWindow:/\bBrowserWindow\b/.test(s),constructsBrowserWindow:/new\s+BrowserWindow\s*\(/.test(s),hasDialog:/\bdialog\b/.test(s),hasIpcMainHandle:/ipcMain\.handle\s*\(/.test(s),hasSafeInvoke:/safeInvoke\s*\(/.test(s),hasContextBridge:/contextBridge\.exposeInMainWorld\s*\(/.test(s),hasPrintToPDF:/printToPDF\s*\(/.test(s),hasWebContentsPrint:/webContents\.print\s*\(/.test(s),hasShowSaveDialog:/showSaveDialog\s*\(/.test(s)};};
+const owner=(file)=>{const s=read(file);return{file,symbols:symbols(s),electronImports:[...s.matchAll(/from\s+['"]electron['"]/g)].length,hasBrowserWindow:/\bBrowserWindow\b/.test(s),constructsBrowserWindow:/new\s+BrowserWindow\s*\(/.test(s),hasDialog:/\bdialog\b/.test(s),hasIpcMainHandle:/ipcMain\.handle\s*\(/.test(s),hasSafeInvoke:/safeInvoke(?:\s*<[^;\n()]+>)?\s*\(/.test(s)||symbols(s).includes('safeInvoke'),hasContextBridge:/contextBridge\.exposeInMainWorld\s*\(/.test(s),hasPrintToPDF:/printToPDF\s*\(/.test(s),hasWebContentsPrint:/webContents\.print\s*\(/.test(s),hasShowSaveDialog:/showSaveDialog\s*\(/.test(s)};};
 const windowFile='src/main/runtime/windowManager.ts';
 const ipcFile='src/main/ipc/ipcRegistry.ts';
 const allowFile='src/shared/security/channelAllowlist.ts';
@@ -20,7 +20,7 @@ const globalApiCandidates=files.filter(p=>{const s=fs.readFileSync(p,'utf8');ret
 const workforceComponentCandidates=files.filter(p=>fs.readFileSync(p,'utf8').includes('function LjudiWorkforceSheet')||fs.readFileSync(p,'utf8').includes('export function LjudiWorkforceSheet')).map(rel);
 const workforceHostCandidates=files.filter(p=>fs.readFileSync(p,'utf8').includes('<LjudiWorkforceSheet')).map(rel);
 const result={
-  audit:'ORBITA_WAVE6C_NATIVE_OUTPUT_BINDING_FORENSIC_V1',sourceExposure:'SEMANTIC_FACTS_ONLY_NO_SOURCE_SNIPPETS',
+  audit:'ORBITA_WAVE6C_NATIVE_OUTPUT_BINDING_FORENSIC_V2',sourceExposure:'SEMANTIC_FACTS_ONLY_NO_SOURCE_SNIPPETS',
   windowOwner:{...owner(windowFile),createMainWindow:fnShape(windowText,'createMainWindow'),hasModuleBrowserWindowReference:/let\s+\w*Window\s*:\s*BrowserWindow|let\s+\w*Window\s*=/.test(windowText),exportsWindowGetter:/export\s+(?:function|const)\s+\w*(?:Window|WebContents)/.test(windowText)&&symbols(windowText).some(x=>x!=='createMainWindow'&&/window|webcontents/i.test(x))},
   ipcOwner:{...owner(ipcFile),registerIpcHandlers:fnShape(ipcText,'registerIpcHandlers'),registeredInvokeChannelsExport:/registeredInvokeChannels/.test(ipcText),nativeDocumentChannelCount:(ipcText.match(/orbita:(?:openManagedDocument|pickAndImportNativeDocumentToWork)/g)||[]).length},
   allowlistOwner:{file:allowFile,hasAllowedInvokeChannels:/ORBITA_ALLOWED_INVOKE_CHANNELS/.test(allowText),hasInvokeChannelType:/OrbitaInvokeChannel/.test(allowText),workforceLegendAlreadyAllowed:/orbita:updateWorkforceLegend/.test(allowText)},
