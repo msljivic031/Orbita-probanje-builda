@@ -1,5 +1,5 @@
-ORBITA redesign Wave 6B legend Settings type/build proof V2
-2026-08-13T10:00+02:00
-Retest the identical Settings product binding after proof-generator syntax repair only. The nested TSX template literal in the transform body is converted to equivalent string concatenation before syntax-check; generated product semantics remain unchanged.
+ORBITA redesign Wave 6B legend Settings type/build proof V3
+2026-08-13T10:04+02:00
+Retest identical Settings product binding after making the generator clone the exact balanced updateDemoOrganization useCallback statement instead of assuming which callback follows it. Nested TSX template escaping repair remains active.
 Required unchanged: existing PodesavanjaScreen root, PeopleWorkspaceActions/App chain, current actor and workspace write lock reused; save/archive append effective versions only; static ownership gate; typecheck/build.
 Visual/runtime interaction proof remains next. FAIL closed.
