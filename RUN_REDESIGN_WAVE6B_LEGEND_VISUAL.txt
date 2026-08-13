@@ -1,8 +1,7 @@
-ORBITA redesign Wave 6B full runtime visual proof V5
-2026-08-13T18:24+02:00
-Reconstruct exact R13AP + admitted redesign through W6A, then apply current W6B core/write/security/Settings state including stable semantic Settings selection, system-default sentinel presentation repair, and fail-closed physical closure of the existing Izgled aplikacije modal before any Workforce legend evidence capture.
-The canonical Settings scenario must close the real appearance dialog through its accessible Zatvori control and assert the dialog hidden before entering Workforce legenda. No Workforce before/save/archive screenshot may be admitted underneath another modal or overlay.
-System default persistence seed may use an internal 1970 effective sentinel for resolution but the user-facing Settings ledger must present it only as Sistemska početna vrednost and must never render 1.1.1970 as a historical user-effective date. Real user versions and archive/fallback transitions keep their real effective dates.
-Real canonical Settings scenario must directly save available D -> AV, verify persisted Settings token, archive field_work and verify archived_fallback; the following canonical People scenario must open real People/Organization Workforce, prove current month exposes D + AV meanings, and prove previous month preserves D and hides AV, without cross-route captures.
-Require npm ci, typecheck, inspector schema, action coverage, production build, strict 18/18 canonical admission at physical 1440x900 and 1366x768, viewport evidence, artifact, and physical human screenshot review. No fake history, no weakened admission, no print/export claim. FAIL closed.
-LATEST_HEAD_RETEST=ba0f6b5e10e02c6b5b39c7609e42e1bbf91d3b3d
+ORBITA redesign Wave 6B full runtime visual proof V7
+2026-08-13T18:55+02:00
+Reconstruct exact R13AP + admitted redesign through W6A, then apply latest W6B core/write/security/Settings/scenario state.
+Human truth: close the real Izgled aplikacije modal before Workforce evidence. Persisted system_default_v1 may retain the internal 1970 sentinel strictly for deterministic as-of resolution, but user-facing Settings/People projection and visible-effective evidence must not expose that sentinel as historical effective data. Real user/archive effective dates remain truthful.
+Settings persists available D -> AV and field_work archive through the real append-only IPC path. People proves period-correct current D+AV and previous D-without-AV without cross-route captures or redundant current-month clicks.
+Require npm ci, typecheck, inspector schema, action coverage, production build, strict 18/18 canonical admission at 1440x900 and 1366x768, viewport evidence, artifact, and physical human screenshot review. No weakened admission, fake history, fake print or fake export. FAIL closed.
+LATEST_HEAD_RETEST=9fcb991905d02cde6d6b7314d11a4071f84e31cd
