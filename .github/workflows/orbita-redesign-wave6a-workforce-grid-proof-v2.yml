@@ -78,6 +78,8 @@ jobs:
           if($LASTEXITCODE-ne0){throw "w6a v2 wrapper syntax $LASTEXITCODE"}
           node ci/orbita-redesign-wave6a-workforce-grid-transform-v2.cjs candidate 2>&1 | Tee-Object evidence/w6a.log
           if($LASTEXITCODE-ne0){throw "w6a v2 transform $LASTEXITCODE"}
+          node ci/orbita-redesign-wave6a-ux-repair.cjs candidate 2>&1 | Tee-Object evidence/w6a-ux-repair.log
+          if($LASTEXITCODE-ne0){throw "w6a ux repair $LASTEXITCODE"}
           node ci/orbita-redesign-wave6a-workforce-scenario-proof.cjs candidate 2>&1 | Tee-Object evidence/w6a-scenario.log
           if($LASTEXITCODE-ne0){throw "w6a scenario $LASTEXITCODE"}
       - name: Install dependencies
