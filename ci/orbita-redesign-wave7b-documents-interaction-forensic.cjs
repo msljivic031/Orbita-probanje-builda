@@ -54,3 +54,4 @@ if(result.structuralSignals.unlinkReviewAction!==1)throw new Error('unlink revie
 if(result.structuralSignals.directBlobPaths!==0)throw new Error('renderer fake file path detected');
 fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,JSON.stringify(result,null,2));
 console.log(JSON.stringify(result,null,2));
+// 2026-08-13 infrastructure-only rerun marker: prior 1366 failure was CDP Runtime.evaluate timeout before canonical scenarios.
