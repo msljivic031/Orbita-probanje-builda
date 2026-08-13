@@ -1,0 +1,15 @@
+const fs=require('fs'),path=require('path');
+const root=path.resolve(process.argv[2]||'candidate');
+const R=f=>fs.readFileSync(path.join(root,f),'utf8').replace(/\r\n/g,'\n');const must=(v,m)=>{if(!v)throw Error(m)};
+const f={h:'src/domain/history/historyTypes.ts',s:'src/main/persistence/schema/sqliteA419WorkforceLegendSchema.ts',p:'src/shared/contracts/persistence/persistenceTypes.ts',q:'src/shared/contracts/persistence/workforceLegendPersistenceTypes.ts',r:'src/main/persistence/people/sqliteWorkforceLegendCommands.ts',repo:'src/main/persistence/repository/workforceLegendRepository.ts',barrel:'src/main/persistence/workspace/workspaceRepository.ts',ipc:'src/main/ipc/repositoryIpcHandlers.ts',allow:'src/shared/security/channelAllowlist.ts',pre:'src/preload/orbitaApi.ts'};
+for(const x of Object.values(f))must(fs.existsSync(path.join(root,x)),`missing ${x}`);
+const H=R(f.h),S=R(f.s),P=R(f.p),Q=R(f.q),RT=R(f.r),RP=R(f.repo),B=R(f.barrel),I=R(f.ipc),A=R(f.allow),PRE=R(f.pre);
+must(H.includes("'workforce_legend_changed'"),'history type missing');must(S.includes('ensureA419HistoryType')&&S.includes("'workforce_legend_changed'"),'A419 history migration missing');
+must(Q.includes('UpdateWorkforceLegendRequest')&&Q.includes('effectiveFrom')&&Q.includes('actorId'),'write request incomplete');
+must(P.includes("'update_workforce_legend'")&&P.includes('workforceLegendVersionId?:'),'WorkspaceWriteBridgeResult extension missing');
+must(RT.includes('INSERT INTO workforce_legend_versions_a419')&&!RT.includes('UPDATE workforce_legend_versions_a419')&&!RT.includes('DELETE FROM workforce_legend_versions_a419'),'runtime must append legend only');
+must(RT.includes('appendSemanticHistoryEvent')&&RT.includes("type:'workforce_legend_changed'"),'semantic history write missing');
+must(RT.includes('Actor does not exist')&&RT.includes('cannot be backdated'),'actor/backdate guards missing');
+must(RP.includes("operation:'update_workforce_legend'")&&RP.includes('WorkspaceWriteBridgeResult'),'repository shape missing');
+must(B.includes("workforceLegendRepository.js"),'barrel export missing');must(I.includes("'orbita:updateWorkforceLegend': updateWorkforceLegendThroughRepository"),'repository IPC mapping missing');must(A.includes("'orbita:updateWorkforceLegend'"),'allowlist missing');must(PRE.includes('updateWorkforceLegend: async')&&PRE.includes("'orbita:updateWorkforceLegend'"),'preload bridge missing');
+console.log(JSON.stringify({audit:'ORBITA_WAVE6B_LEGEND_WRITE_GATE',state:'PASS',checks:12,scope:'append-only version write + semantic history + existing repository/IPC/preload chain'},null,2));
