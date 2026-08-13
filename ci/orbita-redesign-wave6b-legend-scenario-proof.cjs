@@ -21,15 +21,9 @@ if(!settings||!Array.isArray(settings.steps))throw Error('settings-appearance sc
 if(!people||!Array.isArray(people.steps))throw Error('people-select-person scenario missing');
 if(ownerArrayCount!==1||!ownerArray)throw Error(`canonical scenario owner array expected 1, got ${ownerArrayCount}`);
 
-// Persisted Settings mutations must happen before the People projection proves current-vs-historic meaning.
-// Keep each capture inside its canonical route: podesavanja captures Settings; ljudi captures Workforce.
 let settingsIndex=ownerArray.indexOf(settings),peopleIndex=ownerArray.indexOf(people);
 if(settingsIndex<0||peopleIndex<0)throw Error('canonical scenario owner membership missing');
-if(settingsIndex>peopleIndex){
-  ownerArray.splice(settingsIndex,1);
-  peopleIndex=ownerArray.indexOf(people);
-  ownerArray.splice(peopleIndex,0,settings);
-}
+if(settingsIndex>peopleIndex){ownerArray.splice(settingsIndex,1);peopleIndex=ownerArray.indexOf(people);ownerArray.splice(peopleIndex,0,settings);}
 settingsIndex=ownerArray.indexOf(settings);peopleIndex=ownerArray.indexOf(people);
 if(settingsIndex+1!==peopleIndex)throw Error('settings-appearance must execute immediately before people-select-person for W6B persisted projection proof');
 
@@ -67,7 +61,7 @@ if(!people.steps.some(step=>step.type==='capture'&&step.label===peopleMarker)){
   people.steps.push(
     {type:'click',selector:'[data-orbita-action="people-open-workforce"]'},
     {type:'wait',milliseconds:260},
-    {type:'clickText',text:'Tekući mesec',match:'exact'},
+    {type:'assertAttribute',selector:'[data-orbita-workforce="monthly-sheet"]',attribute:'data-orbita-workforce',value:'monthly-sheet'},
     {type:'wait',milliseconds:300},
     {type:'assertAttribute',selector:'[data-orbita-workforce="monthly-sheet"]',attribute:'data-orbita-workforce',value:'monthly-sheet'},
     {type:'assertVisible',selector:'[data-orbita-workforce-legend-token="D"]'},
@@ -84,4 +78,4 @@ if(!people.steps.some(step=>step.type==='capture'&&step.label===peopleMarker)){
 }
 
 fs.writeFileSync(file,JSON.stringify(doc,null,2)+'\n');
-console.log(JSON.stringify({scenarios:[settings.id,people.id],executionOrder:'settings-appearance -> people-select-person',routeLaw:{settings:'podesavanja-only captures',people:'ljudi-only captures'},required:{settings:settings.required,people:people.required},settingsActions:['settings-workforce-legend-save','settings-workforce-legend-archive'],captures:['settings-workforce-legend-before','settings-workforce-legend-after-save','settings-workforce-legend-after-archive','people-workforce-legend-current-versioned','people-workforce-legend-previous-stable'],truth:['Settings persists AV version and field_work archive through real UI before People projection scenario runs','no cross-route capture inside a canonical scenario','People reopens the existing W6A Workforce owner, returns from previous to current month, proves D+AV current meaning, then proves previous month preserves D and hides AV','strict canonical route invariant remains intact']},null,2));
+console.log(JSON.stringify({scenarios:[settings.id,people.id],executionOrder:'settings-appearance -> people-select-person',routeLaw:{settings:'podesavanja-only captures',people:'ljudi-only captures'},required:{settings:settings.required,people:people.required},settingsActions:['settings-workforce-legend-save','settings-workforce-legend-archive'],captures:['settings-workforce-legend-before','settings-workforce-legend-after-save','settings-workforce-legend-after-archive','people-workforce-legend-current-versioned','people-workforce-legend-previous-stable'],truth:['Settings persists AV version and field_work archive through real UI before People projection scenario runs','no cross-route capture inside a canonical scenario','reopening Workforce resets to current month, so no click on the already-current disabled control is required','current month proves D and AV, previous month preserves D and hides AV','strict canonical route invariant remains intact']},null,2));
