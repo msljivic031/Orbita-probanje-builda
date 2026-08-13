@@ -70,8 +70,19 @@ jobs:
           $target=Join-Path $evidence 'ORBITA-WORKFORCE-CANONICAL-PROOF.pdf'
           $result=Join-Path $evidence 'physical-pdf-proof.json'
           Push-Location candidate
-          npx electron ./.w6c-physical-pdf-proof.mjs $target $result 2>&1 | Tee-Object ../evidence-w6c-c2c/physical-pdf-console.log
+          Copy-Item package.json .w6c-package-backup.json -Force
+          @'
+          const fs=require('fs');
+          const p=JSON.parse(fs.readFileSync('package.json','utf8'));
+          p.main='.w6c-physical-pdf-proof.mjs';
+          fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n');
+          '@ | node
+          $env:ORBITA_W6C_PDF_TARGET=$target
+          $env:ORBITA_W6C_PDF_RESULT=$result
+          npx electron . 2>&1 | Tee-Object ../evidence-w6c-c2c/physical-pdf-console.log
           $code=$LASTEXITCODE
+          Copy-Item .w6c-package-backup.json package.json -Force
+          Remove-Item .w6c-package-backup.json -Force
           Pop-Location
           if($code-ne0){throw "physical PDF proof $code"}
           $proof=Get-Content $result -Raw | ConvertFrom-Json
