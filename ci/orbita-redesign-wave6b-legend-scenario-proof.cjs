@@ -2,15 +2,42 @@ const fs=require('fs'),path=require('path');
 const root=path.resolve(process.argv[2]||'candidate');
 const file=path.join(root,'config','inspector','scenarios.json');
 const doc=JSON.parse(fs.readFileSync(file,'utf8'));
-let target=null;
-function visit(node){if(!node||typeof node!=='object')return;if(!Array.isArray(node)&&node.id==='settings-appearance'){if(target)throw Error('duplicate settings-appearance');target=node;return}if(Array.isArray(node))node.forEach(visit);else Object.values(node).forEach(visit)}
+
+let settings=null,people=null,ownerArray=null,ownerArrayCount=0;
+function visit(node){
+  if(!node||typeof node!=='object')return;
+  if(Array.isArray(node)){
+    const hasSettings=node.some(x=>x&&typeof x==='object'&&!Array.isArray(x)&&x.id==='settings-appearance');
+    const hasPeople=node.some(x=>x&&typeof x==='object'&&!Array.isArray(x)&&x.id==='people-select-person');
+    if(hasSettings&&hasPeople){ownerArray=node;ownerArrayCount++;}
+    node.forEach(visit);return;
+  }
+  if(node.id==='settings-appearance'){if(settings)throw Error('duplicate settings-appearance');settings=node;}
+  if(node.id==='people-select-person'){if(people)throw Error('duplicate people-select-person');people=node;}
+  Object.values(node).forEach(visit);
+}
 visit(doc);
-if(!target||!Array.isArray(target.steps))throw Error('settings-appearance scenario missing');
-target.allowMutation=true;
-target.allowFormInput=true;
-const marker='settings-workforce-legend-after-save';
-if(!target.steps.some(step=>step.type==='capture'&&step.label===marker)){
-  target.steps.push(
+if(!settings||!Array.isArray(settings.steps))throw Error('settings-appearance scenario missing');
+if(!people||!Array.isArray(people.steps))throw Error('people-select-person scenario missing');
+if(ownerArrayCount!==1||!ownerArray)throw Error(`canonical scenario owner array expected 1, got ${ownerArrayCount}`);
+
+// Persisted Settings mutations must happen before the People projection proves current-vs-historic meaning.
+// Keep each capture inside its canonical route: podesavanja captures Settings; ljudi captures Workforce.
+let settingsIndex=ownerArray.indexOf(settings),peopleIndex=ownerArray.indexOf(people);
+if(settingsIndex<0||peopleIndex<0)throw Error('canonical scenario owner membership missing');
+if(settingsIndex>peopleIndex){
+  ownerArray.splice(settingsIndex,1);
+  peopleIndex=ownerArray.indexOf(people);
+  ownerArray.splice(peopleIndex,0,settings);
+}
+settingsIndex=ownerArray.indexOf(settings);peopleIndex=ownerArray.indexOf(people);
+if(settingsIndex+1!==peopleIndex)throw Error('settings-appearance must execute immediately before people-select-person for W6B persisted projection proof');
+
+settings.allowMutation=true;
+settings.allowFormInput=true;
+const settingsMarker='settings-workforce-legend-after-save';
+if(!settings.steps.some(step=>step.type==='capture'&&step.label===settingsMarker)){
+  settings.steps.push(
     {type:'click',selector:'[data-orbita-settings-section="workforce"]'},
     {type:'wait',milliseconds:250},
     {type:'assertAttribute',selector:'[data-orbita-workforce-legend-settings="ready"]',attribute:'data-orbita-workforce-legend-settings',value:'ready'},
@@ -28,13 +55,20 @@ if(!target.steps.some(step=>step.type==='capture'&&step.label===marker)){
     {type:'click',selector:'[data-orbita-action="settings-workforce-legend-archive"]'},
     {type:'wait',milliseconds:800},
     {type:'assertAttribute',selector:'[data-orbita-workforce-legend-kind="field_work"]',attribute:'data-orbita-workforce-legend-source',value:'archived_fallback'},
-    {type:'capture',label:'settings-workforce-legend-after-archive'},
-    {type:'click',selector:'[data-orbita-route="ljudi"]'},
-    {type:'wait',milliseconds:300},
-    {type:'click',selector:'.people-network-org-button'},
-    {type:'wait',milliseconds:260},
+    {type:'capture',label:'settings-workforce-legend-after-archive'}
+  );
+}
+
+const peopleMarker='people-workforce-legend-current-versioned';
+if(!people.steps.some(step=>step.type==='capture'&&step.label===peopleMarker)){
+  const w6aCurrent=people.steps.some(step=>step.type==='capture'&&step.label==='people-workforce-current-month');
+  const w6aPrevious=people.steps.some(step=>step.type==='capture'&&step.label==='people-workforce-previous-month');
+  if(!w6aCurrent||!w6aPrevious)throw Error('W6A people Workforce scenario foundation missing');
+  people.steps.push(
     {type:'click',selector:'[data-orbita-action="people-open-workforce"]'},
-    {type:'wait',milliseconds:350},
+    {type:'wait',milliseconds:260},
+    {type:'clickText',text:'Tekući mesec',match:'exact'},
+    {type:'wait',milliseconds:300},
     {type:'assertAttribute',selector:'[data-orbita-workforce="monthly-sheet"]',attribute:'data-orbita-workforce',value:'monthly-sheet'},
     {type:'assertVisible',selector:'[data-orbita-workforce-legend-token="D"]'},
     {type:'assertVisible',selector:'[data-orbita-workforce-legend-token="AV"]'},
@@ -48,5 +82,6 @@ if(!target.steps.some(step=>step.type==='capture'&&step.label===marker)){
     {type:'wait',milliseconds:220}
   );
 }
+
 fs.writeFileSync(file,JSON.stringify(doc,null,2)+'\n');
-console.log(JSON.stringify({scenario:target.id,required:target.required,allowMutation:target.allowMutation,allowFormInput:target.allowFormInput,settingsEntry:'semantic-section-id',directActions:['settings-workforce-legend-save','settings-workforce-legend-archive','people-open-workforce'],captures:['settings-workforce-legend-before','settings-workforce-legend-after-save','settings-workforce-legend-after-archive','people-workforce-legend-current-versioned','people-workforce-legend-previous-stable'],truth:['real Settings owner is used','Save appends AV effective version through real UI','Archive appends field_work archive through real UI','current month shows D and AV meanings','previous month hides AV and preserves D']},null,2));
+console.log(JSON.stringify({scenarios:[settings.id,people.id],executionOrder:'settings-appearance -> people-select-person',routeLaw:{settings:'podesavanja-only captures',people:'ljudi-only captures'},required:{settings:settings.required,people:people.required},settingsActions:['settings-workforce-legend-save','settings-workforce-legend-archive'],captures:['settings-workforce-legend-before','settings-workforce-legend-after-save','settings-workforce-legend-after-archive','people-workforce-legend-current-versioned','people-workforce-legend-previous-stable'],truth:['Settings persists AV version and field_work archive through real UI before People projection scenario runs','no cross-route capture inside a canonical scenario','People reopens the existing W6A Workforce owner, returns from previous to current month, proves D+AV current meaning, then proves previous month preserves D and hides AV','strict canonical route invariant remains intact']},null,2));
