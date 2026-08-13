@@ -24,9 +24,9 @@ env:
 
 jobs:
   probe:
-    name: Windows Electron Printer Environment
+    name: Windows Electron Printer + Platform Dialog
     runs-on: windows-latest
-    timeout-minutes: 35
+    timeout-minutes: 100
     steps:
       - uses: actions/checkout@v4
         with:
@@ -62,6 +62,7 @@ jobs:
           const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json','utf8'));p.main='.w6c-printer-environment-probe.mjs';fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n');
           '@ | node
           $env:ORBITA_W6C_PRINTER_PROBE_RESULT=$result
+          Remove-Item Env:ORBITA_W6C_PRODUCT_PRINT -ErrorAction SilentlyContinue
           npx electron . 2>&1 | Tee-Object ../evidence-w6c-printer-env/printer-probe-console.log
           $code=$LASTEXITCODE
           Copy-Item .w6c-package-backup.json package.json -Force
@@ -69,11 +70,84 @@ jobs:
           Pop-Location
           if($code-ne0){throw "printer environment probe $code"}
           $probe=Get-Content $result -Raw | ConvertFrom-Json
-          if($probe.state-ne'PASS'){throw 'printer environment probe state'}
-      - name: Upload printer environment evidence
+          if($probe.state-ne'PASS' -or $probe.printerCount-lt1){throw 'no Electron printer target'}
+      - name: Bootstrap canonical inspector SQLite truth
+        shell: pwsh
+        run: |
+          & "$env:GITHUB_WORKSPACE\ci\orbita-visual-inspector-infra-retry.ps1" -CandidateRoot "$env:GITHUB_WORKSPACE\candidate" -Output "$env:GITHUB_WORKSPACE\VISUAL_REDESIGN_W6C_PRINT_BOOTSTRAP" -Width 1440 -Height 900 -LogFile "$env:GITHUB_WORKSPACE\evidence-w6c-printer-env\inspector-bootstrap-console.log"
+          if($LASTEXITCODE-ne0){throw "inspector bootstrap $LASTEXITCODE"}
+          $m=Get-Content VISUAL_REDESIGN_W6C_PRINT_BOOTSTRAP/MANIFEST.json -Raw | ConvertFrom-Json
+          $m.summary | ConvertTo-Json -Depth 8 | Out-File evidence-w6c-printer-env/inspector-bootstrap-summary.json
+          if($m.summary.state-ne'PASS' -or $m.summary.passedCanonicalScenarios-ne18 -or $m.summary.failedGates-ne0){throw 'inspector bootstrap admission failure'}
+          if(-not(Test-Path VISUAL_REDESIGN_W6C_PRINT_BOOTSTRAP/runtime-evidence/orbita-visual-inspector.sqlite)){throw 'runtime SQLite missing'}
+      - name: Exercise real product Print dialog and controlled cancel
+        shell: pwsh
+        env:
+          ELECTRON_DISABLE_SECURITY_WARNINGS: 'true'
+        run: |
+          Add-Type -AssemblyName System.Windows.Forms
+          Add-Type -AssemblyName System.Drawing
+          Add-Type @'
+          using System;
+          using System.Text;
+          using System.Runtime.InteropServices;
+          public static class W6CWin32 {
+            [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+            [DllImport("user32.dll", CharSet=CharSet.Unicode)] public static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+            [DllImport("user32.dll", CharSet=CharSet.Unicode)] public static extern int GetClassName(IntPtr hWnd, StringBuilder text, int count);
+            [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);
+          }
+          '@
+          $evidence=(Resolve-Path evidence-w6c-printer-env).Path
+          $result=Join-Path $evidence 'platform-print-result.json'
+          $dialogJson=Join-Path $evidence 'platform-print-dialog.json'
+          $dialogPng=Join-Path $evidence 'platform-print-dialog.png'
+          $console=Join-Path $evidence 'platform-print-console.log'
+          $runtimeDb=(Resolve-Path VISUAL_REDESIGN_W6C_PRINT_BOOTSTRAP/runtime-evidence/orbita-visual-inspector.sqlite).Path
+          Copy-Item ci/orbita-redesign-wave6c-printer-environment-probe.mjs candidate/.w6c-printer-environment-probe.mjs -Force
+          Push-Location candidate
+          Copy-Item package.json .w6c-package-backup.json -Force
+          @'
+          const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json','utf8'));p.main='.w6c-printer-environment-probe.mjs';fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n');
+          '@ | node
+          $env:ORBITA_RUNTIME_SCREENSHOT_DATABASE_PATH=$runtimeDb
+          $env:ORBITA_W6C_PRINTER_PROBE_RESULT=$result
+          $env:ORBITA_W6C_PRODUCT_PRINT='1'
+          $cmd="npx electron . 1> `"$console`" 2>&1"
+          $proc=Start-Process -FilePath cmd.exe -ArgumentList '/d','/s','/c',$cmd -PassThru
+          $seen=$false;$title='';$class='';$handle=[IntPtr]::Zero
+          $deadline=(Get-Date).AddSeconds(25)
+          while((Get-Date)-lt$deadline -and -not$seen){
+            Start-Sleep -Milliseconds 500
+            $h=[W6CWin32]::GetForegroundWindow();if($h-eq[IntPtr]::Zero){continue}
+            $t=New-Object System.Text.StringBuilder 512;$c=New-Object System.Text.StringBuilder 128
+            [void][W6CWin32]::GetWindowText($h,$t,$t.Capacity);[void][W6CWin32]::GetClassName($h,$c,$c.Capacity)
+            $candidateTitle=$t.ToString();$candidateClass=$c.ToString()
+            if($candidateTitle -match '(?i)print|štamp|stamp'){ $seen=$true;$title=$candidateTitle;$class=$candidateClass;$handle=$h }
+          }
+          $bounds=[System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+          $bmp=New-Object System.Drawing.Bitmap $bounds.Width,$bounds.Height
+          $graphics=[System.Drawing.Graphics]::FromImage($bmp)
+          $graphics.CopyFromScreen($bounds.Location,[System.Drawing.Point]::Empty,$bounds.Size)
+          $bmp.Save($dialogPng,[System.Drawing.Imaging.ImageFormat]::Png)
+          $graphics.Dispose();$bmp.Dispose()
+          @{detected=$seen;title=$title;class=$class;width=$bounds.Width;height=$bounds.Height;capturedAt=(Get-Date).ToUniversalTime().ToString('o')} | ConvertTo-Json | Out-File $dialogJson
+          if($seen){[void][W6CWin32]::SetForegroundWindow($handle);Start-Sleep -Milliseconds 250;[System.Windows.Forms.SendKeys]::SendWait('{ESC}')}
+          if(-not$proc.WaitForExit(30000)){[System.Windows.Forms.SendKeys]::SendWait('{ESC}');Start-Sleep 2}
+          if(-not$proc.HasExited){$proc.Kill();throw 'product print process did not exit after controlled cancel'}
+          $code=$proc.ExitCode
+          Copy-Item .w6c-package-backup.json package.json -Force
+          Remove-Item .w6c-package-backup.json -Force
+          Pop-Location
+          if(-not$seen){throw 'native Print dialog was not detected'}
+          if($code-ne0){throw "product print runtime $code"}
+          $print=Get-Content $result -Raw | ConvertFrom-Json
+          if($print.state-ne'PASS_CALLBACK'){throw 'product print callback proof failed'}
+      - name: Upload printer and platform dialog evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ORBITA-REDESIGN-WAVE6C-PRINTER-ENVIRONMENT-EVIDENCE
-          path: evidence-w6c-printer-env
+          name: ORBITA-REDESIGN-WAVE6C-PLATFORM-PRINT-EVIDENCE
+          path: |
+            evidence-w6c-printer-env
           retention-days: 7
