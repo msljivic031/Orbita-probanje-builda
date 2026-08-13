@@ -74,6 +74,8 @@ jobs:
           if($LASTEXITCODE-ne0){throw 'w6b core syntax'}
           node ci/orbita-redesign-wave6b-workforce-legend-core-transform.cjs candidate 2>&1 | Tee-Object evidence-w6b-core/w6b-core.log
           if($LASTEXITCODE-ne0){throw "w6b core $LASTEXITCODE"}
+          node ci/orbita-redesign-wave6b-core-type-repair.cjs candidate 2>&1 | Tee-Object evidence-w6b-core/w6b-core-type-repair.log
+          if($LASTEXITCODE-ne0){throw "w6b core type repair $LASTEXITCODE"}
           node ci/orbita-redesign-wave6b-core-contract-gate.cjs candidate 2>&1 | Tee-Object evidence-w6b-core/w6b-core-contract.log
           if($LASTEXITCODE-ne0){throw "w6b core contract $LASTEXITCODE"}
       - name: Typecheck and build
@@ -88,7 +90,7 @@ jobs:
         run: |
           @'
           import { DatabaseSync } from 'node:sqlite';
-          import { ensureA419WorkforceLegendSchema } from './candidate/dist-electron/main/persistence/schema/sqliteA419WorkforceLegendSchema.js';
+          import { ensureA419WorkforceLegendSchema } from '../candidate/dist-electron/main/persistence/schema/sqliteA419WorkforceLegendSchema.js';
           const db=new DatabaseSync(':memory:');
           ensureA419WorkforceLegendSchema(db); ensureA419WorkforceLegendSchema(db);
           const rows=db.prepare('SELECT version_id, semantic_id, availability_kind, token, effective_from, provenance FROM workforce_legend_versions_a419 ORDER BY sort_order').all();
