@@ -17,6 +17,22 @@ if(!m.includes('workforceLegendEntriesForMonth')){
   m=m.replace('workforceLegendEntryForDate, workforceLegendEntriesForDate','workforceLegendEntryForDate, workforceLegendEntriesForDate, workforceLegendEntriesForMonth');
   m=m.replace('DEFAULT_WORKFORCE_LEGEND, workforceLegendEntriesForDate }','DEFAULT_WORKFORCE_LEGEND, workforceLegendEntriesForDate, workforceLegendEntriesForMonth }');
 }
+const nodeNextImports=[
+  ["from './personTypes';","from './personTypes.js';"],
+  ["from '../workspace/workspaceTypes';","from '../workspace/workspaceTypes.js';"],
+  ["from './availabilityEvents';","from './availabilityEvents.js';"],
+  ["from '../reports/responsibilityAvailabilitySnapshot';","from '../reports/responsibilityAvailabilitySnapshot.js';"],
+  ["from '../work/workSchedule';","from '../work/workSchedule.js';"],
+  ["from './workforceLegend';","from './workforceLegend.js';"],
+];
+const repairedNodeNext=[];
+for(const [from,to] of nodeNextImports){
+  if(m.includes(to))continue;
+  const n=m.split(from).length-1;
+  if(n!==1)throw new Error(`Workforce monthly NodeNext import boundary ${from}: expected 1, got ${n}`);
+  m=m.replace(from,to);
+  repairedNodeNext.push(to);
+}
 write(monthly,m);
 const component='src/renderer/screens/ljudi/components/LjudiWorkforceSheet.tsx';
 let c=read(component);
@@ -28,4 +44,4 @@ const n=c.split(oldMap).length-1; if(n!==1) throw new Error(`visible Workforce l
 c=c.replace(oldMap,newMap);
 c=c.replace('Legenda se razrešava po efektivnoj verziji za izabrani mesec; arhivirana verzija ne prepisuje istorijsko značenje.','Legenda prikazuje sve različite oznake i značenja koja su stvarno važila tokom izabranog meseca; istorijsko značenje se ne prepisuje.');
 write(component,c);
-console.log(JSON.stringify({state:'W6B_MONTH_LEGEND_REPAIR_APPLIED',owners:[legend,monthly,component],truth:['daily cells resolve as-of date','visible monthly legend includes every distinct token/name/category actually used during selected month','mid-month rename D to AV shows both meanings with effective dates','archive/fallback versions with identical visible meaning are not duplicated','visible legend exposes token/source/effective-from evidence attributes','React keys remain version-stable'],productSemanticsChanged:true,reason:'close real mid-month legend truth gap and duplicate-archive legend noise before visual admission'},null,2));
+console.log(JSON.stringify({state:'W6B_MONTH_LEGEND_REPAIR_APPLIED',owners:[legend,monthly,component],truth:['daily cells resolve as-of date','visible monthly legend includes every distinct token/name/category actually used during selected month','mid-month rename D to AV shows both meanings with effective dates','archive/fallback versions with identical visible meaning are not duplicated','visible legend exposes token/source/effective-from evidence attributes','React keys remain version-stable','workforceMonthlySheet remains NodeNext-reachable with explicit .js extensions when W6C main output imports it'],nodeNextImportsRepaired:repairedNodeNext,productSemanticsChanged:true,reason:'close real mid-month legend truth gap and preserve NodeNext reachability for native Workforce output'},null,2));
