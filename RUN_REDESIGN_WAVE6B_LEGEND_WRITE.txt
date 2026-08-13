@@ -1,6 +1,6 @@
-ORBITA redesign Wave 6B append-only legend write proof V1
-2026-08-13T09:31+02:00
-Apply exact reconstructed redesign through admitted W6B core, then implement/prove one append-only Workforce legend mutation path.
-Required: new workforce_legend_changed history type admitted by A4.19; UpdateWorkforceLegendRequest; WorkspaceWriteBridgeResult operation update_workforce_legend; immutable version INSERT; existing actor required; no backdating before latest effective version; semantic history previous/new values; fresh Workspace hydration; existing repository IPC + allowlist + preload chain; typecheck/build.
-Runtime proof must demonstrate D historic seed -> AV first effective version -> A2 later effective version, two semantic history rows, UPDATE blocked and backdate blocked.
-Settings UI and W6B visual/human PASS remain separate and are not claimed by this run. FAIL closed.
+ORBITA redesign Wave 6B append-only legend write proof V2
+2026-08-13T09:35+02:00
+Retest the same append-only legend write after fail-closed security admission repair.
+V1 product/write transforms and static write gate passed, then typecheck correctly rejected the newly allowlisted channel because accessPolicy had no explicit rule. V2 mirrors the physically existing updateDemoOrganization access class and adds a dedicated critical validator for legend kind/token/name/category/order/effectiveFrom/actor/archive fields; runtime validation remains the second boundary.
+Required unchanged: new workforce_legend_changed history type admitted by A4.19; immutable version INSERT; actor required; no backdating; semantic history previous/new values; fresh Workspace hydration; existing repository/IPC/preload chain; typecheck/build; D -> AV -> A2 as-of runtime proof; UPDATE and backdate blocked.
+Settings UI and W6B visual/human PASS remain separate. FAIL closed.
