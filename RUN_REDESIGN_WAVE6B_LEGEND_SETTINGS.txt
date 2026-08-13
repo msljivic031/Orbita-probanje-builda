@@ -1,4 +1,4 @@
-ORBITA redesign Wave 6B legend Settings type/build proof V5
-2026-08-13T10:20+02:00
-Retest the same physical registry-owner Settings binding after removing the last nested template literal from the month-spanning legend generator. Product semantics remain: per-day as-of cells, distinct mid-month meanings visible, visually identical archive/fallback meanings deduped, Settings route preserved, existing registry bridge/write-state/Workspace-refresh path reused.
+ORBITA redesign Wave 6B legend Settings type/build proof V6
+2026-08-13T10:24+02:00
+Retest the current isolated branch head, including the physically proven useOrganizationRegistryActions binding, fail-closed bridge/write-state/Workspace-refresh path, corrected month-spanning resolver without nested generator templates, dedupe of visually identical archive/fallback meanings, and evidence attributes for the next runtime visual proof.
 Required: static core/write/security/Settings gates, typecheck and build. Visual/runtime interaction proof remains next. FAIL closed.
