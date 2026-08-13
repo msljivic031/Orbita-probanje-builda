@@ -1,5 +1,6 @@
 require('./orbita-redesign-wave6b-legend-security-repair.cjs');
 require('./orbita-redesign-wave6b-history-migration-repair.cjs');
+require('./orbita-redesign-wave6b-settings-generator-repair.cjs');
 const fs=require('fs'),path=require('path');
 const root=path.resolve(process.argv[2]||'candidate');
 const R=f=>fs.readFileSync(path.join(root,f),'utf8').replace(/\r\n/g,'\n');const must=(v,m)=>{if(!v)throw Error(m)};
