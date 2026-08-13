@@ -11,10 +11,14 @@ must(S.includes('<WorkforceLegendSettings')&&S.includes('onUpdateWorkforceLegend
 must(K.includes('onUpdateWorkforceLegend: (request: UpdateWorkforceLegendRequest)'),'PeopleWorkspaceActions contract missing');
 must(H.includes('const updateWorkforceLegend = useCallback')&&H.includes('updateWorkforceLegend,'),'physical organization registry action owner not extended');
 must(H.includes('window.orbita?.updateWorkforceLegend')&&H.includes('changedWorkspaceWriteStateFromResult(result, attemptAt)'),'registry action must reuse bridge/write-state convention');
-must(!H.includes("setRoute('podesavanja')")&&!/updateWorkforceLegend[\s\S]{0,800}setRoute\('ljudi'\)/.test(H),'Workforce Settings write must not force a route change');
+const callbackStart=H.indexOf('const updateWorkforceLegend = useCallback');
+const callbackEnd=H.indexOf('const createDemoPerson',callbackStart);
+must(callbackStart>=0&&callbackEnd>callbackStart,'Workforce Settings callback boundary missing');
+const workforceCallback=H.slice(callbackStart,callbackEnd);
+must(!/\bsetRoute\s*\(/.test(workforceCallback),'Workforce Settings write must not force a route change');
 must(AG.includes('...useOrganizationRegistryActions(options)'),'existing organization aggregator must remain composition-only');
 must((ST.match(/updateWorkforceLegend,/g)||[]).length>=2,'appState action not destructured and returned');
 must(A.includes('onUpdateWorkforceLegend={state.updateWorkforceLegend}'),'App binding missing');
 const hosts=[];for(const base of ['src/renderer']){const stack=[path.join(root,base)];while(stack.length){const d=stack.pop();for(const e of fs.readdirSync(d,{withFileTypes:true})){const p=path.join(d,e.name);if(e.isDirectory())stack.push(p);else if(/\.tsx$/.test(e.name)){const s=fs.readFileSync(p,'utf8');if(s.includes('<PodesavanjaScreen'))hosts.push({p,s});}}}}
 must(hosts.length===1,`Podesavanja host count ${hosts.length}`);must(hosts[0].s.includes('onUpdateWorkforceLegend={onUpdateWorkforceLegend}'),'Settings route host missing Workforce prop');
-console.log(JSON.stringify({audit:'ORBITA_WAVE6B_LEGEND_SETTINGS_GATE',state:'PASS',checks:13,settingsHost:path.relative(root,hosts[0].p).replace(/\\/g,'/'),actionOwner:f.registryHook,scope:'existing Settings/App/action chain extended through physical registry owner; aggregator remains composition-only; no parallel renderer truth'},null,2));
+console.log(JSON.stringify({audit:'ORBITA_WAVE6B_LEGEND_SETTINGS_GATE',state:'PASS',checks:13,settingsHost:path.relative(root,hosts[0].p).replace(/\\/g,'/'),actionOwner:f.registryHook,routeGuard:'bounded updateWorkforceLegend callback contains no setRoute; unrelated registry actions are outside this gate',scope:'existing Settings/App/action chain extended through physical registry owner; aggregator remains composition-only; no parallel renderer truth'},null,2));
