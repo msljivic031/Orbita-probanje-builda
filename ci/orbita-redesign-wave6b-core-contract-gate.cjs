@@ -1,3 +1,4 @@
+require('./orbita-redesign-wave6b-month-legend-repair.cjs');
 const fs=require('fs'),path=require('path');
 const root=path.resolve(process.argv[2]||'candidate');
 const R=f=>fs.readFileSync(path.join(root,f),'utf8').replace(/\r\n/g,'\n');
@@ -8,6 +9,7 @@ const L=R(files.legend),W=R(files.workspace),S=R(files.schema),SR=R(files.schema
 must(/WorkforceLegendVersion/.test(L),'legend version type missing');
 must(/effectiveFrom/.test(L)&&/supersedesVersionId/.test(L)&&/recordedAt/.test(L),'legend version identity/provenance boundary incomplete');
 must(/resolveWorkforceLegendVersion/.test(L)&&/workforceLegendEntriesForDate/.test(L),'as-of resolver missing');
+must(/workforceLegendEntriesForMonth/.test(L),'month-spanning legend resolver missing');
 must(/workforceLegendVersions\??\s*:\s*WorkforceLegendVersion\[\]/.test(W),'Workspace aggregate legend field missing');
 must(/CREATE TABLE IF NOT EXISTS workforce_legend_versions_a419/.test(S),'A4.19 table missing');
 must(/append-only/.test(S)&&/BEFORE UPDATE/.test(S)&&/BEFORE DELETE/.test(S),'append-only SQL enforcement missing');
@@ -15,5 +17,6 @@ must(/INSERT OR IGNORE/.test(S)&&/system-default-v1/.test(S),'deterministic seed
 must(/ensureA419WorkforceLegendSchema/.test(SR),'schema chain missing A4.19');
 must(/readWorkforceLegendVersions/.test(RD)&&/workforceLegendVersions:\s*readWorkforceLegendVersions\(database\)/.test(RD),'single reader hydration missing');
 must(/workforceLegendEntryForDate\(workspace\.workforceLegendVersions/.test(M),'per-day as-of legend consumption missing');
-must(/workforceLegendEntriesForDate\(workspace\.workforceLegendVersions/.test(C),'visible month legend not bound to persisted versions');
-console.log(JSON.stringify({audit:'ORBITA_WAVE6B_LEGEND_CORE_CONTRACT',state:'PASS',checks:11,scope:'A4.19 append-only persisted legend + Workspace hydration + per-day/month as-of resolver; legacy fixture omission tolerated; write/Settings intentionally separate'},null,2));
+must(/workforceLegendEntriesForMonth\(workspace\.workforceLegendVersions, monthKey\)/.test(C),'visible month legend must include all effective versions used during selected month');
+must(/Važi od/.test(C)&&/entry\.versionId/.test(C),'visible month legend must expose effective-version provenance with stable keys');
+console.log(JSON.stringify({audit:'ORBITA_WAVE6B_LEGEND_CORE_CONTRACT',state:'PASS',checks:13,scope:'A4.19 append-only persisted legend + Workspace hydration + per-day as-of cells + month-spanning visible version legend; legacy fixture omission tolerated; write/Settings intentionally separate'},null,2));
