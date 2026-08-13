@@ -1,6 +1,6 @@
-ORBITA redesign Wave 6 Workforce final preimplementation forensic V2
-2026-08-13T07:52+02:00
-READ-ONLY product forensic. Design Brain 0.5 active.
-Repair only the forensic permission gate: prove the actual composite authorization boundary across central organization/team command scope plus existing People/Settings isWorkspaceWriting and current-actor resolution. Do not invent a singular Workforce permission owner.
-Retain all prior physical facts: workSchedule is the working-day owner; Saturday/Sunday semantics exist; no holiday truth exists; selected organization/team projection is the renderer scope; legend requires new versioned persistence; no admitted print/export engine exists.
-Do not publish private source snippets. No fake Workforce UI. PASS authorizes product implementation against existing owners while raw-canon full-text infrastructure remains separately fail-closed.
+ORBITA redesign Wave 6B Workforce legend persistence binding forensic
+2026-08-13T08:08+02:00
+READ-ONLY semantic product forensic. Design Brain 0.5 active.
+Keep all proven Wave 6 pre-code truth, then physically bind the new versioned Workforce legend capability to the current incremental SQLite schema pattern, organization/workspace repositories, IPC/preload bridge, existing Settings owner, workspace-write/current-actor authorization and semantic-history provenance.
+Require one history-safe legend truth family with stable ID, token, display name, semantic category, order, active/archive and effective/as-of meaning. Rename/edit must never rewrite historic meaning.
+Do not publish private source snippets. Do not create a parallel Settings, permissions or history system. No product mutation in this run.
