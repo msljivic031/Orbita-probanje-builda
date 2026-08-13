@@ -14,7 +14,9 @@ for(const token of [
  '.documents-workspace-screen .document-dossier-panel',
  '.documents-workspace-screen .documents-import-workflow',
  '@media (max-width:1390px)',
- 'grid-template-columns:142px minmax(0,1fr) 270px'
+ 'grid-template-columns:142px minmax(0,1fr) 270px',
+ '.documents-workspace-screen .documents-file-list{\n  display:flex;\n  flex-direction:column;\n  align-items:stretch;\n  justify-content:flex-start;',
+ '.documents-workspace-screen .documents-list-body{\n  flex:0 0 auto;\n  align-self:stretch;\n  margin-top:0;'
 ]) if(!css.includes(token)) throw new Error('W7A visual invariant missing '+token);
 const screenPath=path.join(root,'src','renderer','screens','dokumenti','DokumentiScreen.tsx');
 const screen=fs.readFileSync(screenPath,'utf8');
@@ -44,4 +46,4 @@ const pkg=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
 const deps={...(pkg.dependencies||{}),...(pkg.devDependencies||{})};
 if(deps['framer-motion']) throw new Error('W7A unexpectedly added framer-motion');
 if(Object.keys(deps).some(k=>/tailwind/i.test(k))) throw new Error('W7A unexpectedly added Tailwind dependency');
-console.log(JSON.stringify({state:'PASS',gate:'ORBITA_W7A_DOCUMENTS_VISUAL_ARCHITECTURE',owner:path.relative(root,owners[0]).replace(/\\/g,'/'),truth:['existing Documents screen preserved','existing native import/open/unlink selectors preserved','one CSS owner refined','1440 and 1366 layout rules present','no persistence/preload ownership change','no framer-motion/Tailwind adoption']},null,2));
+console.log(JSON.stringify({state:'PASS',gate:'ORBITA_W7A_DOCUMENTS_VISUAL_ARCHITECTURE',owner:path.relative(root,owners[0]).replace(/\\/g,'/'),truth:['existing Documents screen preserved','existing native import/open/unlink selectors preserved','one CSS owner refined','registry rows forced into top vertical flow','1440 and 1366 layout rules present','no persistence/preload ownership change','no framer-motion/Tailwind adoption']},null,2));
