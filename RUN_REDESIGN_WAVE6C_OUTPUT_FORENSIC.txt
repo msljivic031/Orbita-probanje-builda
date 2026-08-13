@@ -1,4 +1,4 @@
-ORBITA redesign Wave 6C native output semantic forensic V2
-2026-08-13T19:06+02:00
-Reconstruct exact R13AP + admitted redesign through W6A + current W6B truth layer using the same W6B core/write/security/Settings gates as the full proof. Resolve only semantic facts for the existing BrowserWindow, IPC registry, channel allowlist, preload safeInvoke and native physical-writer precedent. Do not expose candidate source snippets. Do not implement W6C product code and do not claim W6C PASS. Safety typecheck is mandatory. FAIL closed if the reusable Electron/security owner chain is not physically proven.
-CURRENT_HEAD_FORENSIC=ba519fb2eb3c1443159a9a606a14b33039d5f9b9
+ORBITA redesign Wave 6C native output semantic forensic V3
+2026-08-13T20:12+02:00
+Reconstruct exact R13AP + admitted redesign through W6A + current W6B truth layer using the same W6B core/write/security/Settings gates as the full proof. Resolve semantic facts for the existing BrowserWindow, IPC registry, channel allowlist, preload safeInvoke, native physical-writer precedent, and exact registerInvoke/native-document callback shape. Do not expose candidate source snippets. Do not implement W6C product code and do not claim W6C PASS. Safety typecheck is mandatory. FAIL closed if the reusable Electron/security owner chain or IPC binding shape is not physically proven.
+CURRENT_HEAD_FORENSIC=f951224ddf20937022266faa1cc19eab89e3dd1b
