@@ -1,4 +1,5 @@
 require('./orbita-redesign-wave6b-legend-security-repair.cjs');
+require('./orbita-redesign-wave6b-history-migration-repair.cjs');
 const fs=require('fs'),path=require('path');
 const root=path.resolve(process.argv[2]||'candidate');
 const R=f=>fs.readFileSync(path.join(root,f),'utf8').replace(/\r\n/g,'\n');const must=(v,m)=>{if(!v)throw Error(m)};
@@ -6,6 +7,7 @@ const f={h:'src/domain/history/historyTypes.ts',s:'src/main/persistence/schema/s
 for(const x of Object.values(f))must(fs.existsSync(path.join(root,x)),`missing ${x}`);
 const H=R(f.h),S=R(f.s),P=R(f.p),Q=R(f.q),RT=R(f.r),RP=R(f.repo),B=R(f.barrel),I=R(f.ipc),A=R(f.allow),PRE=R(f.pre),AC=R(f.access),CR=R(f.critical);
 must(H.includes("'workforce_legend_changed'"),'history type missing');must(S.includes('ensureA419HistoryType')&&S.includes("'workforce_legend_changed'"),'A419 history migration missing');
+must(S.includes('A4.19 history migration failed to rename source table'),'A419 quoted history table rename fail-closed guard missing');
 must(Q.includes('UpdateWorkforceLegendRequest')&&Q.includes('effectiveFrom')&&Q.includes('actorId'),'write request incomplete');
 must(P.includes("'update_workforce_legend'")&&P.includes('workforceLegendVersionId?:'),'WorkspaceWriteBridgeResult extension missing');
 must(RT.includes('INSERT INTO workforce_legend_versions_a419')&&!RT.includes('UPDATE workforce_legend_versions_a419')&&!RT.includes('DELETE FROM workforce_legend_versions_a419'),'runtime must append legend only');
@@ -14,4 +16,4 @@ must(RT.includes('Actor does not exist')&&RT.includes('cannot be backdated'),'ac
 must(RP.includes("operation:'update_workforce_legend'")&&RP.includes('WorkspaceWriteBridgeResult'),'repository shape missing');
 must(B.includes("workforceLegendRepository.js"),'barrel export missing');must(I.includes("'orbita:updateWorkforceLegend': updateWorkforceLegendThroughRepository"),'repository IPC mapping missing');must(A.includes("'orbita:updateWorkforceLegend'"),'allowlist missing');must(PRE.includes('updateWorkforceLegend: async')&&PRE.includes("'orbita:updateWorkforceLegend'"),'preload bridge missing');
 must(AC.includes("'orbita:updateWorkforceLegend'"),'access policy missing');must(CR.includes("'orbita:updateWorkforceLegend'"),'critical field validator missing');
-console.log(JSON.stringify({audit:'ORBITA_WAVE6B_LEGEND_WRITE_GATE',state:'PASS',checks:14,scope:'append-only version write + semantic history + explicit access/critical validation + existing repository/IPC/preload chain'},null,2));
+console.log(JSON.stringify({audit:'ORBITA_WAVE6B_LEGEND_WRITE_GATE',state:'PASS',checks:15,scope:'append-only version write + semantic history + robust A4.19 quoted-table migration + explicit access/critical validation + existing repository/IPC/preload chain'},null,2));
