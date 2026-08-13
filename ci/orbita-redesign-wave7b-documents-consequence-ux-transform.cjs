@@ -15,7 +15,7 @@ if(!s.includes('className="documents-import-consequence"')){
  const consequence='<div className="documents-import-consequence" role="note" aria-label="Posledica uvoza"><span>Pre potvrde</span><strong>Dokument će biti povezan sa izabranim Radom.</strong><small>Proverite Rad i ulogu veze. Managed kopija i SHA-256 nastaju tek nakon uspešnog native uvoza.</small></div>';
  s=s.replace(actionAnchor,consequence+actionAnchor);
 }
-regexOnce(/>\s*Izaberi fajl i uvezi\s*<\/button>/g,'>Izaberi fajl i potvrdi uvoz</button>','native import button copy','Izaberi fajl i potvrdi uvoz');
+regexOnce(/(<button\b[^>]*data-orbita-action="documents-import-native"[^>]*>)\s*Izaberi fajl i uvezi\s*(<\/button>)/g,'$1Izaberi fajl i potvrdi uvoz$2','native import button copy','Izaberi fajl i potvrdi uvoz');
 fs.writeFileSync(file,s,'utf8');
 function walk(dir){const out=[];for(const e of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())out.push(...walk(p));else out.push(p);}return out;}
 const cssFiles=walk(path.join(root,'src','renderer','styles')).filter(f=>f.endsWith('.css'));
