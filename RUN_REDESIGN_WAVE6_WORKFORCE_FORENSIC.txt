@@ -1,5 +1,6 @@
-ORBITA redesign Wave 6 Workforce preimplementation forensic
-2026-08-13T07:26+02:00
+ORBITA redesign Wave 6 Workforce final preimplementation forensic
+2026-08-13T07:44+02:00
 READ-ONLY product forensic. Design Brain 0.5 active.
-Resolve remaining pre-code contracts without publishing private source snippets: exact active-at membership behavior, executable first/last-workday materialization candidates, holiday/non-working owner truth, existing write/actor permission boundary, People/Settings insertion anchors, versioned legend persistence gap, and real print/export engine truth.
-Emit semantic facts only in the new precode-contract artifact. Do not fake or implement a Workforce runtime surface in this run.
+Close the remaining pre-code facts with semantic-only evidence: exact current workSchedule working-day owner, Saturday/Sunday semantics, absence of holiday truth, existing access/organization policy boundaries, selected-organization projection anchors, Settings/schema/repository insertion patterns, and any real native file/print owner.
+Do not publish private source snippets. Do not implement a fake Workforce surface in this run.
+PASS of this forensic authorizes product implementation only after canon-first private read is also complete.
