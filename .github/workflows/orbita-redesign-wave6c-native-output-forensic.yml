@@ -72,10 +72,14 @@ jobs:
         run: |
           node ci/orbita-redesign-wave6b-workforce-legend-core-transform.cjs candidate 2>&1 | Tee-Object evidence-w6c/w6b-core.log; if($LASTEXITCODE-ne0){throw 'w6b core'}
           node ci/orbita-redesign-wave6b-core-type-repair.cjs candidate 2>&1 | Tee-Object evidence-w6c/w6b-core-repair.log; if($LASTEXITCODE-ne0){throw 'w6b core repair'}
+          node ci/orbita-redesign-wave6b-core-contract-gate.cjs candidate 2>&1 | Tee-Object evidence-w6c/w6b-core-gate.log; if($LASTEXITCODE-ne0){throw 'w6b core gate'}
           node ci/orbita-redesign-wave6b-legend-write-transform.cjs candidate 2>&1 | Tee-Object evidence-w6c/w6b-write.log; if($LASTEXITCODE-ne0){throw 'w6b write'}
+          node ci/orbita-redesign-wave6b-legend-write-gate.cjs candidate 2>&1 | Tee-Object evidence-w6c/w6b-write-gate.log; if($LASTEXITCODE-ne0){throw 'w6b write gate'}
           node ci/orbita-redesign-wave6b-settings-generator-repair.cjs 2>&1 | Tee-Object evidence-w6c/w6b-generator-repair.log; if($LASTEXITCODE-ne0){throw 'w6b generator repair'}
+          node --check ci/orbita-redesign-wave6b-legend-settings-transform.cjs; if($LASTEXITCODE-ne0){throw 'w6b settings syntax'}
           node ci/orbita-redesign-wave6b-legend-settings-transform.cjs candidate 2>&1 | Tee-Object evidence-w6c/w6b-settings.log; if($LASTEXITCODE-ne0){throw 'w6b settings'}
           node ci/orbita-redesign-wave6b-settings-evidence-repair.cjs candidate 2>&1 | Tee-Object evidence-w6c/w6b-settings-evidence.log; if($LASTEXITCODE-ne0){throw 'w6b settings evidence'}
+          node ci/orbita-redesign-wave6b-legend-settings-gate.cjs candidate 2>&1 | Tee-Object evidence-w6c/w6b-settings-gate.log; if($LASTEXITCODE-ne0){throw 'w6b settings gate'}
       - name: Resolve native output owners without source exposure
         shell: pwsh
         run: |
