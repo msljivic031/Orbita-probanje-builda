@@ -6,11 +6,32 @@ if(!fs.existsSync(file))throw new Error('DokumentiScreen owner missing');
 const s=fs.readFileSync(file,'utf8');
 const names=[...s.matchAll(/\b(?:const|function)\s+([A-Za-z_$][\w$]*(?:Import|Document|Link|Unlink|Managed|Folder|Search|Open|Selected)[\w$]*)/g)].map(m=>m[1]);
 const states=[...s.matchAll(/const\s*\[\s*([A-Za-z_$][\w$]*)\s*,\s*([A-Za-z_$][\w$]*)\s*\]\s*=\s*useState/g)].map(m=>({value:m[1],setter:m[2]})).filter(x=>/(import|document|folder|search|selected|link|valid|role)/i.test(x.value+x.setter));
+function initializerKind(name){
+ const escaped=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+ const re=new RegExp(`const\\s*\\[\\s*${escaped}\\s*,[^\\]]+\\]\\s*=\\s*useState(?:<[^;>]+>)?\\(([^;]*?)\\);`,'s');
+ const m=re.exec(s); if(!m)return 'UNRESOLVED';
+ const x=m[1].trim();
+ if(x==="''"||x==='""'||x==='``')return 'EMPTY_STRING';
+ if(x==='false')return 'FALSE'; if(x==='true')return 'TRUE'; if(x==='null')return 'NULL';
+ if(/workItems|works|workItem/i.test(x)&&(/\[0\]|\.at\(0\)|find\(/.test(x)))return 'DERIVED_WORK_SELECTION';
+ if(/folder/i.test(x)&&(/\[0\]|\.at\(0\)|find\(/.test(x)))return 'DERIVED_FOLDER_SELECTION';
+ if(/^['"`][^'"`]+['"`]$/.test(x))return 'NONEMPTY_LITERAL';
+ if(/=>/.test(x))return 'LAZY_DERIVED';
+ return 'OTHER_DERIVED';
+}
+const stateInitializers=states.map(x=>({...x,initializer:initializerKind(x.value)}));
 const actions=[...s.matchAll(/data-orbita-action=["'`]([^"'`]+)["'`]/g)].map(m=>m[1]);
 const aria=[...s.matchAll(/aria-label=["'`]([^"'`]+)["'`]/g)].map(m=>m[1]).filter(x=>/(dokument|fajl|folder|rad|važen|uloga|pretra)/i.test(x));
 const result={
  state:'PASS',audit:'ORBITA_WAVE7B_DOCUMENTS_INTERACTION_FORENSIC',owner:'src/renderer/screens/dokumenti/DokumentiScreen.tsx',
  stateHooks:states,
+ stateInitializers,
+ hiddenDefaultRisk:{
+  workSelection:initializerKind('importWorkItemId'),
+  role:initializerKind('importRole'),
+  folder:initializerKind('importFolderId'),
+  validUntil:initializerKind('importValidUntil')
+ },
  interactionIdentifiers:[...new Set(names)].sort(),
  canonicalActions:[...new Set(actions)].sort(),
  relevantAriaLabels:[...new Set(aria)].sort(),
@@ -24,7 +45,7 @@ const result={
   unlinkReviewAction:(s.match(/documents-review-unlink/g)||[]).length,
   directBlobPaths:(s.match(/new Blob|URL\.createObjectURL|download=/g)||[]).length
  },
- laws:['semantic identifier evidence only; no source snippets','existing state/handlers must be reused','progressive import may change presentation but not native command ownership','link/unlink remains relation review']
+ laws:['semantic identifier evidence only; no source snippets','existing state/handlers must be reused','progressive import may change presentation but not native command ownership','do not hide a cross-entity default consequence','link/unlink remains relation review']
 };
 if(result.structuralSignals.importWorkflowClass!==1)throw new Error('import workflow owner count');
 if(result.structuralSignals.nativeImportAction!==1)throw new Error('native import action owner count');
