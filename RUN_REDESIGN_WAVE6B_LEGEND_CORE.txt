@@ -1,6 +1,6 @@
-ORBITA redesign Wave 6B legend core proof V2
-2026-08-13T09:23+02:00
-Retest the same W6B A4.19 legend core after exact first-run TypeScript compatibility repairs.
-Repairs are scoped: current TS target uses indexed-last instead of Array.at; EffectiveWorkforceLegendEntry map return is explicitly typed; legacy fixture Workspace objects may omit the new persisted legend field while repository hydration always supplies it; runtime proof imports built A4.19 schema from the correct sibling candidate path.
-Required unchanged: deterministic 7-row seed, idempotent ensure, append-only SQL UPDATE/DELETE blocking, one Workspace hydration path, per-day/month as-of legend resolution, typecheck and build.
+ORBITA redesign Wave 6B legend core proof V3
+2026-08-13T09:26+02:00
+Retest identical W6B A4.19 legend semantics after NodeNext import-extension repair.
+V2 eliminated the Array.at/literal-union/legacy-fixture errors and left only two explicit `.js` extension errors on new NodeNext-reachable domain imports. V3 fixes only those imports.
+Required unchanged: deterministic 7-row seed, idempotent ensure, append-only UPDATE/DELETE blocking, one Workspace hydration path, per-day/month as-of legend resolution, typecheck, build and runtime schema proof.
 No write/Settings/permission/W6B PASS claim yet. FAIL closed.
