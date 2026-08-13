@@ -1,8 +1,9 @@
-ORBITA redesign Wave 6A Workforce monthly projection V4 retry
-2026-08-13T08:28+02:00
-Retest unchanged Wave 6A product candidate after the only prior product-level gate failure was physically identified as action-coverage classification, not TypeScript/schema failure.
-Canonical scenario now directly clicks `[data-orbita-action="people-open-workforce"]` using the inspector-supported `click` + `selector` contract, so the source action must be runtime-covered rather than hidden in a disposition.
-Reconstruct exact R13AP, apply proven Wave 1→5, apply repaired W6A monthly projection, then npm ci, typecheck, inspector schema, action coverage, production build, runtime 1440x900 and 1366x768, physical Workforce screenshot dimension/hash gate and evidence upload.
-Prove real People/Organization entry, month navigation, range-event daily truth, temporal membership/as-of scope, unknown_start honesty, workSchedule weekend owner reuse, sticky Person column and accessible Person+date+status cells.
-Do not claim full Wave 6: persisted/versioned legend Settings and real Print/Export remain mandatory successor work.
+ORBITA redesign Wave 6A Workforce monthly projection V5 retry
+2026-08-13T08:46+02:00
+Repair and retest the two physically proven 1440 runtime issues from run 31673184630.
+1) Canonical People scenario organization transition is selector-stable via `.people-network-org-button` instead of exact text matching, while `people-open-workforce` remains directly covered through its data-orbita-action selector.
+2) Existing People CSS owner now respects the semantic `hidden` state for `people-dossier-surface`, so the organization dossier cannot remain visibly rendered underneath active Workforce mode.
+No change to Workforce truth semantics: availability range events, temporal membership/as-of, unknown_start honesty and workSchedule weekend ownership remain unchanged.
+Run exact reconstruction, Wave 1→5, W6A product + UX repair, npm ci, typecheck, inspector schema, action coverage, build, strict 18/18 at 1440 and 1366, physical PNG dimension/hash gate, then human review.
+Do not claim full Wave 6; W6B versioned legend persistence/Settings and W6C real output remain open.
 FAIL closed.
