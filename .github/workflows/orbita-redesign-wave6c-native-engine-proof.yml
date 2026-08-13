@@ -22,9 +22,9 @@ env:
 
 jobs:
   proof:
-    name: Windows Workforce Wave 6C Native Engine C2a
+    name: Windows Workforce Wave 6C Native Bridge C2b
     runs-on: windows-latest
-    timeout-minutes: 60
+    timeout-minutes: 65
     steps:
       - uses: actions/checkout@v4
         with:
@@ -97,6 +97,12 @@ jobs:
         run: |
           node --check ci/orbita-redesign-wave6c-native-output-transform.cjs; if($LASTEXITCODE-ne0){throw 'native transform syntax'}
           node ci/orbita-redesign-wave6c-native-output-transform.cjs candidate 2>&1 | Tee-Object evidence-w6c-c2a/native-transform.log; if($LASTEXITCODE-ne0){throw 'native transform'}
+      - name: Apply and gate canonical native bridge
+        shell: pwsh
+        run: |
+          node --check ci/orbita-redesign-wave6c-native-bridge-transform.cjs; if($LASTEXITCODE-ne0){throw 'bridge transform syntax'}
+          node ci/orbita-redesign-wave6c-native-bridge-transform.cjs candidate 2>&1 | Tee-Object evidence-w6c-c2a/bridge-transform.log; if($LASTEXITCODE-ne0){throw 'bridge transform'}
+          node ci/orbita-redesign-wave6c-native-bridge-gate.cjs candidate 2>&1 | Tee-Object evidence-w6c-c2a/bridge-gate.log; if($LASTEXITCODE-ne0){throw 'bridge gate'}
       - name: Typecheck schema action coverage build
         working-directory: candidate
         shell: pwsh
@@ -106,10 +112,10 @@ jobs:
           npm run check:inspector-schema 2>&1 | Tee-Object ../evidence-w6c-c2a/schema.log; if($LASTEXITCODE-ne0){throw 'schema'}
           npm run check:action-coverage 2>&1 | Tee-Object ../evidence-w6c-c2a/action-coverage.log; if($LASTEXITCODE-ne0){throw 'action coverage'}
           npm run build 2>&1 | Tee-Object ../evidence-w6c-c2a/build.log; if($LASTEXITCODE-ne0){throw 'build'}
-      - name: Upload W6C C2a evidence
+      - name: Upload W6C C2b evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ORBITA-REDESIGN-WAVE6C-NATIVE-ENGINE-C2A-EVIDENCE
+          name: ORBITA-REDESIGN-WAVE6C-NATIVE-BRIDGE-C2B-EVIDENCE
           path: evidence-w6c-c2a
           retention-days: 7
