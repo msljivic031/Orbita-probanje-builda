@@ -32,8 +32,11 @@ settings.allowFormInput=true;
 const settingsMarker='settings-workforce-legend-after-save';
 if(!settings.steps.some(step=>step.type==='capture'&&step.label===settingsMarker)){
   settings.steps.push(
+    {type:'click',selector:'button[aria-label="Zatvori"]'},
+    {type:'wait',milliseconds:180},
     {type:'click',selector:'[data-orbita-settings-section="workforce"]'},
     {type:'wait',milliseconds:250},
+    {type:'assertVisible',selector:'[data-orbita-workforce-legend-settings="ready"]'},
     {type:'assertAttribute',selector:'[data-orbita-workforce-legend-settings="ready"]',attribute:'data-orbita-workforce-legend-settings',value:'ready'},
     {type:'capture',label:'settings-workforce-legend-before'},
     {type:'click',selector:'[data-orbita-workforce-legend-kind="available"] button'},
@@ -78,4 +81,4 @@ if(!people.steps.some(step=>step.type==='capture'&&step.label===peopleMarker)){
 }
 
 fs.writeFileSync(file,JSON.stringify(doc,null,2)+'\n');
-console.log(JSON.stringify({scenarios:[settings.id,people.id],executionOrder:'settings-appearance -> people-select-person',routeLaw:{settings:'podesavanja-only captures',people:'ljudi-only captures'},required:{settings:settings.required,people:people.required},settingsActions:['settings-workforce-legend-save','settings-workforce-legend-archive'],captures:['settings-workforce-legend-before','settings-workforce-legend-after-save','settings-workforce-legend-after-archive','people-workforce-legend-current-versioned','people-workforce-legend-previous-stable'],truth:['Settings persists AV version and field_work archive through real UI before People projection scenario runs','no cross-route capture inside a canonical scenario','reopening Workforce resets to current month, so no click on the already-current disabled control is required','current month proves D and AV, previous month preserves D and hides AV','strict canonical route invariant remains intact']},null,2));
+console.log(JSON.stringify({scenarios:[settings.id,people.id],executionOrder:'settings-appearance -> people-select-person',routeLaw:{settings:'podesavanja-only captures',people:'ljudi-only captures'},required:{settings:settings.required,people:people.required},settingsActions:['settings-workforce-legend-save','settings-workforce-legend-archive'],captures:['settings-workforce-legend-before','settings-workforce-legend-after-save','settings-workforce-legend-after-archive','people-workforce-legend-current-versioned','people-workforce-legend-previous-stable'],truth:['appearance modal is physically closed through its real accessible close control before Workforce evidence','Settings persists AV version and field_work archive through visible real UI before People projection scenario runs','no cross-route capture inside a canonical scenario','reopening Workforce resets to current month; current proves D and AV, previous preserves D and hides AV','strict canonical route invariant remains intact']},null,2));
