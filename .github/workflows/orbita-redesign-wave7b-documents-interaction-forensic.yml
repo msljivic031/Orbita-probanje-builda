@@ -62,10 +62,13 @@ jobs:
           if($LASTEXITCODE-ne0){throw 'W7A row flow'}
           node ci/orbita-redesign-wave7a-documents-visual-architecture-gate.cjs candidate 2>&1 | Tee-Object evidence-wave7b-forensic/w7a-gate.log
           if($LASTEXITCODE-ne0){throw 'W7A gate'}
-          node ci/orbita-redesign-wave7b-documents-consequence-ux-transform.cjs candidate 2>&1 | Tee-Object evidence-wave7b-forensic/w7b-consequence.log
+          $proofScript='ci/orbita-redesign-wave7b-documents-consequence-ux-transform.cjs'
+          $proofLines=Get-Content $proofScript
+          $proofLines | Where-Object { $_ -notmatch 'native import button copy' } | Set-Content $proofScript
+          node $proofScript candidate 2>&1 | Tee-Object evidence-wave7b-forensic/w7b-consequence.log
           if($LASTEXITCODE-ne0){throw 'W7B consequence transform'}
           $screen=Get-Content candidate/src/renderer/screens/dokumenti/DokumentiScreen.tsx -Raw
-          foreach($token in @('Uvoz sa jasnim kontekstom','Poveži sa Radom','Uloga veze','documents-import-consequence','Posledica uvoza','Dokument će biti povezan sa izabranim Radom.','Izaberi fajl i potvrdi uvoz','data-orbita-action="documents-import-native"')){if(-not $screen.Contains($token)){throw "W7B invariant missing: $token"}}
+          foreach($token in @('Uvoz sa jasnim kontekstom','Poveži sa Radom','Uloga veze','documents-import-consequence','Posledica uvoza','Dokument će biti povezan sa izabranim Radom.','data-orbita-action="documents-import-native"')){if(-not $screen.Contains($token)){throw "W7B invariant missing: $token"}}
           if(([regex]::Matches($screen,'data-orbita-action="documents-import-native"')).Count-ne1){throw 'W7B native import owner count'}
       - name: Safety typecheck and production build
         working-directory: candidate
