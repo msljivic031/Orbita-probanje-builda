@@ -71,6 +71,10 @@ jobs:
           if($LASTEXITCODE-ne0){throw "workforce final precode $LASTEXITCODE"}
           node ci/orbita-redesign-wave6b-legend-binding-forensic.cjs candidate workforce-evidence/workforce-legend-binding.json 2>&1 | Tee-Object workforce-evidence/legend-binding-console.log
           if($LASTEXITCODE-ne0){throw "workforce legend binding $LASTEXITCODE"}
+          node ci/orbita-redesign-wave6b-legend-exact-contract-forensic.cjs candidate workforce-evidence/workforce-legend-exact-contract.json 2>&1 | Tee-Object workforce-evidence/legend-exact-contract-console.log
+          if($LASTEXITCODE-ne0){throw "workforce legend exact contract $LASTEXITCODE"}
+          node ci/orbita-inspector-action-coverage-contract-forensic.cjs candidate workforce-evidence/inspector-action-coverage-contract.json 2>&1 | Tee-Object workforce-evidence/inspector-action-coverage-console.log
+          if($LASTEXITCODE-ne0){throw "inspector action coverage contract $LASTEXITCODE"}
       - name: Safety typecheck baseline
         working-directory: candidate
         shell: pwsh
