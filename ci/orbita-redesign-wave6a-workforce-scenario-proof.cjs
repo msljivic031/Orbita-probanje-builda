@@ -1,0 +1,26 @@
+const fs=require('fs'),path=require('path');
+const root=path.resolve(process.argv[2]||'candidate');
+const file=path.join(root,'config','inspector','scenarios.json');
+const doc=JSON.parse(fs.readFileSync(file,'utf8'));
+let target=null;
+function visit(node){if(!node||typeof node!=='object')return;if(!Array.isArray(node)&&node.id==='people-select-person'){if(target)throw Error('duplicate people-select-person');target=node;return}if(Array.isArray(node))node.forEach(visit);else Object.values(node).forEach(visit)}
+visit(doc);
+if(!target||!Array.isArray(target.steps))throw Error('people-select-person scenario missing');
+const marker='people-workforce-current-month';
+if(!target.steps.some(step=>step.type==='capture'&&step.label===marker)){
+  target.steps.push(
+    {type:'clickText',text:'Моја организација'},
+    {type:'wait',milliseconds:300},
+    {type:'clickText',text:'Otvori Workforce'},
+    {type:'wait',milliseconds:350},
+    {type:'assertAttribute',selector:'[data-orbita-workforce="monthly-sheet"]',attribute:'data-orbita-workforce',value:'monthly-sheet'},
+    {type:'capture',label:'people-workforce-current-month'},
+    {type:'clickText',text:'Prethodni'},
+    {type:'wait',milliseconds:300},
+    {type:'capture',label:'people-workforce-previous-month'},
+    {type:'clickText',text:'Nazad na dosije'},
+    {type:'wait',milliseconds:220}
+  );
+}
+fs.writeFileSync(file,JSON.stringify(doc,null,2)+'\n');
+console.log(JSON.stringify({scenario:target.id,productSrcChanged:false,captures:['people-workforce-current-month','people-workforce-previous-month'],truth:'real People/Organization mode entry; no synthetic route or fake screen'},null,2));
