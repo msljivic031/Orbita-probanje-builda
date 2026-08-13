@@ -1,9 +1,11 @@
-ORBITA redesign Wave 6A Workforce monthly projection V5 retry
-2026-08-13T08:46+02:00
-Repair and retest the two physically proven 1440 runtime issues from run 31673184630.
-1) Canonical People scenario organization transition is selector-stable via `.people-network-org-button` instead of exact text matching, while `people-open-workforce` remains directly covered through its data-orbita-action selector.
-2) Existing People CSS owner now respects the semantic `hidden` state for `people-dossier-surface`, so the organization dossier cannot remain visibly rendered underneath active Workforce mode.
-No change to Workforce truth semantics: availability range events, temporal membership/as-of, unknown_start honesty and workSchedule weekend ownership remain unchanged.
+ORBITA redesign Wave 6A Workforce monthly projection V6 retry
+2026-08-13T09:04+02:00
+Forensic repair from run 31673929226: the product/runtime successfully opened Workforce and captured current month, but the optional people-select-person scenario then failed on brittle clickText("Prethodni") despite the control existing with aria-label="Prethodni mesec".
+Proof-only stabilization:
+1) Previous-month navigation now uses `button[aria-label="Prethodni mesec"]`.
+2) Workforce close returns through the existing `[data-orbita-action="people-open-workforce"]` owner instead of brittle text matching.
+3) Monthly-sheet existence is asserted again after month navigation before the previous-month capture.
+No Workforce product semantics changed. Existing W6A UX hidden-state repair remains active.
 Run exact reconstruction, Wave 1→5, W6A product + UX repair, npm ci, typecheck, inspector schema, action coverage, build, strict 18/18 at 1440 and 1366, physical PNG dimension/hash gate, then human review.
 Do not claim full Wave 6; W6B versioned legend persistence/Settings and W6C real output remain open.
 FAIL closed.
