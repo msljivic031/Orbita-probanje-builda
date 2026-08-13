@@ -1,6 +1,8 @@
-ORBITA redesign Wave 6B exact write/security forensic
-2026-08-13T08:38+02:00
+ORBITA redesign Wave 6B exact write/security forensic V2
+2026-08-13T09:08+02:00
 READ-ONLY semantic forensic. Design Brain 0.5 active.
-Resolve exact fields for WorkspaceWriteBridgeResult and SemanticHistoryEventInput, exact sqliteWorkspaceStore hydration insertion context, and the updateDemoOrganization security classification across channel allowlist, business-actor requirement, command scope, request shape and critical-field policies.
-Also bind existing App/PeopleWorkspaceActions/Settings mutation plumbing so Workforce legend writes extend one admitted renderer→IPC→repository path.
+Repair the prior forensic parser failure without changing product code.
+Resolve WorkspaceWriteBridgeResult even when it is an alias/intersection/reference rather than a direct object type; resolve its inherited/direct fields semantically without exposing source snippets.
+Locate the actual `readWorkspaceFromDatabase` hydration owner(s) physically instead of assuming sqliteWorkspaceStore is the implementation owner.
+Retain exact SemanticHistoryEventInput, Settings/App/PeopleWorkspaceActions plumbing, and updateDemoOrganization security classification across allowlist/business-actor/scope/request/critical policies; generic policies remain fail-closed and are not forced to contain a literal channel when they do not today.
 Metadata only; no private source snippets and no product mutation in this run.
