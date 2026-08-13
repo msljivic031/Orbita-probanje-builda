@@ -1,6 +1,6 @@
-ORBITA redesign Wave 6B deep runtime binding forensic
-2026-08-13T08:34+02:00
+ORBITA redesign Wave 6B exact write/security forensic
+2026-08-13T08:38+02:00
 READ-ONLY semantic forensic. Design Brain 0.5 active.
-Resolve exact low-level SQLite runtime methods, A4.18 schema installer convention, organization command/history functions, workspace hydration chain, repository IPC handler shape, IPC registration, preload safeInvoke/API contract and shared API type owner needed for one persisted versioned Workforce legend family.
-This is implementation preparation only: metadata output, no private source snippets, no product mutation, no parallel Settings/permissions/history subsystem.
-W6A proof runs independently and remains fail-closed until both viewport runtime captures and human review pass.
+Resolve exact fields for WorkspaceWriteBridgeResult and SemanticHistoryEventInput, exact sqliteWorkspaceStore hydration insertion context, and the updateDemoOrganization security classification across channel allowlist, business-actor requirement, command scope, request shape and critical-field policies.
+Also bind existing App/PeopleWorkspaceActions/Settings mutation plumbing so Workforce legend writes extend one admitted renderer→IPC→repository path.
+Metadata only; no private source snippets and no product mutation in this run.
