@@ -68,6 +68,8 @@ jobs:
           if($LASTEXITCODE-ne0){throw "r13aq $LASTEXITCODE"}
           node ci/r13ap-visual-inspector-root-launch-patch.cjs candidate 2>&1 | Tee-Object evidence/root.log
           if($LASTEXITCODE-ne0){throw "root $LASTEXITCODE"}
+          node ci/orbita-visual-inspector-viewport-proof-patch.cjs candidate 2>&1 | Tee-Object evidence/viewport-proof-patch.log
+          if($LASTEXITCODE-ne0){throw "viewport proof patch $LASTEXITCODE"}
           node ci/orbita-redesign-wave1-transform.cjs candidate 2>&1 | Tee-Object evidence/wave1.log
           if($LASTEXITCODE-ne0){throw "wave1 $LASTEXITCODE"}
           node ci/orbita-redesign-wave2-run.cjs candidate 2>&1 | Tee-Object evidence/wave2.log
@@ -141,6 +143,11 @@ jobs:
           $h=@(Get-ChildItem VISUAL_REDESIGN_W5_1366/screenshots -Filter '*people-person-unified-history*.png')
           if($h.Count-lt1){throw 'unified history evidence missing 1366'}
           "historyCaptures=$($h.Count) unlabeled=$($unlabeled.Count)" | Tee-Object evidence/history-1366.txt
+      - name: Assert physical cross-viewport screenshot evidence
+        shell: pwsh
+        run: |
+          node ci/orbita-redesign-wave5-viewport-evidence-gate.cjs "$env:GITHUB_WORKSPACE" 2>&1 | Tee-Object evidence/viewport-evidence-gate.log
+          if($LASTEXITCODE-ne0){throw "viewport evidence gate $LASTEXITCODE"}
       - name: Upload Wave 5 evidence
         if: always()
         uses: actions/upload-artifact@v4
