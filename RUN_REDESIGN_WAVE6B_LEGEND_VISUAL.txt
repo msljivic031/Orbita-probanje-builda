@@ -1,6 +1,6 @@
-ORBITA redesign Wave 6B full runtime visual proof V3
-2026-08-13T17:34+02:00
-Reconstruct exact R13AP + admitted redesign through W6A, then apply current W6B core/write/security/Settings state including the stable semantic Settings section selector repair.
-Real canonical Settings scenario must directly: open Workforce legend through data-orbita-settings-section=workforce, save available D -> AV, verify persisted Settings token, archive field_work and verify archived_fallback, navigate to real People/Organization Workforce, prove current month exposes D + AV meanings, prove previous month preserves D and hides AV.
-Require direct action coverage for both new Settings actions, typecheck/build, strict 18/18 canonical admission at physical 1440x900 and 1366x768, and cross-viewport/current-vs-previous physical PNG hash/dimension gates.
-No fake route, no renderer-only persistence, no weakened admission, no print/export claim. FAIL closed.
+ORBITA redesign Wave 6B full runtime visual proof V4
+2026-08-13T17:50+02:00
+Reconstruct exact R13AP + admitted redesign through W6A, then apply current W6B core/write/security/Settings state including stable semantic Settings selection and the human-truth presentation repair for system_default_v1.
+System default persistence seed may use an internal 1970 effective sentinel for resolution but the user-facing Settings ledger must present it only as Sistemska početna vrednost and must never render 1.1.1970 as a historical user-effective date. Real user versions and archive/fallback transitions keep their real effective dates.
+Real canonical Settings scenario must directly save available D -> AV, verify persisted Settings token, archive field_work and verify archived_fallback, navigate to real People/Organization Workforce, prove current month exposes D + AV meanings, and prove previous month preserves D and hides AV.
+Require typecheck/build, strict 18/18 canonical admission at physical 1440x900 and 1366x768, viewport evidence, artifact, and physical human screenshot review. No fake history, no weakened admission, no print/export claim. FAIL closed.
