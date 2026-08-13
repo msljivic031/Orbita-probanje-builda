@@ -11,7 +11,7 @@ if(!target.steps.some(step=>step.type==='capture'&&step.label===marker)){
   target.steps.push(
     {type:'clickText',text:'Моја организација'},
     {type:'wait',milliseconds:300},
-    {type:'clickText',text:'Otvori Workforce'},
+    {type:'click',selector:'[data-orbita-action="people-open-workforce"]'},
     {type:'wait',milliseconds:350},
     {type:'assertAttribute',selector:'[data-orbita-workforce="monthly-sheet"]',attribute:'data-orbita-workforce',value:'monthly-sheet'},
     {type:'capture',label:'people-workforce-current-month'},
@@ -23,4 +23,4 @@ if(!target.steps.some(step=>step.type==='capture'&&step.label===marker)){
   );
 }
 fs.writeFileSync(file,JSON.stringify(doc,null,2)+'\n');
-console.log(JSON.stringify({scenario:target.id,productSrcChanged:false,captures:['people-workforce-current-month','people-workforce-previous-month'],truth:'real People/Organization mode entry; no synthetic route or fake screen'},null,2));
+console.log(JSON.stringify({scenario:target.id,productSrcChanged:false,directAction:'people-open-workforce',directActionStep:{type:'click',selector:'[data-orbita-action="people-open-workforce"]'},captures:['people-workforce-current-month','people-workforce-previous-month'],truth:'real People/Organization mode entry; canonical scenario directly covers the source action; no synthetic route, fake screen or disposition masking'},null,2));
