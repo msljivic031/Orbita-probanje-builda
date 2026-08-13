@@ -27,7 +27,7 @@ jobs:
   forensic:
     name: Windows Documents Interaction + Consequence UX
     runs-on: windows-latest
-    timeout-minutes: 55
+    timeout-minutes: 110
     steps:
       - uses: actions/checkout@v4
         with:
@@ -84,6 +84,38 @@ jobs:
           if($LASTEXITCODE-ne0){throw 'action coverage'}
           npm run build 2>&1 | Tee-Object ../evidence-wave7b-forensic/build.log
           if($LASTEXITCODE-ne0){throw 'build'}
+      - name: Full canonical visual inspector 1440x900
+        shell: pwsh
+        run: |
+          & "$env:GITHUB_WORKSPACE\ci\orbita-visual-inspector-infra-retry.ps1" -CandidateRoot "$env:GITHUB_WORKSPACE\candidate" -Output "$env:GITHUB_WORKSPACE\VISUAL_W7B_1440" -Width 1440 -Height 900 -LogFile "$env:GITHUB_WORKSPACE\evidence-wave7b-forensic\inspector-1440.log"
+          if($LASTEXITCODE-ne0){throw "1440 inspector $LASTEXITCODE"}
+          $m=Get-Content VISUAL_W7B_1440/MANIFEST.json -Raw | ConvertFrom-Json
+          $m.summary | ConvertTo-Json -Depth 8 | Out-File evidence-wave7b-forensic/summary-1440.json
+          if($m.summary.state-ne'PASS' -or $m.summary.canonicalScenarios-ne18 -or $m.summary.passedCanonicalScenarios-ne18 -or $m.summary.failedRequiredCanonicalScenarios-ne0 -or $m.summary.failedGates-ne0){throw '1440 admission failure'}
+          $importHtml=Get-ChildItem VISUAL_W7B_1440/states -Filter '*documents-r4r21-import-workflow*.html' | Select-Object -First 1
+          $importPng=Get-ChildItem VISUAL_W7B_1440/screenshots -Filter '*documents-r4r21-import-workflow*.png' | Select-Object -First 1
+          if(-not $importHtml -or -not $importPng){throw '1440 import evidence missing'}
+          $html=Get-Content $importHtml.FullName -Raw
+          foreach($token in @('Uvoz sa jasnim kontekstom','Poveži sa Radom','Uloga veze','Posledica uvoza','Dokument će biti povezan sa izabranim Radom.','documents-import-native')){if(-not $html.Contains($token)){throw "1440 import evidence invariant missing: $token"}}
+          New-Item -ItemType Directory -Force evidence-wave7b-forensic/visual-1440 | Out-Null
+          Get-ChildItem VISUAL_W7B_1440/screenshots -Filter '*.png' | Where-Object { $_.Name -match 'documents-r4r21-import-workflow|documents-selected-document|documents-r4r21-selected-managed-state' } | Copy-Item -Destination evidence-wave7b-forensic/visual-1440
+          Get-ChildItem VISUAL_W7B_1440/states -Filter '*.html' | Where-Object { $_.Name -match 'documents-r4r21-import-workflow|documents-selected-document|documents-r4r21-selected-managed-state' } | Copy-Item -Destination evidence-wave7b-forensic/visual-1440
+      - name: Full canonical visual inspector 1366x768
+        shell: pwsh
+        run: |
+          & "$env:GITHUB_WORKSPACE\ci\orbita-visual-inspector-infra-retry.ps1" -CandidateRoot "$env:GITHUB_WORKSPACE\candidate" -Output "$env:GITHUB_WORKSPACE\VISUAL_W7B_1366" -Width 1366 -Height 768 -LogFile "$env:GITHUB_WORKSPACE\evidence-wave7b-forensic\inspector-1366.log"
+          if($LASTEXITCODE-ne0){throw "1366 inspector $LASTEXITCODE"}
+          $m=Get-Content VISUAL_W7B_1366/MANIFEST.json -Raw | ConvertFrom-Json
+          $m.summary | ConvertTo-Json -Depth 8 | Out-File evidence-wave7b-forensic/summary-1366.json
+          if($m.summary.state-ne'PASS' -or $m.summary.canonicalScenarios-ne18 -or $m.summary.passedCanonicalScenarios-ne18 -or $m.summary.failedRequiredCanonicalScenarios-ne0 -or $m.summary.failedGates-ne0){throw '1366 admission failure'}
+          $importHtml=Get-ChildItem VISUAL_W7B_1366/states -Filter '*documents-r4r21-import-workflow*.html' | Select-Object -First 1
+          $importPng=Get-ChildItem VISUAL_W7B_1366/screenshots -Filter '*documents-r4r21-import-workflow*.png' | Select-Object -First 1
+          if(-not $importHtml -or -not $importPng){throw '1366 import evidence missing'}
+          $html=Get-Content $importHtml.FullName -Raw
+          foreach($token in @('Uvoz sa jasnim kontekstom','Poveži sa Radom','Uloga veze','Posledica uvoza','Dokument će biti povezan sa izabranim Radom.','documents-import-native')){if(-not $html.Contains($token)){throw "1366 import evidence invariant missing: $token"}}
+          New-Item -ItemType Directory -Force evidence-wave7b-forensic/visual-1366 | Out-Null
+          Get-ChildItem VISUAL_W7B_1366/screenshots -Filter '*.png' | Where-Object { $_.Name -match 'documents-r4r21-import-workflow|documents-selected-document|documents-r4r21-selected-managed-state' } | Copy-Item -Destination evidence-wave7b-forensic/visual-1366
+          Get-ChildItem VISUAL_W7B_1366/states -Filter '*.html' | Where-Object { $_.Name -match 'documents-r4r21-import-workflow|documents-selected-document|documents-r4r21-selected-managed-state' } | Copy-Item -Destination evidence-wave7b-forensic/visual-1366
       - name: Upload interaction and consequence evidence
         if: always()
         uses: actions/upload-artifact@v4
