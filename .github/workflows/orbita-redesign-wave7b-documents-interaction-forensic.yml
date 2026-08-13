@@ -1,10 +1,11 @@
-name: ORBITA Redesign Wave 7B Documents Interaction Forensic
+name: ORBITA Redesign Wave 7B Documents Interaction + Consequence Proof
 
 on:
   push:
     branches: [orbita-redesign]
     paths:
       - 'ci/orbita-redesign-wave7b-documents-interaction-forensic.cjs'
+      - 'ci/orbita-redesign-wave7b-documents-consequence-ux-transform.cjs'
       - '.github/workflows/orbita-redesign-wave7b-documents-interaction-forensic.yml'
   workflow_dispatch:
 
@@ -24,9 +25,9 @@ env:
 
 jobs:
   forensic:
-    name: Windows Documents Interaction Owner Map
+    name: Windows Documents Interaction + Consequence UX
     runs-on: windows-latest
-    timeout-minutes: 45
+    timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
         with:
@@ -52,7 +53,35 @@ jobs:
         run: |
           node ci/orbita-redesign-wave7b-documents-interaction-forensic.cjs candidate evidence-wave7b-forensic/documents-interaction-map.json 2>&1 | Tee-Object evidence-wave7b-forensic/interaction-forensic.log
           if($LASTEXITCODE-ne0){throw 'Documents interaction forensic'}
-      - name: Upload interaction forensic evidence
+      - name: Reapply admitted Wave 7A and W7B consequence UX
+        shell: pwsh
+        run: |
+          node ci/orbita-redesign-wave7a-documents-visual-architecture-transform.cjs candidate 2>&1 | Tee-Object evidence-wave7b-forensic/w7a-transform.log
+          if($LASTEXITCODE-ne0){throw 'W7A transform'}
+          node ci/orbita-redesign-wave7a-documents-row-flow-repair.cjs candidate 2>&1 | Tee-Object evidence-wave7b-forensic/w7a-row-flow.log
+          if($LASTEXITCODE-ne0){throw 'W7A row flow'}
+          node ci/orbita-redesign-wave7a-documents-visual-architecture-gate.cjs candidate 2>&1 | Tee-Object evidence-wave7b-forensic/w7a-gate.log
+          if($LASTEXITCODE-ne0){throw 'W7A gate'}
+          node ci/orbita-redesign-wave7b-documents-consequence-ux-transform.cjs candidate 2>&1 | Tee-Object evidence-wave7b-forensic/w7b-consequence.log
+          if($LASTEXITCODE-ne0){throw 'W7B consequence transform'}
+          $screen=Get-Content candidate/src/renderer/screens/dokumenti/DokumentiScreen.tsx -Raw
+          foreach($token in @('Uvoz sa jasnim kontekstom','Poveži sa Radom','Uloga veze','documents-import-consequence','Posledica uvoza','Dokument će biti povezan sa izabranim Radom.','Izaberi fajl i potvrdi uvoz','data-orbita-action="documents-import-native"')){if(-not $screen.Contains($token)){throw "W7B invariant missing: $token"}}
+          if(([regex]::Matches($screen,'data-orbita-action="documents-import-native"')).Count-ne1){throw 'W7B native import owner count'}
+      - name: Safety typecheck and production build
+        working-directory: candidate
+        shell: pwsh
+        run: |
+          npm ci --no-audit --no-fund 2>&1 | Tee-Object ../evidence-wave7b-forensic/npm-ci.log
+          if($LASTEXITCODE-ne0){throw 'npm ci'}
+          npm run typecheck 2>&1 | Tee-Object ../evidence-wave7b-forensic/typecheck.log
+          if($LASTEXITCODE-ne0){throw 'typecheck'}
+          npm run check:inspector-schema 2>&1 | Tee-Object ../evidence-wave7b-forensic/schema.log
+          if($LASTEXITCODE-ne0){throw 'schema'}
+          npm run check:action-coverage 2>&1 | Tee-Object ../evidence-wave7b-forensic/action-coverage.log
+          if($LASTEXITCODE-ne0){throw 'action coverage'}
+          npm run build 2>&1 | Tee-Object ../evidence-wave7b-forensic/build.log
+          if($LASTEXITCODE-ne0){throw 'build'}
+      - name: Upload interaction and consequence evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
