@@ -74,8 +74,8 @@ if(!s.includes(registryMarker)){
 }
 
 const jsxAnchorFrom="  const jsx=/^(\\s*)onUpdateDemoStatusDefinition=\\{([^}]+)\\}/m.exec(host);";
-const jsxAnchorTo="  const jsx=/^(\\s*)<PodesavanjaScreen\\b/m.exec(host);";
-if(replaceOnce(jsxAnchorFrom,jsxAnchorTo,'W6B Settings AppShell JSX owner anchor repair')) repairs.push('bind Settings through unique PodesavanjaScreen JSX owner');
+const jsxAnchorTo="  const jsx=/(\\s*)<PodesavanjaScreen\\b/m.exec(host);";
+if(replaceOnce(jsxAnchorFrom,jsxAnchorTo,'W6B Settings AppShell JSX owner anchor repair')) repairs.push('bind Settings through unique PodesavanjaScreen JSX owner without a line-start assumption');
 
 const jsxErrorFrom="  if(!jsx)throw Error(`Settings host ${hostRel} missing status JSX anchor`);";
 const jsxErrorTo="  if(!jsx)throw Error(`Settings host ${hostRel} missing PodesavanjaScreen JSX owner anchor`);";
@@ -92,4 +92,4 @@ if(!s.includes(jsxErrorTo)) throw new Error('W6B Settings structural JSX failure
 if(!s.includes(jsxInsertTo)) throw new Error('W6B Settings structural JSX insertion not established');
 
 fs.writeFileSync(file,s,'utf8');
-console.log(JSON.stringify({state:'W6B_SETTINGS_GENERATOR_REPAIR_APPLIED',owner:'ci/orbita-redesign-wave6b-legend-settings-transform.cjs',repairs,alreadyAdmittedParts:repairs.length===0,physicalOwner:'src/renderer/app/state/useOrganizationRegistryActions.ts',settingsHostOwner:'unique <PodesavanjaScreen host',rules:['idempotent on already-repaired generator','bounded effective-date normalization','no parallel product owner','fail closed on unknown semantic drift'],generatedProductBindingChanged:true},null,2));
+console.log(JSON.stringify({state:'W6B_SETTINGS_GENERATOR_REPAIR_APPLIED',owner:'ci/orbita-redesign-wave6b-legend-settings-transform.cjs',repairs,alreadyAdmittedParts:repairs.length===0,physicalOwner:'src/renderer/app/state/useOrganizationRegistryActions.ts',settingsHostOwner:'unique <PodesavanjaScreen host; no line-start assumption',rules:['idempotent on already-repaired generator','bounded effective-date normalization','no parallel product owner','fail closed on unknown semantic drift'],generatedProductBindingChanged:true},null,2));
