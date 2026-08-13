@@ -86,9 +86,13 @@ jobs:
           @'
           import fs from 'node:fs'; import os from 'node:os'; import path from 'node:path';
           import { openDemoWorkspaceDatabase, readWorkspaceFromDatabase } from '../candidate/dist-electron/main/persistence/workspace/sqliteWorkspaceStore.js';
+          import { createDemoPersonRuntime } from '../candidate/dist-electron/main/persistence/organization/sqliteOrganizationRegistryCommands.js';
           import { updateWorkforceLegendRuntime } from '../candidate/dist-electron/main/persistence/people/sqliteWorkforceLegendCommands.js';
           const dbPath=path.join(os.tmpdir(),`orbita-w6b-write-${process.pid}-${Date.now()}.sqlite`);
-          let db=openDemoWorkspaceDatabase(dbPath,{forceSeed:true}); const initial=readWorkspaceFromDatabase(db); const actor=initial.people.find(p=>!p.archivedAt)?.id; if(!actor)throw new Error('no actor in seeded workspace'); db.close();
+          let db=openDemoWorkspaceDatabase(dbPath,{forceSeed:true}); db.close();
+          const createdActor=createDemoPersonRuntime({displayName:'W6B Proof Actor',availability:'available',isSelf:true},dbPath);
+          const actor=createdActor.personId; if(!actor)throw new Error('proof actor was not created through existing person runtime');
+          db=openDemoWorkspaceDatabase(dbPath,{forceSeed:false}); const initial=readWorkspaceFromDatabase(db); if(!initial.people.some(p=>p.id===actor))throw new Error('proof actor not hydrated'); db.close();
           const one=updateWorkforceLegendRuntime({availabilityKind:'available',token:'AV',displayName:'Dostupan potvrđeno',semanticCategory:'available',sortOrder:10,effectiveFrom:'2026-08-13T08:00:00.000Z',actorId:actor,reasonCode:'w6b_runtime_proof'},dbPath);
           if(one.workspace.workforceLegendVersions?.length!==8)throw new Error(`after first write ${one.workspace.workforceLegendVersions?.length}`);
           const two=updateWorkforceLegendRuntime({availabilityKind:'available',token:'A2',displayName:'Dostupan nova oznaka',semanticCategory:'available',sortOrder:10,effectiveFrom:'2026-08-14T08:00:00.000Z',actorId:actor,reasonCode:'w6b_runtime_proof_2'},dbPath);
@@ -102,7 +106,7 @@ jobs:
           const history=db.prepare("SELECT type,entity_type,actor_id,previous_value_json,new_value_json,source FROM history_events WHERE type='workforce_legend_changed' ORDER BY timestamp").all(); if(history.length!==2)throw new Error(`history rows ${history.length}`);
           let updateBlocked=false;try{db.prepare("UPDATE workforce_legend_versions_a419 SET token='BAD' WHERE availability_kind='available'").run()}catch{updateBlocked=true} if(!updateBlocked)throw new Error('append-only update not blocked'); db.close();
           let backdateBlocked=false;try{updateWorkforceLegendRuntime({availabilityKind:'available',token:'OLD',displayName:'Backdate',semanticCategory:'available',sortOrder:10,effectiveFrom:'2026-08-13T09:00:00.000Z',actorId:actor},dbPath)}catch{backdateBlocked=true} if(!backdateBlocked)throw new Error('backdate not blocked');
-          console.log(JSON.stringify({state:'PASS',actor,writeOperations:[one.write?.operation??'runtime',two.write?.operation??'runtime'],availableRows:rows,historyCount:history.length,asOf:{before:'D',first:'AV',second:'A2'},appendOnlyUpdateBlocked:updateBlocked,backdateBlocked},null,2));
+          console.log(JSON.stringify({state:'PASS',actor,actorCreatedThrough:'createDemoPersonRuntime',availableRows:rows,historyCount:history.length,asOf:{before:'D',first:'AV',second:'A2'},appendOnlyUpdateBlocked:updateBlocked,backdateBlocked},null,2));
           try{fs.rmSync(dbPath,{force:true})}catch{}
           '@ | Set-Content evidence-w6b-write/runtime-write-proof.mjs -Encoding utf8
           node evidence-w6b-write/runtime-write-proof.mjs 2>&1 | Tee-Object evidence-w6b-write/runtime-write-proof.log
