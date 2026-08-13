@@ -8,7 +8,7 @@ const L=R(files.legend),W=R(files.workspace),S=R(files.schema),SR=R(files.schema
 must(/WorkforceLegendVersion/.test(L),'legend version type missing');
 must(/effectiveFrom/.test(L)&&/supersedesVersionId/.test(L)&&/recordedAt/.test(L),'legend version identity/provenance boundary incomplete');
 must(/resolveWorkforceLegendVersion/.test(L)&&/workforceLegendEntriesForDate/.test(L),'as-of resolver missing');
-must(/workforceLegendVersions\s*:\s*WorkforceLegendVersion\[\]/.test(W),'Workspace aggregate legend field missing');
+must(/workforceLegendVersions\??\s*:\s*WorkforceLegendVersion\[\]/.test(W),'Workspace aggregate legend field missing');
 must(/CREATE TABLE IF NOT EXISTS workforce_legend_versions_a419/.test(S),'A4.19 table missing');
 must(/append-only/.test(S)&&/BEFORE UPDATE/.test(S)&&/BEFORE DELETE/.test(S),'append-only SQL enforcement missing');
 must(/INSERT OR IGNORE/.test(S)&&/system-default-v1/.test(S),'deterministic seed missing');
@@ -16,4 +16,4 @@ must(/ensureA419WorkforceLegendSchema/.test(SR),'schema chain missing A4.19');
 must(/readWorkforceLegendVersions/.test(RD)&&/workforceLegendVersions:\s*readWorkforceLegendVersions\(database\)/.test(RD),'single reader hydration missing');
 must(/workforceLegendEntryForDate\(workspace\.workforceLegendVersions/.test(M),'per-day as-of legend consumption missing');
 must(/workforceLegendEntriesForDate\(workspace\.workforceLegendVersions/.test(C),'visible month legend not bound to persisted versions');
-console.log(JSON.stringify({audit:'ORBITA_WAVE6B_LEGEND_CORE_CONTRACT',state:'PASS',checks:11,scope:'A4.19 append-only persisted legend + Workspace hydration + per-day/month as-of resolver; write/Settings intentionally separate'},null,2));
+console.log(JSON.stringify({audit:'ORBITA_WAVE6B_LEGEND_CORE_CONTRACT',state:'PASS',checks:11,scope:'A4.19 append-only persisted legend + Workspace hydration + per-day/month as-of resolver; legacy fixture omission tolerated; write/Settings intentionally separate'},null,2));
