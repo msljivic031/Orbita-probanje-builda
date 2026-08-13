@@ -1,0 +1,110 @@
+name: ORBITA Redesign Wave 6C Renderer Output Proof
+
+on:
+  push:
+    branches: [orbita-redesign]
+    paths:
+      - 'ci/orbita-redesign-wave6c-renderer-output-bind.cjs'
+      - 'ci/orbita-redesign-wave6c-renderer-output-gate.cjs'
+      - '.github/workflows/orbita-redesign-wave6c-renderer-output-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CI: 'true'
+  CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+  ORBITA_BRIDGE_ZIP: 'ORBITA_R13AN_PUBLIC_ENCRYPTED_CI_REPO_READY_R1_2026_08_12.zip'
+  ORBITA_BRIDGE_SHA256: 'dfe1f58a7df5c79c2d841496fd364418f98a91ed2fd6112fc0f5e0ab9c43731e'
+  ORBITA_BASE_R13AN_SHA256: '140846e9be04d3da222996fed9701771c4cb1be1c8395e766512ece153ba399a'
+  ORBITA_ENCRYPTED_SHA256: '827742a1633bd71dae1d2e1fb3dc77a95835a279a660016c8844d305341b1687'
+  ORBITA_AAD: 'ORBITA-R13AN-PUBLIC-CI-R1'
+  ORBITA_ENCRYPTED_FILE: 'bridge/ORBITA2_R14_R13AN_NATIVE_CONTENT_SIGNATURE_HARDENING_NON_PROMOTED_CANDIDATE_R2_2026_08_12.zip.aesgcm'
+  ORBITA_R13AP_SOURCE_IDENTITY: '8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704'
+
+jobs:
+  proof:
+    name: Windows Workforce Wave 6C Renderer Output C2d
+    runs-on: windows-latest
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: orbita-redesign
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Reconstruct exact candidate through C2b
+        shell: pwsh
+        env:
+          ORBITA_CI_AES256_KEY_B64: ${{ secrets.ORBITA_CI_AES256_KEY_B64 }}
+        run: |
+          ./ci/orbita-redesign-wave6c-reconstruct-c2b.ps1 -EvidenceDir evidence-w6c-c2d
+      - name: Apply and gate renderer output commands
+        shell: pwsh
+        run: |
+          node --check ci/orbita-redesign-wave6c-renderer-output-bind.cjs
+          if($LASTEXITCODE-ne0){throw 'renderer bind syntax'}
+          node ci/orbita-redesign-wave6c-renderer-output-bind.cjs candidate 2>&1 | Tee-Object evidence-w6c-c2d/renderer-bind.log
+          if($LASTEXITCODE-ne0){throw 'renderer bind'}
+          node ci/orbita-redesign-wave6c-renderer-output-gate.cjs candidate 2>&1 | Tee-Object evidence-w6c-c2d/renderer-gate.log
+          if($LASTEXITCODE-ne0){throw 'renderer gate'}
+      - name: Typecheck schema action coverage build
+        working-directory: candidate
+        shell: pwsh
+        run: |
+          npm ci --no-audit --no-fund 2>&1 | Tee-Object ../evidence-w6c-c2d/npm-ci.log; if($LASTEXITCODE-ne0){throw 'npm ci'}
+          npm run typecheck 2>&1 | Tee-Object ../evidence-w6c-c2d/typecheck.log; if($LASTEXITCODE-ne0){throw 'typecheck'}
+          npm run check:inspector-schema 2>&1 | Tee-Object ../evidence-w6c-c2d/schema.log; if($LASTEXITCODE-ne0){throw 'schema'}
+          npm run check:action-coverage 2>&1 | Tee-Object ../evidence-w6c-c2d/action-coverage.log; if($LASTEXITCODE-ne0){throw 'action coverage'}
+          npm run build 2>&1 | Tee-Object ../evidence-w6c-c2d/build.log; if($LASTEXITCODE-ne0){throw 'build'}
+      - name: Full canonical visual inspector 1440x900
+        shell: pwsh
+        run: |
+          & "$env:GITHUB_WORKSPACE\ci\orbita-visual-inspector-infra-retry.ps1" -CandidateRoot "$env:GITHUB_WORKSPACE\candidate" -Output "$env:GITHUB_WORKSPACE\VISUAL_REDESIGN_W6C_C2D_1440" -Width 1440 -Height 900 -LogFile "$env:GITHUB_WORKSPACE\evidence-w6c-c2d\visual-1440-console.log"
+          if($LASTEXITCODE-ne0){throw "visual 1440 $LASTEXITCODE"}
+      - name: Assert 1440 output command evidence
+        shell: pwsh
+        run: |
+          $m=Get-Content VISUAL_REDESIGN_W6C_C2D_1440/MANIFEST.json -Raw | ConvertFrom-Json
+          $m.summary | ConvertTo-Json -Depth 8 | Out-File evidence-w6c-c2d/visual-1440-summary.json
+          if($m.summary.state-ne'PASS' -or $m.summary.canonicalScenarios-ne18 -or $m.summary.passedCanonicalScenarios-ne18 -or $m.summary.failedRequiredCanonicalScenarios-ne0 -or $m.summary.failedGates-ne0){throw '1440 admission failure'}
+          $state=Get-ChildItem VISUAL_REDESIGN_W6C_C2D_1440/states -Filter '*people-workforce-legend-current-versioned.html' | Select-Object -First 1
+          if(-not$state){$state=Get-ChildItem VISUAL_REDESIGN_W6C_C2D_1440/states -Filter '*people-workforce-current-month.html' | Select-Object -First 1}
+          if(-not$state){throw '1440 Workforce state missing'}
+          $html=Get-Content $state.FullName -Raw
+          if($html -notmatch 'data-orbita-workforce-output="export-pdf"'){throw '1440 export command missing'}
+          if($html -notmatch 'data-orbita-workforce-output="print"'){throw '1440 print command missing'}
+          if(-not(Get-ChildItem VISUAL_REDESIGN_W6C_C2D_1440/screenshots -Filter '*people-workforce-legend-current-versioned*.png')){throw '1440 Workforce screenshot missing'}
+      - name: Full canonical visual inspector 1366x768
+        shell: pwsh
+        run: |
+          & "$env:GITHUB_WORKSPACE\ci\orbita-visual-inspector-infra-retry.ps1" -CandidateRoot "$env:GITHUB_WORKSPACE\candidate" -Output "$env:GITHUB_WORKSPACE\VISUAL_REDESIGN_W6C_C2D_1366" -Width 1366 -Height 768 -LogFile "$env:GITHUB_WORKSPACE\evidence-w6c-c2d\visual-1366-console.log"
+          if($LASTEXITCODE-ne0){throw "visual 1366 $LASTEXITCODE"}
+      - name: Assert 1366 output command evidence
+        shell: pwsh
+        run: |
+          $m=Get-Content VISUAL_REDESIGN_W6C_C2D_1366/MANIFEST.json -Raw | ConvertFrom-Json
+          $m.summary | ConvertTo-Json -Depth 8 | Out-File evidence-w6c-c2d/visual-1366-summary.json
+          if($m.summary.state-ne'PASS' -or $m.summary.canonicalScenarios-ne18 -or $m.summary.passedCanonicalScenarios-ne18 -or $m.summary.failedRequiredCanonicalScenarios-ne0 -or $m.summary.failedGates-ne0){throw '1366 admission failure'}
+          $state=Get-ChildItem VISUAL_REDESIGN_W6C_C2D_1366/states -Filter '*people-workforce-legend-current-versioned.html' | Select-Object -First 1
+          if(-not$state){$state=Get-ChildItem VISUAL_REDESIGN_W6C_C2D_1366/states -Filter '*people-workforce-current-month.html' | Select-Object -First 1}
+          if(-not$state){throw '1366 Workforce state missing'}
+          $html=Get-Content $state.FullName -Raw
+          if($html -notmatch 'data-orbita-workforce-output="export-pdf"'){throw '1366 export command missing'}
+          if($html -notmatch 'data-orbita-workforce-output="print"'){throw '1366 print command missing'}
+          if(-not(Get-ChildItem VISUAL_REDESIGN_W6C_C2D_1366/screenshots -Filter '*people-workforce-legend-current-versioned*.png')){throw '1366 Workforce screenshot missing'}
+      - name: Upload W6C C2d evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ORBITA-REDESIGN-WAVE6C-RENDERER-OUTPUT-C2D-EVIDENCE
+          path: |
+            evidence-w6c-c2d
+            VISUAL_REDESIGN_W6C_C2D_1440
+            VISUAL_REDESIGN_W6C_C2D_1366
+          retention-days: 7
