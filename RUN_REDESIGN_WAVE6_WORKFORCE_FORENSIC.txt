@@ -1,4 +1,4 @@
-ORBITA redesign Wave 6B exact renderer action-hook forensic V5
-2026-08-13T10:08+02:00
+ORBITA redesign Wave 6B exact organization registry action-owner forensic V6
+2026-08-13T10:12+02:00
 READ-ONLY bounded forensic. Design Brain 0.5 active.
-All backend W6B owner/write/security contracts are already proven. Resolve only the exact current source shape of `src/renderer/app/state/useOrganizationCommandActions.ts`, especially the real updateDemoOrganization callback declaration/name/body, its window.orbita call, workspace write-state handling, Workspace refresh and returned action binding. No product mutation. This exists only to eliminate guessing in Settings binding.
+The prior forensic proved useOrganizationCommandActions is only an aggregator. Resolve the exact current source shape of `src/renderer/app/state/useOrganizationRegistryActions.ts`: updateDemoOrganization declaration/body, window.orbita call, workspace write-state handling, refreshed Workspace assignment, error/finally behavior and returned action binding. No product mutation. This exists only to bind Settings to the real existing owner without guessing.
