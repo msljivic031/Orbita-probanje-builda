@@ -1,6 +1,7 @@
 ORBITA redesign Wave 5 Person History trigger
-2026-08-12T23:47+02:00
-Retry after type-safe truth repair: ResponsibilityRoute may have no workItemId; TemporalTeamMembership may have unknown validFrom.
-No fake Rad link and no fabricated historical start date. Persisted record timestamp is used only as a stable sort anchor when interval start is unknown.
-Design Brain 0.5 active; product intent unchanged.
-Preserve Wave 4 deep absence proof and require Person history runtime capture at 1440x900 + 1366x768.
+2026-08-13T07:26+02:00
+Proof-harness retest after physical human-review evidence failure: prior 1440x900 and 1366x768 Person History PNG captures were byte-identical and physically 1164x695 despite manifest viewport labels.
+Product intent and product transforms remain unchanged.
+Apply proof-only Chromium viewport emulation before scenario execution and require a physical PNG dimension/hash gate: 1440x900 must be 1440x900, 1366x768 must be 1366x768, and cross-viewport history captures must not be byte-identical.
+Preserve Wave 4 and Wave 5 semantic truth: no fake Rad link, no fabricated unknown-start date, current projection remains distinct from persisted history.
+Design Brain 0.5 active. FAIL closed; human PASS only after newly valid screenshots are physically reviewed.
