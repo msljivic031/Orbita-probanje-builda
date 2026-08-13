@@ -17,6 +17,23 @@ function sha256(buffer) {
 function fail(message) {
   throw new Error(`W6C physical PDF proof: ${message}`);
 }
+function withTimeout(promise, ms, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)),
+  ]);
+}
+
+const watchdog = setTimeout(() => {
+  const error = 'W6C physical PDF proof watchdog exceeded 120000ms';
+  try {
+    fs.mkdirSync(path.dirname(resultPath), { recursive: true });
+    fs.writeFileSync(resultPath, JSON.stringify({ state: 'FAIL', proof: 'W6C_CANONICAL_PHYSICAL_PDF', error }, null, 2));
+  } catch {}
+  console.error(error);
+  try { app.exit(124); } catch {}
+  process.exit(124);
+}, 120000);
 
 await app.whenReady();
 let exitCode = 0;
@@ -73,7 +90,7 @@ try {
   if (/1\.\s*1\.\s*1970|1970-01-01/.test(html)) fail('HTML exposes technical 1970 system sentinel');
   if (html.includes('<script')) fail('output HTML must not contain script');
 
-  const exported = await exportCanonicalWorkforcePdf(request, target);
+  const exported = await withTimeout(exportCanonicalWorkforcePdf(request, target), 90000, 'Electron printToPDF');
   const bytes = fs.readFileSync(target);
   const actualSha = sha256(bytes);
   const header = bytes.subarray(0, 5).toString('ascii');
@@ -116,9 +133,11 @@ try {
 } catch (error) {
   exitCode = 1;
   const message = error instanceof Error ? error.stack || error.message : String(error);
+  fs.mkdirSync(path.dirname(resultPath), { recursive: true });
   fs.writeFileSync(resultPath, JSON.stringify({ state: 'FAIL', proof: 'W6C_CANONICAL_PHYSICAL_PDF', error: message }, null, 2));
   console.error(message);
 } finally {
-  app.quit();
+  clearTimeout(watchdog);
+  try { app.exit(exitCode); } catch {}
 }
-process.exitCode = exitCode;
+process.exit(exitCode);
