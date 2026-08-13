@@ -1,0 +1,116 @@
+name: ORBITA Redesign Wave 6B Legend Write Proof
+
+on:
+  push:
+    branches: [orbita-redesign]
+    paths: ['RUN_REDESIGN_WAVE6B_LEGEND_WRITE.txt']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CI: 'true'
+  CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+  ORBITA_BRIDGE_ZIP: 'ORBITA_R13AN_PUBLIC_ENCRYPTED_CI_REPO_READY_R1_2026_08_12.zip'
+  ORBITA_BRIDGE_SHA256: 'dfe1f58a7df5c79c2d841496fd364418f98a91ed2fd6112fc0f5e0ab9c43731e'
+  ORBITA_BASE_R13AN_SHA256: '140846e9be04d3da222996fed9701771c4cb1be1c8395e766512ece153ba399a'
+  ORBITA_ENCRYPTED_SHA256: '827742a1633bd71dae1d2e1fb3dc77a95835a279a660016c8844d305341b1687'
+  ORBITA_AAD: 'ORBITA-R13AN-PUBLIC-CI-R1'
+  ORBITA_ENCRYPTED_FILE: 'bridge/ORBITA2_R14_R13AN_NATIVE_CONTENT_SIGNATURE_HARDENING_NON_PROMOTED_CANDIDATE_R2_2026_08_12.zip.aesgcm'
+  ORBITA_R13AP_SOURCE_IDENTITY: '8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704'
+
+jobs:
+  write-proof:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: orbita-redesign
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare evidence
+        shell: pwsh
+        run: New-Item -ItemType Directory -Force evidence-w6b-write | Out-Null
+      - name: Reconstruct exact baseline through W6A
+        shell: pwsh
+        env:
+          ORBITA_CI_AES256_KEY_B64: ${{ secrets.ORBITA_CI_AES256_KEY_B64 }}
+        run: |
+          $bh=(Get-FileHash $env:ORBITA_BRIDGE_ZIP -Algorithm SHA256).Hash.ToLowerInvariant(); if($bh-ne$env:ORBITA_BRIDGE_SHA256){throw "bridge $bh"}
+          Expand-Archive $env:ORBITA_BRIDGE_ZIP bridge -Force
+          $eh=(Get-FileHash $env:ORBITA_ENCRYPTED_FILE -Algorithm SHA256).Hash.ToLowerInvariant(); if($eh-ne$env:ORBITA_ENCRYPTED_SHA256){throw "enc $eh"}
+          @'
+          const fs=require('fs'),crypto=require('crypto');const k=Buffer.from(process.env.ORBITA_CI_AES256_KEY_B64||'','base64');if(k.length!==32)throw Error('secret');const b=fs.readFileSync(process.env.ORBITA_ENCRYPTED_FILE),n=b.subarray(8,20),x=b.subarray(20),tag=x.subarray(x.length-16),ct=x.subarray(0,x.length-16),d=crypto.createDecipheriv('aes-256-gcm',k,n);d.setAAD(Buffer.from(process.env.ORBITA_AAD));d.setAuthTag(tag);const p=Buffer.concat([d.update(ct),d.final()]);const s=crypto.createHash('sha256').update(p).digest('hex');if(s!==process.env.ORBITA_BASE_R13AN_SHA256)throw Error(s);fs.writeFileSync('candidate.zip',p);
+          '@ | Set-Content decrypt.cjs -Encoding utf8
+          node decrypt.cjs
+          Expand-Archive candidate.zip candidate -Force
+          node ci/r13ao-tooling-patch.cjs candidate 2>&1 | Tee-Object evidence-w6b-write/r13ao.log; if($LASTEXITCODE-ne0){throw 'r13ao'}
+          python ci/r13ap-transform.py candidate 2>&1 | Tee-Object evidence-w6b-write/r13ap.log; if($LASTEXITCODE-ne0){throw 'r13ap'}
+          $p=Get-Content candidate/.orbita-code-boundary.json -Raw | ConvertFrom-Json
+          if($p.sourceDirectoryIdentitySha256-ne$env:ORBITA_R13AP_SOURCE_IDENTITY){throw "identity $($p.sourceDirectoryIdentitySha256)"}
+          node ci/r13ar-people-availability-live-entry-repair.cjs candidate 2>&1 | Tee-Object evidence-w6b-write/r13ar.log; if($LASTEXITCODE-ne0){throw 'r13ar'}
+          node ci/r13aq-people-availability-scenario-owner-repair.cjs candidate 2>&1 | Tee-Object evidence-w6b-write/r13aq.log; if($LASTEXITCODE-ne0){throw 'r13aq'}
+          node ci/r13ap-visual-inspector-root-launch-patch.cjs candidate 2>&1 | Tee-Object evidence-w6b-write/root.log; if($LASTEXITCODE-ne0){throw 'root'}
+          node ci/orbita-redesign-wave1-transform.cjs candidate 2>&1 | Tee-Object evidence-w6b-write/w1.log; if($LASTEXITCODE-ne0){throw 'w1'}
+          node ci/orbita-redesign-wave2-run.cjs candidate 2>&1 | Tee-Object evidence-w6b-write/w2.log; if($LASTEXITCODE-ne0){throw 'w2'}
+          node ci/orbita-redesign-wave3-run.cjs candidate 2>&1 | Tee-Object evidence-w6b-write/w3.log; if($LASTEXITCODE-ne0){throw 'w3'}
+          node ci/orbita-redesign-wave4-people-transform.cjs candidate 2>&1 | Tee-Object evidence-w6b-write/w4.log; if($LASTEXITCODE-ne0){throw 'w4'}
+          node ci/orbita-redesign-wave5-person-history-transform.cjs candidate 2>&1 | Tee-Object evidence-w6b-write/w5.log; if($LASTEXITCODE-ne0){throw 'w5'}
+          node ci/orbita-redesign-wave6a-workforce-grid-transform-v2.cjs candidate 2>&1 | Tee-Object evidence-w6b-write/w6a.log; if($LASTEXITCODE-ne0){throw 'w6a'}
+          node ci/orbita-redesign-wave6a-ux-repair.cjs candidate 2>&1 | Tee-Object evidence-w6b-write/w6a-ux.log; if($LASTEXITCODE-ne0){throw 'w6a ux'}
+      - name: Apply admitted W6B core and append-only write
+        shell: pwsh
+        run: |
+          node ci/orbita-redesign-wave6b-workforce-legend-core-transform.cjs candidate 2>&1 | Tee-Object evidence-w6b-write/w6b-core.log; if($LASTEXITCODE-ne0){throw 'w6b core'}
+          node ci/orbita-redesign-wave6b-core-type-repair.cjs candidate 2>&1 | Tee-Object evidence-w6b-write/w6b-core-type-repair.log; if($LASTEXITCODE-ne0){throw 'w6b core repair'}
+          node ci/orbita-redesign-wave6b-core-contract-gate.cjs candidate 2>&1 | Tee-Object evidence-w6b-write/w6b-core-gate.log; if($LASTEXITCODE-ne0){throw 'w6b core gate'}
+          node --check ci/orbita-redesign-wave6b-legend-write-transform.cjs; if($LASTEXITCODE-ne0){throw 'write transform syntax'}
+          node ci/orbita-redesign-wave6b-legend-write-transform.cjs candidate 2>&1 | Tee-Object evidence-w6b-write/w6b-write.log; if($LASTEXITCODE-ne0){throw 'w6b write transform'}
+          node ci/orbita-redesign-wave6b-legend-write-gate.cjs candidate 2>&1 | Tee-Object evidence-w6b-write/w6b-write-gate.log; if($LASTEXITCODE-ne0){throw 'w6b write gate'}
+      - name: Typecheck and build write candidate
+        working-directory: candidate
+        shell: pwsh
+        run: |
+          npm ci --no-audit --no-fund 2>&1 | Tee-Object ../evidence-w6b-write/npm-ci.log; if($LASTEXITCODE-ne0){throw 'npm ci'}
+          npm run typecheck 2>&1 | Tee-Object ../evidence-w6b-write/typecheck.log; if($LASTEXITCODE-ne0){throw 'typecheck'}
+          npm run build 2>&1 | Tee-Object ../evidence-w6b-write/build.log; if($LASTEXITCODE-ne0){throw 'build'}
+      - name: Runtime prove version append history and as-of truth
+        shell: pwsh
+        run: |
+          @'
+          import fs from 'node:fs'; import os from 'node:os'; import path from 'node:path';
+          import { openDemoWorkspaceDatabase, readWorkspaceFromDatabase } from '../candidate/dist-electron/main/persistence/workspace/sqliteWorkspaceStore.js';
+          import { updateWorkforceLegendRuntime } from '../candidate/dist-electron/main/persistence/people/sqliteWorkforceLegendCommands.js';
+          const dbPath=path.join(os.tmpdir(),`orbita-w6b-write-${process.pid}-${Date.now()}.sqlite`);
+          let db=openDemoWorkspaceDatabase(dbPath,{forceSeed:true}); const initial=readWorkspaceFromDatabase(db); const actor=initial.people.find(p=>!p.archivedAt)?.id; if(!actor)throw new Error('no actor in seeded workspace'); db.close();
+          const one=updateWorkforceLegendRuntime({availabilityKind:'available',token:'AV',displayName:'Dostupan potvrđeno',semanticCategory:'available',sortOrder:10,effectiveFrom:'2026-08-13T08:00:00.000Z',actorId:actor,reasonCode:'w6b_runtime_proof'},dbPath);
+          if(one.workspace.workforceLegendVersions?.length!==8)throw new Error(`after first write ${one.workspace.workforceLegendVersions?.length}`);
+          const two=updateWorkforceLegendRuntime({availabilityKind:'available',token:'A2',displayName:'Dostupan nova oznaka',semanticCategory:'available',sortOrder:10,effectiveFrom:'2026-08-14T08:00:00.000Z',actorId:actor,reasonCode:'w6b_runtime_proof_2'},dbPath);
+          db=openDemoWorkspaceDatabase(dbPath,{forceSeed:false});
+          const rows=db.prepare("SELECT token,effective_from,supersedes_version_id,provenance FROM workforce_legend_versions_a419 WHERE availability_kind='available' ORDER BY effective_from,recorded_at,version_id").all();
+          if(rows.length!==3)throw new Error(`available rows ${rows.length}`);
+          const at=(iso)=>db.prepare("SELECT token FROM workforce_legend_versions_a419 WHERE availability_kind='available' AND effective_from<=? ORDER BY effective_from DESC,recorded_at DESC,version_id DESC LIMIT 1").get(iso)?.token;
+          if(at('2026-08-12T23:59:59.999Z')!=='D')throw new Error('historic seed meaning changed');
+          if(at('2026-08-13T23:59:59.999Z')!=='AV')throw new Error('first effective version missing');
+          if(at('2026-08-14T23:59:59.999Z')!=='A2')throw new Error('second effective version missing');
+          const history=db.prepare("SELECT type,entity_type,actor_id,previous_value_json,new_value_json,source FROM history_events WHERE type='workforce_legend_changed' ORDER BY timestamp").all(); if(history.length!==2)throw new Error(`history rows ${history.length}`);
+          let updateBlocked=false;try{db.prepare("UPDATE workforce_legend_versions_a419 SET token='BAD' WHERE availability_kind='available'").run()}catch{updateBlocked=true} if(!updateBlocked)throw new Error('append-only update not blocked'); db.close();
+          let backdateBlocked=false;try{updateWorkforceLegendRuntime({availabilityKind:'available',token:'OLD',displayName:'Backdate',semanticCategory:'available',sortOrder:10,effectiveFrom:'2026-08-13T09:00:00.000Z',actorId:actor},dbPath)}catch{backdateBlocked=true} if(!backdateBlocked)throw new Error('backdate not blocked');
+          console.log(JSON.stringify({state:'PASS',actor,writeOperations:[one.write?.operation??'runtime',two.write?.operation??'runtime'],availableRows:rows,historyCount:history.length,asOf:{before:'D',first:'AV',second:'A2'},appendOnlyUpdateBlocked:updateBlocked,backdateBlocked},null,2));
+          try{fs.rmSync(dbPath,{force:true})}catch{}
+          '@ | Set-Content evidence-w6b-write/runtime-write-proof.mjs -Encoding utf8
+          node evidence-w6b-write/runtime-write-proof.mjs 2>&1 | Tee-Object evidence-w6b-write/runtime-write-proof.log
+          if($LASTEXITCODE-ne0){throw "runtime write proof $LASTEXITCODE"}
+      - name: Upload W6B write evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ORBITA-REDESIGN-WAVE6B-LEGEND-WRITE-EVIDENCE
+          path: evidence-w6b-write
+          retention-days: 7
