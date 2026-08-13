@@ -11,7 +11,7 @@ target.allowFormInput=true;
 const marker='settings-workforce-legend-after-save';
 if(!target.steps.some(step=>step.type==='capture'&&step.label===marker)){
   target.steps.push(
-    {type:'clickText',text:'Workforce legenda',match:'exact'},
+    {type:'click',selector:'[data-orbita-settings-section="workforce"]'},
     {type:'wait',milliseconds:250},
     {type:'assertAttribute',selector:'[data-orbita-workforce-legend-settings="ready"]',attribute:'data-orbita-workforce-legend-settings',value:'ready'},
     {type:'capture',label:'settings-workforce-legend-before'},
@@ -49,4 +49,4 @@ if(!target.steps.some(step=>step.type==='capture'&&step.label===marker)){
   );
 }
 fs.writeFileSync(file,JSON.stringify(doc,null,2)+'\n');
-console.log(JSON.stringify({scenario:target.id,required:target.required,allowMutation:target.allowMutation,allowFormInput:target.allowFormInput,directActions:['settings-workforce-legend-save','settings-workforce-legend-archive','people-open-workforce'],captures:['settings-workforce-legend-before','settings-workforce-legend-after-save','settings-workforce-legend-after-archive','people-workforce-legend-current-versioned','people-workforce-legend-previous-stable'],truth:['real Settings owner is used','Save appends AV effective version through real UI','Archive appends field_work archive through real UI','current month shows D and AV meanings','previous month hides AV and preserves D']},null,2));
+console.log(JSON.stringify({scenario:target.id,required:target.required,allowMutation:target.allowMutation,allowFormInput:target.allowFormInput,settingsEntry:'semantic-section-id',directActions:['settings-workforce-legend-save','settings-workforce-legend-archive','people-open-workforce'],captures:['settings-workforce-legend-before','settings-workforce-legend-after-save','settings-workforce-legend-after-archive','people-workforce-legend-current-versioned','people-workforce-legend-previous-stable'],truth:['real Settings owner is used','Save appends AV effective version through real UI','Archive appends field_work archive through real UI','current month shows D and AV meanings','previous month hides AV and preserves D']},null,2));
