@@ -27,7 +27,7 @@ jobs:
   proof:
     name: Windows Workforce Wave 6C Physical PDF C2c
     runs-on: windows-latest
-    timeout-minutes: 70
+    timeout-minutes: 100
     steps:
       - uses: actions/checkout@v4
         with:
@@ -60,6 +60,18 @@ jobs:
         run: |
           npx electron --version 2>&1 | Tee-Object ../evidence-w6c-c2c/electron-runtime.log
           if($LASTEXITCODE-ne0){throw 'electron runtime prewarm'}
+      - name: Bootstrap canonical inspector SQLite truth
+        shell: pwsh
+        run: |
+          & "$env:GITHUB_WORKSPACE\ci\orbita-visual-inspector-infra-retry.ps1" -CandidateRoot "$env:GITHUB_WORKSPACE\candidate" -Output "$env:GITHUB_WORKSPACE\VISUAL_REDESIGN_W6C_C2C_BOOTSTRAP" -Width 1440 -Height 900 -LogFile "$env:GITHUB_WORKSPACE\evidence-w6c-c2c\inspector-bootstrap-console.log"
+          if($LASTEXITCODE-ne0){throw "inspector bootstrap $LASTEXITCODE"}
+          $manifest=Get-Content VISUAL_REDESIGN_W6C_C2C_BOOTSTRAP/MANIFEST.json -Raw | ConvertFrom-Json
+          $manifest.summary | ConvertTo-Json -Depth 8 | Out-File evidence-w6c-c2c/inspector-bootstrap-summary.json
+          if($manifest.summary.state-ne'PASS' -or $manifest.summary.canonicalScenarios-ne18 -or $manifest.summary.passedCanonicalScenarios-ne18 -or $manifest.summary.failedRequiredCanonicalScenarios-ne0 -or $manifest.summary.failedGates-ne0){throw 'inspector bootstrap admission failure'}
+          $runtimeDb='VISUAL_REDESIGN_W6C_C2C_BOOTSTRAP/runtime-evidence/orbita-visual-inspector.sqlite'
+          if(-not(Test-Path $runtimeDb)){throw 'canonical inspector runtime SQLite missing'}
+          (Get-FileHash $runtimeDb -Algorithm SHA256).Hash.ToLowerInvariant() | Out-File evidence-w6c-c2c/inspector-runtime-db-sha256.txt
+          (Get-Item $runtimeDb).Length | Out-File evidence-w6c-c2c/inspector-runtime-db-bytes.txt
       - name: Produce and verify physical canonical PDF
         shell: pwsh
         env:
@@ -69,6 +81,7 @@ jobs:
           $evidence=(Resolve-Path evidence-w6c-c2c).Path
           $target=Join-Path $evidence 'ORBITA-WORKFORCE-CANONICAL-PROOF.pdf'
           $result=Join-Path $evidence 'physical-pdf-proof.json'
+          $runtimeDb=(Resolve-Path VISUAL_REDESIGN_W6C_C2C_BOOTSTRAP/runtime-evidence/orbita-visual-inspector.sqlite).Path
           Push-Location candidate
           Copy-Item package.json .w6c-package-backup.json -Force
           @'
@@ -77,6 +90,7 @@ jobs:
           p.main='.w6c-physical-pdf-proof.mjs';
           fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n');
           '@ | node
+          $env:ORBITA_RUNTIME_SCREENSHOT_DATABASE_PATH=$runtimeDb
           $env:ORBITA_W6C_PDF_TARGET=$target
           $env:ORBITA_W6C_PDF_RESULT=$result
           npx electron . 2>&1 | Tee-Object ../evidence-w6c-c2c/physical-pdf-console.log
