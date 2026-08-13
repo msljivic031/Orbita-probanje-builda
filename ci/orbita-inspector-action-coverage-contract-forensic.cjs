@@ -1,0 +1,15 @@
+const fs=require('fs'),path=require('path');
+const root=path.resolve(process.argv[2]||'candidate'),out=path.resolve(process.argv[3]||'inspector-action-coverage-contract.json');
+const targets={coverage:'tooling/quality/check-action-coverage.mjs',schema:'tooling/quality/check-inspector-scenario-schema.mjs',runtime:'tooling/inspector/visual-runtime-inspector.mjs',scenarios:'config/inspector/scenarios.json'};
+const read=f=>fs.readFileSync(path.join(root,f),'utf8').replace(/\r\n/g,'\n');
+for(const f of Object.values(targets))if(!fs.existsSync(path.join(root,f)))throw Error('missing '+f);
+const coverage=read(targets.coverage),schema=read(targets.schema),runtime=read(targets.runtime),scenarioDoc=JSON.parse(read(targets.scenarios));
+const literals=s=>[...s.matchAll(/['"`]([A-Za-z][A-Za-z0-9_.:-]{1,80})['"`]/g)].map(m=>m[1]);
+const semanticLiterals=s=>[...new Set(literals(s).filter(x=>/click|action|selector|text|attribute|capture|assert|wait|route|type/i.test(x)))].sort();
+const stepProps=s=>[...new Set([...s.matchAll(/\bstep\.([A-Za-z_$][\w$]*)/g)].map(m=>m[1]))].sort();
+const selectorActionPatterns=[...new Set([...coverage.matchAll(/data-orbita-action[^A-Za-z0-9_-]{0,80}/g)].map(m=>m[0].replace(/\s+/g,' ').slice(0,100)))];
+const types=new Set(); const actionLike=[];
+(function visit(n){if(!n||typeof n!=='object')return;if(Array.isArray(n))return n.forEach(visit);if(typeof n.type==='string')types.add(n.type);if(n.type&&Object.values(n).some(v=>typeof v==='string'&&/data-orbita-action|people-open-workforce/i.test(v)))actionLike.push({type:n.type,keys:Object.keys(n).sort()});Object.values(n).forEach(visit)})(scenarioDoc);
+const result={audit:'ORBITA_INSPECTOR_ACTION_COVERAGE_CONTRACT_V1',sourceExposure:'SEMANTIC_METADATA_ONLY_NO_SOURCE_SNIPPETS',scenario:{presentStepTypes:[...types].sort(),actionLikeStepShapes:actionLike},schema:{stepProperties:stepProps(schema),semanticLiterals:semanticLiterals(schema)},runtime:{stepProperties:stepProps(runtime),semanticLiterals:semanticLiterals(runtime)},coverage:{stepProperties:stepProps(coverage),semanticLiterals:semanticLiterals(coverage),mentionsDataOrbitaAction:/data-orbita-action/.test(coverage),selectorActionPatternCount:selectorActionPatterns.length},decision:'Choose an inspector-supported step shape that the coverage checker recognizes as a direct data-orbita-action reference; do not add an explicit disposition for a canonical exercised action.'};
+fs.writeFileSync(out,JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));
+if(!result.coverage.mentionsDataOrbitaAction)throw Error('coverage checker does not mention data-orbita-action; need deeper parser forensic');
