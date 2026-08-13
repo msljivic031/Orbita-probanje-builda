@@ -1,0 +1,111 @@
+name: ORBITA Redesign Wave 6B Legend Core Proof
+
+on:
+  push:
+    branches: [orbita-redesign]
+    paths: ['RUN_REDESIGN_WAVE6B_LEGEND_CORE.txt']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CI: 'true'
+  CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+  ORBITA_BRIDGE_ZIP: 'ORBITA_R13AN_PUBLIC_ENCRYPTED_CI_REPO_READY_R1_2026_08_12.zip'
+  ORBITA_BRIDGE_SHA256: 'dfe1f58a7df5c79c2d841496fd364418f98a91ed2fd6112fc0f5e0ab9c43731e'
+  ORBITA_BASE_R13AN_SHA256: '140846e9be04d3da222996fed9701771c4cb1be1c8395e766512ece153ba399a'
+  ORBITA_ENCRYPTED_SHA256: '827742a1633bd71dae1d2e1fb3dc77a95835a279a660016c8844d305341b1687'
+  ORBITA_AAD: 'ORBITA-R13AN-PUBLIC-CI-R1'
+  ORBITA_ENCRYPTED_FILE: 'bridge/ORBITA2_R14_R13AN_NATIVE_CONTENT_SIGNATURE_HARDENING_NON_PROMOTED_CANDIDATE_R2_2026_08_12.zip.aesgcm'
+  ORBITA_R13AP_SOURCE_IDENTITY: '8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704'
+
+jobs:
+  core:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: orbita-redesign
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare evidence
+        shell: pwsh
+        run: New-Item -ItemType Directory -Force evidence-w6b-core | Out-Null
+      - name: Reconstruct exact R13AP parent
+        shell: pwsh
+        env:
+          ORBITA_CI_AES256_KEY_B64: ${{ secrets.ORBITA_CI_AES256_KEY_B64 }}
+        run: |
+          $bh=(Get-FileHash $env:ORBITA_BRIDGE_ZIP -Algorithm SHA256).Hash.ToLowerInvariant(); if($bh-ne$env:ORBITA_BRIDGE_SHA256){throw "bridge $bh"}
+          Expand-Archive $env:ORBITA_BRIDGE_ZIP bridge -Force
+          $eh=(Get-FileHash $env:ORBITA_ENCRYPTED_FILE -Algorithm SHA256).Hash.ToLowerInvariant(); if($eh-ne$env:ORBITA_ENCRYPTED_SHA256){throw "enc $eh"}
+          @'
+          const fs=require('fs'),crypto=require('crypto');const k=Buffer.from(process.env.ORBITA_CI_AES256_KEY_B64||'','base64');if(k.length!==32)throw Error('secret');const b=fs.readFileSync(process.env.ORBITA_ENCRYPTED_FILE),n=b.subarray(8,20),x=b.subarray(20),tag=x.subarray(x.length-16),ct=x.subarray(0,x.length-16),d=crypto.createDecipheriv('aes-256-gcm',k,n);d.setAAD(Buffer.from(process.env.ORBITA_AAD));d.setAuthTag(tag);const p=Buffer.concat([d.update(ct),d.final()]);const s=crypto.createHash('sha256').update(p).digest('hex');if(s!==process.env.ORBITA_BASE_R13AN_SHA256)throw Error(s);fs.writeFileSync('candidate.zip',p);
+          '@ | Set-Content decrypt.cjs -Encoding utf8
+          node decrypt.cjs
+          Expand-Archive candidate.zip candidate -Force
+          node ci/r13ao-tooling-patch.cjs candidate 2>&1 | Tee-Object evidence-w6b-core/r13ao.log; if($LASTEXITCODE-ne0){throw 'r13ao'}
+          python ci/r13ap-transform.py candidate 2>&1 | Tee-Object evidence-w6b-core/r13ap.log; if($LASTEXITCODE-ne0){throw 'r13ap'}
+          $p=Get-Content candidate/.orbita-code-boundary.json -Raw | ConvertFrom-Json
+          if($p.sourceDirectoryIdentitySha256-ne$env:ORBITA_R13AP_SOURCE_IDENTITY){throw "identity $($p.sourceDirectoryIdentitySha256)"}
+      - name: Apply proven redesign through W6A
+        shell: pwsh
+        run: |
+          node ci/r13ar-people-availability-live-entry-repair.cjs candidate 2>&1 | Tee-Object evidence-w6b-core/r13ar.log; if($LASTEXITCODE-ne0){throw 'r13ar'}
+          node ci/r13aq-people-availability-scenario-owner-repair.cjs candidate 2>&1 | Tee-Object evidence-w6b-core/r13aq.log; if($LASTEXITCODE-ne0){throw 'r13aq'}
+          node ci/r13ap-visual-inspector-root-launch-patch.cjs candidate 2>&1 | Tee-Object evidence-w6b-core/root.log; if($LASTEXITCODE-ne0){throw 'root'}
+          node ci/orbita-redesign-wave1-transform.cjs candidate 2>&1 | Tee-Object evidence-w6b-core/w1.log; if($LASTEXITCODE-ne0){throw 'w1'}
+          node ci/orbita-redesign-wave2-run.cjs candidate 2>&1 | Tee-Object evidence-w6b-core/w2.log; if($LASTEXITCODE-ne0){throw 'w2'}
+          node ci/orbita-redesign-wave3-run.cjs candidate 2>&1 | Tee-Object evidence-w6b-core/w3.log; if($LASTEXITCODE-ne0){throw 'w3'}
+          node ci/orbita-redesign-wave4-people-transform.cjs candidate 2>&1 | Tee-Object evidence-w6b-core/w4.log; if($LASTEXITCODE-ne0){throw 'w4'}
+          node ci/orbita-redesign-wave5-person-history-transform.cjs candidate 2>&1 | Tee-Object evidence-w6b-core/w5.log; if($LASTEXITCODE-ne0){throw 'w5'}
+          node ci/orbita-redesign-wave6a-workforce-grid-transform-v2.cjs candidate 2>&1 | Tee-Object evidence-w6b-core/w6a.log; if($LASTEXITCODE-ne0){throw 'w6a'}
+          node ci/orbita-redesign-wave6a-ux-repair.cjs candidate 2>&1 | Tee-Object evidence-w6b-core/w6a-ux.log; if($LASTEXITCODE-ne0){throw 'w6a ux'}
+      - name: Apply W6B legend core
+        shell: pwsh
+        run: |
+          node --check ci/orbita-redesign-wave6b-workforce-legend-core-transform.cjs
+          if($LASTEXITCODE-ne0){throw 'w6b core syntax'}
+          node ci/orbita-redesign-wave6b-workforce-legend-core-transform.cjs candidate 2>&1 | Tee-Object evidence-w6b-core/w6b-core.log
+          if($LASTEXITCODE-ne0){throw "w6b core $LASTEXITCODE"}
+          node ci/orbita-redesign-wave6b-core-contract-gate.cjs candidate 2>&1 | Tee-Object evidence-w6b-core/w6b-core-contract.log
+          if($LASTEXITCODE-ne0){throw "w6b core contract $LASTEXITCODE"}
+      - name: Typecheck and build
+        working-directory: candidate
+        shell: pwsh
+        run: |
+          npm ci --no-audit --no-fund 2>&1 | Tee-Object ../evidence-w6b-core/npm-ci.log; if($LASTEXITCODE-ne0){throw 'npm ci'}
+          npm run typecheck 2>&1 | Tee-Object ../evidence-w6b-core/typecheck.log; if($LASTEXITCODE-ne0){throw 'typecheck'}
+          npm run build 2>&1 | Tee-Object ../evidence-w6b-core/build.log; if($LASTEXITCODE-ne0){throw 'build'}
+      - name: Prove A4.19 idempotent append-only seed
+        shell: pwsh
+        run: |
+          @'
+          import { DatabaseSync } from 'node:sqlite';
+          import { ensureA419WorkforceLegendSchema } from './candidate/dist-electron/main/persistence/schema/sqliteA419WorkforceLegendSchema.js';
+          const db=new DatabaseSync(':memory:');
+          ensureA419WorkforceLegendSchema(db); ensureA419WorkforceLegendSchema(db);
+          const rows=db.prepare('SELECT version_id, semantic_id, availability_kind, token, effective_from, provenance FROM workforce_legend_versions_a419 ORDER BY sort_order').all();
+          if(rows.length!==7) throw new Error(`seed count ${rows.length}`);
+          if(new Set(rows.map(r=>r.semantic_id)).size!==7) throw new Error('semantic ids not stable/unique');
+          let updateBlocked=false,deleteBlocked=false;
+          try{db.prepare("UPDATE workforce_legend_versions_a419 SET token='X' WHERE availability_kind='available'").run()}catch{updateBlocked=true}
+          try{db.prepare("DELETE FROM workforce_legend_versions_a419 WHERE availability_kind='available'").run()}catch{deleteBlocked=true}
+          if(!updateBlocked||!deleteBlocked) throw new Error('append-only trigger not enforced');
+          console.log(JSON.stringify({state:'PASS',seedRows:rows.length,idempotent:true,appendOnlyUpdateBlocked:updateBlocked,appendOnlyDeleteBlocked:deleteBlocked,first:rows[0]},null,2));
+          '@ | Set-Content evidence-w6b-core/a419-runtime-proof.mjs -Encoding utf8
+          node evidence-w6b-core/a419-runtime-proof.mjs 2>&1 | Tee-Object evidence-w6b-core/a419-runtime-proof.log
+          if($LASTEXITCODE-ne0){throw "A4.19 runtime proof $LASTEXITCODE"}
+      - name: Upload W6B core evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ORBITA-REDESIGN-WAVE6B-LEGEND-CORE-EVIDENCE
+          path: evidence-w6b-core
+          retention-days: 7
