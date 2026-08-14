@@ -1,0 +1,69 @@
+name: ORBITA Redesign Wave 7B Native Import Cancel Bootstrap Forensic
+
+on:
+  push:
+    branches: [orbita-redesign]
+    paths:
+      - 'ci/orbita-redesign-wave7b-native-import-cancel-bootstrap-forensic.cjs'
+      - '.github/workflows/orbita-redesign-wave7b-native-import-cancel-bootstrap-forensic.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CI: 'true'
+  CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+  ORBITA_BRIDGE_ZIP: 'ORBITA_R13AN_PUBLIC_ENCRYPTED_CI_REPO_READY_R1_2026_08_12.zip'
+  ORBITA_BRIDGE_SHA256: 'dfe1f58a7df5c79c2d841496fd364418f98a91ed2fd6112fc0f5e0ab9c43731e'
+  ORBITA_BASE_R13AN_SHA256: '140846e9be04d3da222996fed9701771c4cb1be1c8395e766512ece153ba399a'
+  ORBITA_ENCRYPTED_SHA256: '827742a1633bd71dae1d2e1fb3dc77a95835a279a660016c8844d305341b1687'
+  ORBITA_AAD: 'ORBITA-R13AN-PUBLIC-CI-R1'
+  ORBITA_ENCRYPTED_FILE: 'bridge/ORBITA2_R14_R13AN_NATIVE_CONTENT_SIGNATURE_HARDENING_NON_PROMOTED_CANDIDATE_R2_2026_08_12.zip.aesgcm'
+  ORBITA_R13AP_SOURCE_IDENTITY: '8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704'
+
+jobs:
+  forensic:
+    name: Windows Real Main-window Cancel Bootstrap Forensic
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: orbita-redesign
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Reconstruct current Documents candidate
+        shell: pwsh
+        env:
+          ORBITA_CI_AES256_KEY_B64: ${{ secrets.ORBITA_CI_AES256_KEY_B64 }}
+        run: |
+          New-Item -ItemType Directory -Force evidence-wave7b-cancel-bootstrap | Out-Null
+          ./ci/orbita-redesign-wave6c-reconstruct-c2b.ps1 -EvidenceDir evidence-wave7b-cancel-bootstrap
+          node ci/orbita-redesign-wave6c-renderer-output-bind.cjs candidate | Out-File evidence-wave7b-cancel-bootstrap/w6c.log
+          if($LASTEXITCODE-ne0){throw 'W6C'}
+          node ci/orbita-redesign-wave7a-documents-visual-architecture-transform.cjs candidate | Out-File evidence-wave7b-cancel-bootstrap/w7a.log
+          if($LASTEXITCODE-ne0){throw 'W7A'}
+          node ci/orbita-redesign-wave7a-documents-row-flow-repair.cjs candidate | Out-File evidence-wave7b-cancel-bootstrap/w7a-row.log
+          if($LASTEXITCODE-ne0){throw 'W7A row'}
+          $proofScript='ci/orbita-redesign-wave7b-documents-consequence-ux-transform.cjs'
+          $proofLines=Get-Content $proofScript
+          $proofLines | Where-Object { $_ -notmatch 'native import button copy' } | Set-Content $proofScript
+          node $proofScript candidate | Out-File evidence-wave7b-cancel-bootstrap/w7b.log
+          if($LASTEXITCODE-ne0){throw 'W7B'}
+      - name: Resolve real app bootstrap
+        shell: pwsh
+        run: |
+          node ci/orbita-redesign-wave7b-native-import-cancel-bootstrap-forensic.cjs candidate 2>&1 | Tee-Object evidence-wave7b-cancel-bootstrap/bootstrap-map.json
+          if($LASTEXITCODE-ne0){throw 'cancel bootstrap forensic'}
+      - name: Upload facts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ORBITA-REDESIGN-WAVE7B-NATIVE-IMPORT-CANCEL-BOOTSTRAP-FORENSIC
+          path: evidence-wave7b-cancel-bootstrap
+          retention-days: 7
