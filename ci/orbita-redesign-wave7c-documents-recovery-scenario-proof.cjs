@@ -10,7 +10,8 @@ const dispositionIndexes=[];
 coverage.explicitDispositions.forEach((entry,index)=>{if(entry&&entry.action==='documents-review-unlink')dispositionIndexes.push(index);});
 if(dispositionIndexes.length!==1)throw new Error(`documents-review-unlink explicit disposition expected 1, got ${dispositionIndexes.length}`);
 coverage.explicitDispositions.splice(dispositionIndexes[0],1);
-if(coverage.explicitDispositions.some(entry=>entry&&entry.action==='documents-review-unlink'))throw new Error('obsolete disposition removal incomplete');
+if(coverage.explicitDispositions.some(entry=>entry&&entry.action==='documents-review-unlink'))throw new Error('obsolete review disposition removal incomplete');
+if(!coverage.explicitDispositions.some(entry=>entry&&entry.action==='documents-confirm-unlink'))throw new Error('documents-confirm-unlink disposition must remain because canonical inspector does not commit unlink');
 let target=null,count=0;
 function visit(node){if(!node||typeof node!=='object')return;if(!Array.isArray(node)&&node.id==='documents-select-document'&&Array.isArray(node.steps)){target=node;count++;}if(Array.isArray(node))node.forEach(visit);else Object.values(node).forEach(visit);}
 visit(doc);
@@ -24,13 +25,13 @@ const invalidMarker='documents-unlink-invalid-reason';
 const readyMarker='documents-unlink-valid-reason-ready';
 const isW7cStep=(step)=>!!step&&(
  (step.type==='capture'&&[reviewMarker,invalidMarker,readyMarker].includes(step.label))||
- (typeof step.selector==='string'&&(step.selector.includes('documents-review-unlink')||step.selector.includes('data-orbita-w7c-relation-review')||step.selector.includes('data-orbita-w7c-unlink-reason')||step.selector.includes('documents-confirm-unlink')))
+ (typeof step.selector==='string'&&(step.selector.includes('documents-review-unlink')||step.selector.includes('data-orbita-w7c-relation-review')||step.selector.includes('data-orbita-w7c-unlink-reason')||step.selector.includes('data-orbita-w7c-confirm-unlink')))
 );
 target.steps=target.steps.filter(step=>!isW7cStep(step));
 const baselineIndex=target.steps.findIndex(step=>step&&step.type==='capture'&&step.label===baselineLabel);
 if(baselineIndex<0)throw new Error('baseline capture lost while normalizing W7C steps');
 const reasonSelector='[data-orbita-w7c-unlink-reason="true"]';
-const confirmSelector='[data-orbita-action="documents-confirm-unlink"]';
+const confirmStateSelector='[data-orbita-w7c-confirm-unlink="true"]';
 const proofSteps=[
  {type:'click',selector:'[data-orbita-action="documents-review-unlink"]'},
  {type:'wait',milliseconds:180},
@@ -39,15 +40,15 @@ const proofSteps=[
  {type:'capture',label:reviewMarker},
  {type:'fill',selector:reasonSelector,value:'x'},
  {type:'wait',milliseconds:80},
- {type:'assertDisabled',selector:confirmSelector},
+ {type:'assertDisabled',selector:confirmStateSelector},
  {type:'capture',label:invalidMarker},
  {type:'fill',selector:reasonSelector,value:'Ispravka pogrešne veze'},
  {type:'wait',milliseconds:80},
- {type:'assertEnabled',selector:confirmSelector},
+ {type:'assertEnabled',selector:confirmStateSelector},
  {type:'capture',label:readyMarker}
 ];
 target.steps.splice(baselineIndex+1,0,...proofSteps);
 for(const label of [reviewMarker,invalidMarker,readyMarker])if(target.steps.filter(step=>step&&step.type==='capture'&&step.label===label).length!==1)throw new Error(`W7C capture count invalid ${label}`);
 fs.writeFileSync(scenarioFile,JSON.stringify(doc,null,2)+'\n');
 fs.writeFileSync(coverageFile,JSON.stringify(coverage,null,2)+'\n');
-console.log(JSON.stringify({state:'W7C_SCENARIO_EXTENDED_NOT_ADMITTED',scenario:target.id,route:target.route,productSrcChanged:false,action:'documents-review-unlink',placement:'immediately-after-scenario-documents-selected-document',obsoleteDispositionRemoved:{owner:'config/inspector/action-coverage-current.json',count:1},proof:['exact relation review visible','one-character reason keeps confirm disabled','valid reason restores confirm enabled','no unlink commit executed in canonical inspector'],captures:[reviewMarker,invalidMarker,readyMarker],truth:'exact physically proven documents-select-document scenario; error prevention and recoverability are exercised without mutating canonical relation truth'},null,2));
+console.log(JSON.stringify({state:'W7C_SCENARIO_EXTENDED_NOT_ADMITTED',scenario:target.id,route:target.route,productSrcChanged:false,directAction:'documents-review-unlink',confirmActionDispositionRetained:true,placement:'immediately-after-scenario-documents-selected-document',obsoleteDispositionRemoved:{owner:'config/inspector/action-coverage-current.json',action:'documents-review-unlink',count:1},proof:['exact relation review visible','one-character reason keeps confirm disabled through neutral evidence marker','valid reason restores confirm enabled through neutral evidence marker','documents-confirm-unlink is never clicked in canonical inspector'],captures:[reviewMarker,invalidMarker,readyMarker],truth:'error prevention and recoverability are exercised without misclassifying the uncommitted confirm action as direct coverage and without mutating canonical relation truth'},null,2));
