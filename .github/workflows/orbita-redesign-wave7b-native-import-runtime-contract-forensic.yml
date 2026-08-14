@@ -5,6 +5,7 @@ on:
     branches: [orbita-redesign]
     paths:
       - 'ci/orbita-redesign-wave7b-native-import-runtime-contract-forensic.cjs'
+      - 'ci/orbita-redesign-wave7b-native-import-options-forensic.cjs'
       - '.github/workflows/orbita-redesign-wave7b-native-import-runtime-contract-forensic.yml'
   workflow_dispatch:
 
@@ -55,11 +56,13 @@ jobs:
           $proofLines | Where-Object { $_ -notmatch 'native import button copy' } | Set-Content $proofScript
           node $proofScript candidate | Out-File evidence-wave7b-native-runtime-contract/w7b.log
           if($LASTEXITCODE-ne0){throw 'W7B'}
-      - name: Resolve native runtime and picker contract
+      - name: Resolve native runtime picker and exact options contract
         shell: pwsh
         run: |
           node ci/orbita-redesign-wave7b-native-import-runtime-contract-forensic.cjs candidate 2>&1 | Tee-Object evidence-wave7b-native-runtime-contract/native-runtime-contract.json
           if($LASTEXITCODE-ne0){throw 'runtime contract forensic'}
+          node ci/orbita-redesign-wave7b-native-import-options-forensic.cjs candidate 2>&1 | Tee-Object evidence-wave7b-native-runtime-contract/native-options-contract.json
+          if($LASTEXITCODE-ne0){throw 'options contract forensic'}
       - name: Safety typecheck
         working-directory: candidate
         shell: pwsh
