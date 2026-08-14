@@ -15,6 +15,7 @@ function relationCandidates(workspace){const out=[];for(const {name,rows} of arr
 function documentExists(workspace,documentId){for(const {name,rows} of arrayFacts(workspace))for(const row of rows){if(!row||typeof row!=='object'||row.id!==documentId)continue;const keys=Object.keys(row).join(' ');if(/file|document|checksum|mime|storage|original/i.test(keys))return {collection:name,row};}return null;}
 function linkMatches(workspace,linkId){const matches=[];for(const {name,rows} of arrayFacts(workspace))for(const row of rows){if(row&&typeof row==='object'&&(row.id===linkId||row.documentWorkLinkId===linkId))matches.push({collection:name,row});}return matches;}
 function actorIdFrom(workspace){const preferred=['people','users','actors','members'];for(const name of preferred){const rows=workspace?.[name];if(Array.isArray(rows)){const row=rows.find(x=>x&&typeof x.id==='string'&&x.id);if(row)return row.id;}}for(const {rows} of arrayFacts(workspace)){const row=rows.find(x=>x&&typeof x.id==='string'&&x.id&&(/person|user|actor|member/i.test(Object.keys(x).join(' '))));if(row)return row.id;}return 'w7c-proof-actor';}
+function changedTopLevelKeys(before,after){const keys=[...new Set([...Object.keys(before||{}),...Object.keys(after||{})])].sort();return keys.filter(key=>normalize(before?.[key])!==normalize(after?.[key])).map(key=>({key,beforeType:Array.isArray(before?.[key])?'array':typeof before?.[key],afterType:Array.isArray(after?.[key])?'array':typeof after?.[key],beforeCount:Array.isArray(before?.[key])?before[key].length:null,afterCount:Array.isArray(after?.[key])?after[key].length:null,beforeSha256:sha(normalize(before?.[key])),afterSha256:sha(normalize(after?.[key]))}));}
 function makeDb(label){if(!sourceDatabasePath||!fs.existsSync(sourceDatabasePath))fail(`canonical inspector source database missing: ${sourceDatabasePath}`);const dir=fs.mkdtempSync(path.join(os.tmpdir(),`orbita-w7c-${label}-`));const dbPath=path.join(dir,'proof.sqlite');fs.copyFileSync(sourceDatabasePath,dbPath);const database=openDemoWorkspaceDatabase(dbPath,{forceSeed:false});return {dir,dbPath,database};}
 function cleanup(ctx){try{ctx.database.close();}catch{}try{fs.rmSync(ctx.dir,{recursive:true,force:true});}catch{}}
 
@@ -55,8 +56,9 @@ try{
   if(!errorMessage)fail('missing-link unlink unexpectedly succeeded');
   const errorAfter=readWorkspaceFromDatabase(errorCtx.database);
   const afterJson=normalize(errorAfter),afterSha=sha(afterJson);
-  if(beforeSha!==afterSha)fail('workspace changed after rejected missing-link unlink');
-  const errorFacts={actorId:errorActor,errorMessage,workspaceSha256Before:beforeSha,workspaceSha256After:afterSha,noMutation:true};
+  const changedKeys=changedTopLevelKeys(errorBefore,errorAfter);
+  if(beforeSha!==afterSha){const diagnostic={state:'DIAGNOSTIC_FAIL',proof:'ORBITA_W7C_DOCUMENT_UNLINK_LIFECYCLE',errorCase:{actorId:errorActor,errorMessage,workspaceSha256Before:beforeSha,workspaceSha256After:afterSha,changedTopLevelKeys:changedKeys}};fs.mkdirSync(path.dirname(resultPath),{recursive:true});fs.writeFileSync(resultPath,JSON.stringify(diagnostic,null,2));fail(`workspace changed after rejected missing-link unlink; changedTopLevelKeys=${changedKeys.map(x=>x.key).join(',')||'none-detected'}`);}
+  const errorFacts={actorId:errorActor,errorMessage,workspaceSha256Before:beforeSha,workspaceSha256After:afterSha,changedTopLevelKeys:changedKeys,noMutation:true};
   cleanup(errorCtx);errorCtx=null;
 
   const proof={state:'PASS',proof:'ORBITA_W7C_DOCUMENT_UNLINK_LIFECYCLE',sourceDatabase:{fileName:path.basename(sourceDatabasePath),bytes:sourceBytes.length,sha256:sourceSha},success:successFacts,error:errorFacts,truth:[
@@ -71,4 +73,4 @@ try{
     'no product API schema renderer state or persistence owner was added for this proof'
   ]};
   fs.mkdirSync(path.dirname(resultPath),{recursive:true});fs.writeFileSync(resultPath,JSON.stringify(proof,null,2));console.log(JSON.stringify(proof,null,2));
-}catch(error){if(successCtx)cleanup(successCtx);if(errorCtx)cleanup(errorCtx);const message=error instanceof Error?(error.stack||error.message):String(error);try{fs.mkdirSync(path.dirname(resultPath),{recursive:true});fs.writeFileSync(resultPath,JSON.stringify({state:'FAIL',proof:'ORBITA_W7C_DOCUMENT_UNLINK_LIFECYCLE',error:message},null,2));}catch{}console.error(message);process.exit(1);}
+}catch(error){if(successCtx)cleanup(successCtx);if(errorCtx)cleanup(errorCtx);const message=error instanceof Error?(error.stack||error.message):String(error);try{if(!fs.existsSync(resultPath)){fs.mkdirSync(path.dirname(resultPath),{recursive:true});fs.writeFileSync(resultPath,JSON.stringify({state:'FAIL',proof:'ORBITA_W7C_DOCUMENT_UNLINK_LIFECYCLE',error:message},null,2));}}catch{}console.error(message);process.exit(1);}
