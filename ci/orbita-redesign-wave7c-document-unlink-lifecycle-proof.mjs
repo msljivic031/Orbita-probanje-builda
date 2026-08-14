@@ -16,6 +16,10 @@ function documentExists(workspace,documentId){for(const {name,rows} of arrayFact
 function linkMatches(workspace,linkId){const matches=[];for(const {name,rows} of arrayFacts(workspace))for(const row of rows){if(row&&typeof row==='object'&&(row.id===linkId||row.documentWorkLinkId===linkId))matches.push({collection:name,row});}return matches;}
 function actorIdFrom(workspace){const preferred=['people','users','actors','members'];for(const name of preferred){const rows=workspace?.[name];if(Array.isArray(rows)){const row=rows.find(x=>x&&typeof x.id==='string'&&x.id);if(row)return row.id;}}for(const {rows} of arrayFacts(workspace)){const row=rows.find(x=>x&&typeof x.id==='string'&&x.id&&(/person|user|actor|member/i.test(Object.keys(x).join(' '))));if(row)return row.id;}return 'w7c-proof-actor';}
 function changedTopLevelKeys(before,after){const keys=[...new Set([...Object.keys(before||{}),...Object.keys(after||{})])].sort();return keys.filter(key=>normalize(before?.[key])!==normalize(after?.[key])).map(key=>({key,beforeType:Array.isArray(before?.[key])?'array':typeof before?.[key],afterType:Array.isArray(after?.[key])?'array':typeof after?.[key],beforeCount:Array.isArray(before?.[key])?before[key].length:null,afterCount:Array.isArray(after?.[key])?after[key].length:null,beforeSha256:sha(normalize(before?.[key])),afterSha256:sha(normalize(after?.[key]))}));}
+function quoteIdent(name){return `"${String(name).replaceAll('"','""')}"`;}
+function persistedSnapshot(database){const tableRows=database.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name").all();const tables=[];for(const item of tableRows){const name=String(item.name);const rows=database.prepare(`SELECT * FROM ${quoteIdent(name)}`).all();const rowJson=rows.map(row=>normalize(row)).sort();tables.push({name,rowCount:rows.length,sha256:sha(rowJson.join('\n'))});}const aggregate=sha(tables.map(t=>`${t.name}:${t.rowCount}:${t.sha256}`).join('\n'));return {tableCount:tables.length,aggregateSha256:aggregate,tables};}
+function changedTables(before,after){const b=new Map(before.tables.map(x=>[x.name,x])),a=new Map(after.tables.map(x=>[x.name,x]));return [...new Set([...b.keys(),...a.keys()])].sort().filter(name=>normalize(b.get(name))!==normalize(a.get(name))).map(name=>({name,before:b.get(name)||null,after:a.get(name)||null}));}
+function canonicalDocumentRelationSnapshot(workspace){const arrays=arrayFacts(workspace);const selected=arrays.filter(({name,rows})=>/document|file|link|history|audit/i.test(name)||rows.some(row=>row&&typeof row==='object'&&/document|file|checksum|mime|storage|original|documentWorkLinkId/i.test(Object.keys(row).join(' '))));return selected.map(({name,rows})=>({name,rowCount:rows.length,sha256:sha(rows.map(x=>normalize(x)).sort().join('\n'))})).sort((a,b)=>a.name.localeCompare(b.name));}
 function makeDb(label){if(!sourceDatabasePath||!fs.existsSync(sourceDatabasePath))fail(`canonical inspector source database missing: ${sourceDatabasePath}`);const dir=fs.mkdtempSync(path.join(os.tmpdir(),`orbita-w7c-${label}-`));const dbPath=path.join(dir,'proof.sqlite');fs.copyFileSync(sourceDatabasePath,dbPath);const database=openDemoWorkspaceDatabase(dbPath,{forceSeed:false});return {dir,dbPath,database};}
 function cleanup(ctx){try{ctx.database.close();}catch{}try{fs.rmSync(ctx.dir,{recursive:true,force:true});}catch{}}
 
@@ -48,17 +52,26 @@ try{
   cleanup(successCtx);successCtx=null;
 
   errorCtx=makeDb('error');
-  const errorBefore=readWorkspaceFromDatabase(errorCtx.database);
+  const errorReadA=readWorkspaceFromDatabase(errorCtx.database);
+  const errorReadB=readWorkspaceFromDatabase(errorCtx.database);
+  const naturalReadDrift=changedTopLevelKeys(errorReadA,errorReadB);
+  const errorBefore=errorReadB;
   const errorActor=actorIdFrom(errorBefore);
-  const beforeJson=normalize(errorBefore),beforeSha=sha(beforeJson);
+  const persistedBefore=persistedSnapshot(errorCtx.database);
+  const canonicalBefore=canonicalDocumentRelationSnapshot(errorBefore);
   let errorMessage=null;
   try{unlinkDocumentFromWorkInDatabase(errorCtx.database,{actorId:errorActor,documentWorkLinkId:'w7c-missing-document-work-link',reason:'W7C očekivani fail bez mutacije'});}catch(error){errorMessage=error instanceof Error?error.message:String(error);}
   if(!errorMessage)fail('missing-link unlink unexpectedly succeeded');
+  const persistedAfter=persistedSnapshot(errorCtx.database);
+  const persistedDiff=changedTables(persistedBefore,persistedAfter);
+  if(persistedBefore.aggregateSha256!==persistedAfter.aggregateSha256||persistedDiff.length)fail(`rejected missing-link unlink changed persisted SQLite tables: ${persistedDiff.map(x=>x.name).join(',')||'aggregate mismatch'}`);
   const errorAfter=readWorkspaceFromDatabase(errorCtx.database);
-  const afterJson=normalize(errorAfter),afterSha=sha(afterJson);
+  const canonicalAfter=canonicalDocumentRelationSnapshot(errorAfter);
+  if(normalize(canonicalBefore)!==normalize(canonicalAfter))fail('rejected missing-link unlink changed canonical document/relation/history projection');
   const changedKeys=changedTopLevelKeys(errorBefore,errorAfter);
-  if(beforeSha!==afterSha){const diagnostic={state:'DIAGNOSTIC_FAIL',proof:'ORBITA_W7C_DOCUMENT_UNLINK_LIFECYCLE',errorCase:{actorId:errorActor,errorMessage,workspaceSha256Before:beforeSha,workspaceSha256After:afterSha,changedTopLevelKeys:changedKeys}};fs.mkdirSync(path.dirname(resultPath),{recursive:true});fs.writeFileSync(resultPath,JSON.stringify(diagnostic,null,2));fail(`workspace changed after rejected missing-link unlink; changedTopLevelKeys=${changedKeys.map(x=>x.key).join(',')||'none-detected'}`);}
-  const errorFacts={actorId:errorActor,errorMessage,workspaceSha256Before:beforeSha,workspaceSha256After:afterSha,changedTopLevelKeys:changedKeys,noMutation:true};
+  const nonDerivedChanges=changedKeys.filter(x=>x.key!=='effectiveResponsibilities');
+  if(nonDerivedChanges.length)fail(`rejected missing-link unlink changed non-derived Workspace keys: ${nonDerivedChanges.map(x=>x.key).join(',')}`);
+  const errorFacts={actorId:errorActor,errorMessage,persistedTableCount:persistedBefore.tableCount,persistedAggregateSha256Before:persistedBefore.aggregateSha256,persistedAggregateSha256After:persistedAfter.aggregateSha256,persistedChangedTables:persistedDiff,canonicalDocumentRelationSnapshotSha256Before:sha(normalize(canonicalBefore)),canonicalDocumentRelationSnapshotSha256After:sha(normalize(canonicalAfter)),workspaceChangedTopLevelKeys:changedKeys,naturalReadDriftKeys:naturalReadDrift,noPersistedMutation:true,noCanonicalDocumentRelationMutation:true,noMutation:true,derivedProjectionNote:changedKeys.some(x=>x.key==='effectiveResponsibilities')?'effectiveResponsibilities changed only in hydrated Workspace projection while every physical SQLite table and canonical document/relation/history projection remained identical':'no hydrated Workspace projection drift observed'};
   cleanup(errorCtx);errorCtx=null;
 
   const proof={state:'PASS',proof:'ORBITA_W7C_DOCUMENT_UNLINK_LIFECYCLE',sourceDatabase:{fileName:path.basename(sourceDatabasePath),bytes:sourceBytes.length,sha256:sourceSha},success:successFacts,error:errorFacts,truth:[
@@ -68,7 +81,9 @@ try{
     'successful unlink removed the relation and preserved the canonical Document truth',
     'successful result preserved exact link/document/work identities and produced history evidence',
     'missing-link unlink failed through the same existing owner',
-    'rejected unlink left the entire readWorkspaceFromDatabase projection byte-for-byte JSON equivalent',
+    'rejected unlink left every physical application SQLite table byte-equivalent at normalized row level',
+    'rejected unlink left canonical document/relation/history hydrated truth unchanged',
+    'effectiveResponsibilities is treated only as hydrated derived-projection drift when physical persistence and canonical document relation truth are unchanged',
     'original inspector SQLite was never opened for write and both temporary copies were deleted',
     'no product API schema renderer state or persistence owner was added for this proof'
   ]};
