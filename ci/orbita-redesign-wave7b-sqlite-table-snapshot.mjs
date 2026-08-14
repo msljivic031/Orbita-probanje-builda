@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import crypto from 'node:crypto';
 import { DatabaseSync } from 'node:sqlite';
 const [,,dbPath,outPath]=process.argv;if(!dbPath||!outPath)throw new Error('usage: snapshot <db> <out>');
@@ -7,4 +8,4 @@ const q=n=>`"${String(n).replaceAll('"','""')}"`;
 const db=new DatabaseSync(dbPath,{readOnly:true});
 const names=db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name").all().map(x=>String(x.name));
 const tables=names.map(name=>{const rows=db.prepare(`SELECT * FROM ${q(name)}`).all();const normalized=rows.map(x=>JSON.stringify(x)).sort();return {name,rowCount:rows.length,sha256:sha(normalized.join('\n'))};});db.close();
-const result={state:'PASS',tableCount:tables.length,aggregateSha256:sha(tables.map(x=>`${x.name}:${x.rowCount}:${x.sha256}`).join('\n')),tables};fs.mkdirSync(new URL('.',`file://${outPath.replaceAll('\\','/')}`).pathname,{recursive:true});fs.writeFileSync(outPath,JSON.stringify(result,null,2));console.log(JSON.stringify({state:result.state,tableCount:result.tableCount,aggregateSha256:result.aggregateSha256}));
+const result={state:'PASS',tableCount:tables.length,aggregateSha256:sha(tables.map(x=>`${x.name}:${x.rowCount}:${x.sha256}`).join('\n')),tables};fs.mkdirSync(path.dirname(path.resolve(outPath)),{recursive:true});fs.writeFileSync(outPath,JSON.stringify(result,null,2));console.log(JSON.stringify({state:result.state,tableCount:result.tableCount,aggregateSha256:result.aggregateSha256}));
