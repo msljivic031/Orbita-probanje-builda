@@ -38,6 +38,17 @@ if(!s.includes(marker)){
                       `;
   s=s.replace(re,note+'$1');
 }
+if(!s.includes('data-orbita-w7c-unlink-reason="true"')){
+  const confirmIndex=s.indexOf('data-orbita-action="documents-confirm-unlink"');
+  if(confirmIndex<0)throw new Error('confirm unlink action missing while binding reason control');
+  const searchStart=Math.max(0,confirmIndex-3200);
+  const region=s.slice(searchStart,confirmIndex);
+  const inputMatches=[...region.matchAll(/<input\b[^>]*>/g)];
+  if(inputMatches.length!==1)throw new Error(`unlink review reason input expected 1 before confirm action, got ${inputMatches.length}`);
+  const input=inputMatches[0][0];
+  const bound=`<input aria-label="Razlog uklanjanja veze" data-orbita-w7c-unlink-reason="true"${input.slice('<input'.length)}`;
+  s=s.slice(0,searchStart+inputMatches[0].index)+bound+s.slice(searchStart+inputMatches[0].index+input.length);
+}
 replaceOnce('>Ukloni samo vezu</button>','>Potvrdi uklanjanje veze</button>','confirm unlink copy');
 fs.writeFileSync(screenFile,s,'utf8');
 function walk(dir){const out=[];for(const e of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())out.push(...walk(p));else out.push(p);}return out;}
@@ -49,4 +60,4 @@ const cssFile=owners[0];let css=fs.readFileSync(cssFile,'utf8').replace(/\r\n/g,
 const cssMarker='/* ORBITA W7C DOCUMENTS RECOVERY UX */';
 if(!css.includes(cssMarker))css+=`\n\n${cssMarker}\n.documents-workspace-screen .documents-unlink-consequence{display:grid;gap:5px;margin:7px 0 9px;padding:9px 10px;border:1px solid rgba(65,99,139,.13);border-radius:9px;background:rgba(246,249,253,.86)}.documents-workspace-screen .documents-unlink-consequence>div{display:grid;grid-template-columns:64px minmax(0,1fr);gap:8px;align-items:baseline}.documents-workspace-screen .documents-unlink-consequence span{font-size:8px;font-weight:850;letter-spacing:.06em;text-transform:uppercase;color:#718399}.documents-workspace-screen .documents-unlink-consequence strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;color:#203f5e}.documents-workspace-screen .documents-unlink-consequence small{padding-top:4px;border-top:1px solid rgba(65,99,139,.09);font-size:8.5px;line-height:1.45;color:#667b91}@media(max-width:1390px){.documents-workspace-screen .documents-unlink-consequence>div{grid-template-columns:56px minmax(0,1fr)}}\n`;
 fs.writeFileSync(cssFile,css,'utf8');
-console.log(JSON.stringify({state:'W7C_RECOVERY_UX_IMPLEMENTED_NOT_ADMITTED',owners:[screenRel,path.relative(root,cssFile).replace(/\\/g,'/')],truthTouched:false,stateOwnersAdded:0,handlersAdded:0,canonicalDocumentNameField:'originalFileName',semantics:['existing operationState reused','existing unlinkReview reused','existing activeDocument/link/work context reused','unlink review names exact document and Rad','relation-only consequence visible before commit','native import/open/unlink callbacks unchanged','no preview/file owner added']},null,2));
+console.log(JSON.stringify({state:'W7C_RECOVERY_UX_IMPLEMENTED_NOT_ADMITTED',owners:[screenRel,path.relative(root,cssFile).replace(/\\/g,'/')],truthTouched:false,stateOwnersAdded:0,handlersAdded:0,canonicalDocumentNameField:'originalFileName',a11y:['unlink reason input has explicit aria-label','unlink reason input has stable evidence marker'],semantics:['existing operationState reused','existing unlinkReview reused','existing activeDocument/link/work context reused','unlink review names exact document and Rad','relation-only consequence visible before commit','native import/open/unlink callbacks unchanged','no preview/file owner added']},null,2));
