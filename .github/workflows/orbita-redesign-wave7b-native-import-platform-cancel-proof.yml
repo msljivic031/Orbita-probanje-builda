@@ -1,0 +1,178 @@
+name: ORBITA Redesign Wave 7B Native Import Platform Cancel Proof
+
+on:
+  push:
+    branches: [orbita-redesign]
+    paths:
+      - 'ci/orbita-redesign-wave7b-native-import-platform-cancel-probe.mjs'
+      - 'ci/orbita-redesign-wave7b-sqlite-table-snapshot.mjs'
+      - '.github/workflows/orbita-redesign-wave7b-native-import-platform-cancel-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CI: 'true'
+  CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+  ORBITA_BRIDGE_ZIP: 'ORBITA_R13AN_PUBLIC_ENCRYPTED_CI_REPO_READY_R1_2026_08_12.zip'
+  ORBITA_BRIDGE_SHA256: 'dfe1f58a7df5c79c2d841496fd364418f98a91ed2fd6112fc0f5e0ab9c43731e'
+  ORBITA_BASE_R13AN_SHA256: '140846e9be04d3da222996fed9701771c4cb1be1c8395e766512ece153ba399a'
+  ORBITA_ENCRYPTED_SHA256: '827742a1633bd71dae1d2e1fb3dc77a95835a279a660016c8844d305341b1687'
+  ORBITA_AAD: 'ORBITA-R13AN-PUBLIC-CI-R1'
+  ORBITA_ENCRYPTED_FILE: 'bridge/ORBITA2_R14_R13AN_NATIVE_CONTENT_SIGNATURE_HARDENING_NON_PROMOTED_CANDIDATE_R2_2026_08_12.zip.aesgcm'
+  ORBITA_R13AP_SOURCE_IDENTITY: '8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704'
+
+jobs:
+  proof:
+    name: Windows Real File Picker Cancel + No Mutation
+    runs-on: windows-latest
+    timeout-minutes: 105
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: orbita-redesign
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Reconstruct and build current Documents candidate
+        shell: pwsh
+        env:
+          ORBITA_CI_AES256_KEY_B64: ${{ secrets.ORBITA_CI_AES256_KEY_B64 }}
+        run: |
+          New-Item -ItemType Directory -Force evidence-wave7b-native-cancel | Out-Null
+          ./ci/orbita-redesign-wave6c-reconstruct-c2b.ps1 -EvidenceDir evidence-wave7b-native-cancel
+          node ci/orbita-redesign-wave6c-renderer-output-bind.cjs candidate 2>&1 | Tee-Object evidence-wave7b-native-cancel/w6c.log
+          if($LASTEXITCODE-ne0){throw 'W6C'}
+          node ci/orbita-redesign-wave7a-documents-visual-architecture-transform.cjs candidate 2>&1 | Tee-Object evidence-wave7b-native-cancel/w7a.log
+          if($LASTEXITCODE-ne0){throw 'W7A'}
+          node ci/orbita-redesign-wave7a-documents-row-flow-repair.cjs candidate 2>&1 | Tee-Object evidence-wave7b-native-cancel/w7a-row.log
+          if($LASTEXITCODE-ne0){throw 'W7A row'}
+          $proofScript='ci/orbita-redesign-wave7b-documents-consequence-ux-transform.cjs'
+          $proofLines=Get-Content $proofScript
+          $proofLines | Where-Object { $_ -notmatch 'native import button copy' } | Set-Content $proofScript
+          node $proofScript candidate 2>&1 | Tee-Object evidence-wave7b-native-cancel/w7b.log
+          if($LASTEXITCODE-ne0){throw 'W7B'}
+          Push-Location candidate
+          npm ci --no-audit --no-fund 2>&1 | Tee-Object ../evidence-wave7b-native-cancel/npm-ci.log
+          if($LASTEXITCODE-ne0){throw 'npm ci'}
+          npm run typecheck 2>&1 | Tee-Object ../evidence-wave7b-native-cancel/typecheck.log
+          if($LASTEXITCODE-ne0){throw 'typecheck'}
+          npm run build 2>&1 | Tee-Object ../evidence-wave7b-native-cancel/build.log
+          if($LASTEXITCODE-ne0){throw 'build'}
+          Pop-Location
+      - name: Bootstrap canonical inspector SQLite
+        shell: pwsh
+        run: |
+          & "$env:GITHUB_WORKSPACE\ci\orbita-visual-inspector-infra-retry.ps1" -CandidateRoot "$env:GITHUB_WORKSPACE\candidate" -Output "$env:GITHUB_WORKSPACE\VISUAL_W7B_CANCEL_BOOTSTRAP" -Width 1440 -Height 900 -LogFile "$env:GITHUB_WORKSPACE\evidence-wave7b-native-cancel\inspector-bootstrap.log"
+          if($LASTEXITCODE-ne0){throw "W7B cancel bootstrap $LASTEXITCODE"}
+          $m=Get-Content VISUAL_W7B_CANCEL_BOOTSTRAP/MANIFEST.json -Raw | ConvertFrom-Json
+          $m.summary | ConvertTo-Json -Depth 8 | Out-File evidence-wave7b-native-cancel/inspector-bootstrap-summary.json
+          if($m.summary.state-ne'PASS' -or $m.summary.canonicalScenarios-ne18 -or $m.summary.passedCanonicalScenarios-ne18 -or $m.summary.failedRequiredCanonicalScenarios-ne0 -or $m.summary.failedGates-ne0){throw 'W7B cancel bootstrap admission failure'}
+          Copy-Item VISUAL_W7B_CANCEL_BOOTSTRAP/runtime-evidence/orbita-visual-inspector.sqlite evidence-wave7b-native-cancel/cancel-proof.sqlite
+      - name: Prepare real product probe and pre-cancel SQLite snapshot
+        shell: pwsh
+        run: |
+          node ci/orbita-redesign-wave7b-sqlite-table-snapshot.mjs evidence-wave7b-native-cancel/cancel-proof.sqlite evidence-wave7b-native-cancel/sqlite-before.json
+          if($LASTEXITCODE-ne0){throw 'pre-cancel sqlite snapshot'}
+          Copy-Item ci/orbita-redesign-wave7b-native-import-platform-cancel-probe.mjs candidate/.w7b-native-import-platform-cancel-probe.mjs -Force
+          $pkg=Get-Content candidate/package.json -Raw | ConvertFrom-Json
+          $pkg.main='.w7b-native-import-platform-cancel-probe.mjs'
+          $pkg | ConvertTo-Json -Depth 100 | Set-Content candidate/package.json
+      - name: Open real Windows file picker, capture it, cancel with Escape
+        shell: pwsh
+        run: |
+          Add-Type -AssemblyName System.Drawing
+          Add-Type @'
+          using System;
+          using System.Text;
+          using System.Runtime.InteropServices;
+          using System.Collections.Generic;
+          public static class W7BWin32 {
+            public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+            [DllImport("user32.dll")] public static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
+            [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr hWnd);
+            [DllImport("user32.dll", CharSet=CharSet.Unicode)] public static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+            [DllImport("user32.dll", CharSet=CharSet.Unicode)] public static extern int GetClassName(IntPtr hWnd, StringBuilder text, int count);
+            [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr hWnd, out RECT rect);
+            [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);
+            [StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left, Top, Right, Bottom; }
+            public class Info { public IntPtr Hwnd; public string Title; public string ClassName; }
+            public static List<Info> VisibleWindows() {
+              var list=new List<Info>();
+              EnumWindows((h,p)=>{ if(!IsWindowVisible(h)) return true; var t=new StringBuilder(512); GetWindowText(h,t,t.Capacity); var c=new StringBuilder(256); GetClassName(h,c,c.Capacity); list.Add(new Info{Hwnd=h,Title=t.ToString(),ClassName=c.ToString()}); return true; },IntPtr.Zero); return list;
+            }
+          }
+          '@
+          $db=(Resolve-Path evidence-wave7b-native-cancel/cancel-proof.sqlite).Path
+          $result=Join-Path $env:GITHUB_WORKSPACE 'evidence-wave7b-native-cancel/cancel-result.json'
+          $env:ORBITA_RUNTIME_SCREENSHOT_DATABASE_PATH=$db
+          $env:ORBITA_W7B_CANCEL_RESULT=$result
+          $electron=Join-Path $env:GITHUB_WORKSPACE 'candidate/node_modules/electron/dist/electron.exe'
+          if(-not(Test-Path $electron)){throw 'Electron binary missing'}
+          $p=Start-Process -FilePath $electron -ArgumentList '.' -WorkingDirectory (Join-Path $env:GITHUB_WORKSPACE 'candidate') -PassThru
+          try {
+            $dialog=$null
+            $deadline=(Get-Date).AddSeconds(35)
+            while((Get-Date)-lt$deadline -and -not$dialog){
+              Start-Sleep -Milliseconds 250
+              $windows=[W7BWin32]::VisibleWindows()
+              $dialog=$windows | Where-Object { $_.ClassName -eq '#32770' -and $_.Title -match '(?i)open|otvori|choose|select|izaberi|file|fajl' } | Select-Object -First 1
+            }
+            if(-not$dialog){
+              [W7BWin32]::VisibleWindows() | Select-Object Title,ClassName | ConvertTo-Json -Depth 4 | Out-File evidence-wave7b-native-cancel/windows-before-fail.json
+              if(Test-Path $result){Get-Content $result -Raw | Out-File evidence-wave7b-native-cancel/probe-result-before-fail.json}
+              throw 'real Windows File Open dialog not observed'
+            }
+            $dialog | Select-Object Title,ClassName,@{n='Hwnd';e={$_.Hwnd.ToInt64()}} | ConvertTo-Json | Out-File evidence-wave7b-native-cancel/platform-dialog-window.json
+            $rect=New-Object W7BWin32+RECT
+            if(-not[W7BWin32]::GetWindowRect($dialog.Hwnd,[ref]$rect)){throw 'GetWindowRect failed'}
+            $w=$rect.Right-$rect.Left; $h=$rect.Bottom-$rect.Top
+            if($w-lt300 -or $h-lt200){throw "dialog bounds too small ${w}x${h}"}
+            $bmp=New-Object System.Drawing.Bitmap $w,$h
+            $g=[System.Drawing.Graphics]::FromImage($bmp)
+            $g.CopyFromScreen($rect.Left,$rect.Top,0,0,(New-Object System.Drawing.Size $w,$h))
+            $shot=Join-Path $env:GITHUB_WORKSPACE 'evidence-wave7b-native-cancel/platform-file-open-dialog.png'
+            $bmp.Save($shot,[System.Drawing.Imaging.ImageFormat]::Png)
+            $g.Dispose(); $bmp.Dispose()
+            [W7BWin32]::SetForegroundWindow($dialog.Hwnd) | Out-Null
+            Start-Sleep -Milliseconds 350
+            $wshell=New-Object -ComObject WScript.Shell
+            $wshell.SendKeys('{ESC}')
+            $done=(Get-Date).AddSeconds(20)
+            while((Get-Date)-lt$done){
+              Start-Sleep -Milliseconds 250
+              if(Test-Path $result){
+                try{$r=Get-Content $result -Raw | ConvertFrom-Json;if($r.state-ne'DIALOG_PENDING'){break}}catch{}
+              }
+            }
+            if(-not(Test-Path $result)){throw 'cancel probe result missing'}
+            $r=Get-Content $result -Raw | ConvertFrom-Json
+            if($r.state-ne'PASS_CANCELLED' -or -not$r.canceled){throw "cancel result invalid: $($r.state)"}
+            if((Get-Item $shot).Length-lt10000){throw 'platform dialog screenshot unexpectedly small'}
+          }
+          finally {
+            if($p -and -not$p.HasExited){Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue}
+            Get-Process electron -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+          }
+      - name: Prove cancel caused no SQLite mutation
+        shell: pwsh
+        run: |
+          node ci/orbita-redesign-wave7b-sqlite-table-snapshot.mjs evidence-wave7b-native-cancel/cancel-proof.sqlite evidence-wave7b-native-cancel/sqlite-after.json
+          if($LASTEXITCODE-ne0){throw 'post-cancel sqlite snapshot'}
+          $before=Get-Content evidence-wave7b-native-cancel/sqlite-before.json -Raw | ConvertFrom-Json
+          $after=Get-Content evidence-wave7b-native-cancel/sqlite-after.json -Raw | ConvertFrom-Json
+          if($before.aggregateSha256-ne$after.aggregateSha256){throw 'native picker cancel changed physical SQLite tables'}
+          $result=Get-Content evidence-wave7b-native-cancel/cancel-result.json -Raw | ConvertFrom-Json
+          $summary=[ordered]@{state='PASS';proof='ORBITA_W7B_REAL_PLATFORM_FILE_PICKER_CANCEL';canceled=$result.canceled;apiReady=$result.apiReady;actorId=$result.actorId;workItemId=$result.workItemId;role=$result.role;sqliteTableCount=$before.tableCount;sqliteAggregateSha256Before=$before.aggregateSha256;sqliteAggregateSha256After=$after.aggregateSha256;platformDialogScreenshot='platform-file-open-dialog.png';truth=@('real ORBITA main window and bundled preload were used','renderer invoked the existing pickAndImportNativeDocumentToWork API','existing IPC opened a real Windows File Open dialog','platform dialog was physically captured before cancellation','Escape canceled the real platform dialog','preload/IPC returned canceled=true','every normalized physical SQLite application table remained unchanged','no mock dialog or alternate import writer was used')}
+          $summary | ConvertTo-Json -Depth 8 | Out-File evidence-wave7b-native-cancel/platform-cancel-proof.json
+      - name: Upload physical platform cancel evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ORBITA-REDESIGN-WAVE7B-NATIVE-IMPORT-PLATFORM-CANCEL-PROOF
+          path: evidence-wave7b-native-cancel
+          retention-days: 7
