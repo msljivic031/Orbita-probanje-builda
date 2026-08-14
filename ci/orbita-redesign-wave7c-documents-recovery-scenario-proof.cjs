@@ -24,9 +24,11 @@ if(baselineIndexes.length!==1)throw new Error(`physically proven selected-docume
 const reviewMarker='documents-unlink-relation-review';
 const invalidMarker='documents-unlink-invalid-reason';
 const readyMarker='documents-unlink-valid-reason-ready';
+const destinationMarker='documents-linked-rad-destination';
 const continuityMarker='documents-linked-rad-dossier-documents';
+const captureMarkers=[reviewMarker,invalidMarker,readyMarker,destinationMarker,continuityMarker];
 const isW7cStep=(step)=>!!step&&(
- (step.type==='capture'&&[reviewMarker,invalidMarker,readyMarker,continuityMarker].includes(step.label))||
+ (step.type==='capture'&&captureMarkers.includes(step.label))||
  (typeof step.selector==='string'&&(
    step.selector.includes('documents-review-unlink')||
    step.selector.includes('data-orbita-w7c-relation-review')||
@@ -58,6 +60,8 @@ const proofSteps=[
  {type:'assertEnabled',selector:confirmStateSelector},
  {type:'capture',label:readyMarker},
  {type:'click',selector:'.document-work-open'},
+ {type:'wait',milliseconds:180},
+ {type:'capture',label:destinationMarker},
  {type:'waitFor',selector:'[data-orbita-dossier-tab="documents"]',timeoutMs:5000},
  {type:'click',selector:'[data-orbita-dossier-tab="documents"]'},
  {type:'waitFor',selector:'[data-orbita-dossier-active-tab="documents"]',timeoutMs:5000},
@@ -69,8 +73,8 @@ if(reviewClicks.length!==1)throw new Error('W7C review-only mutation-class click
 if(target.allowMutation!==true)throw new Error('W7C scenario-level allowMutation must be true per physical inspector contract');
 if(reviewClicks.some(step=>Object.prototype.hasOwnProperty.call(step,'allowMutation')))throw new Error('W7C must not rely on unsupported step-level allowMutation');
 if(target.steps.some(step=>step&&step.type==='click'&&typeof step.selector==='string'&&step.selector.includes('documents-confirm-unlink')))throw new Error('W7C canonical inspector must never click documents-confirm-unlink');
-if(target.steps.some(step=>step&&step.type==='click'&&typeof step.selector==='string'&&step.selector.includes('selected-work-open-dossier')))throw new Error('W7C continuity must follow direct onOpenWorkDossier destination without second dossier-open click');
-for(const label of [reviewMarker,invalidMarker,readyMarker,continuityMarker])if(target.steps.filter(step=>step&&step.type==='capture'&&step.label===label).length!==1)throw new Error(`W7C capture count invalid ${label}`);
+if(target.steps.some(step=>step&&step.type==='click'&&typeof step.selector==='string'&&step.selector.includes('selected-work-open-dossier')))throw new Error('W7C continuity must follow physical document-work-open destination without redundant dossier-open click');
+for(const label of captureMarkers)if(target.steps.filter(step=>step&&step.type==='capture'&&step.label===label).length!==1)throw new Error(`W7C capture count invalid ${label}`);
 fs.writeFileSync(scenarioFile,JSON.stringify(doc,null,2)+'\n');
 fs.writeFileSync(coverageFile,JSON.stringify(coverage,null,2)+'\n');
-console.log(JSON.stringify({state:'W7C_SCENARIO_EXTENDED_NOT_ADMITTED',scenario:target.id,route:target.route,productSrcChanged:false,directAction:'documents-review-unlink',mutationPermissionOwner:'scenario.allowMutation',reviewOnlyMutationClassPermission:true,confirmActionDispositionRetained:true,placement:'immediately-after-scenario-documents-selected-document',obsoleteDispositionRemoved:{owner:'config/inspector/action-coverage-current.json',action:'documents-review-unlink',count:1},continuityDestination:'document-work-open -> existing onOpenWorkDossier -> dossier Documents tab',proof:['scenario-level allowMutation follows physical visual-runtime-inspector contract','review click opens context only; documents-confirm-unlink is never clicked','exact relation review visible','one-character reason keeps confirm disabled through neutral evidence marker','valid reason restores confirm enabled through neutral evidence marker','existing linked-Rad control invokes the existing onOpenWorkDossier destination directly','existing dossier Documents tab is reached without a redundant second dossier-open click'],captures:[reviewMarker,invalidMarker,readyMarker,continuityMarker],truth:'error prevention, recoverability and Documents→Rad dossier continuity are exercised on existing owners without committing unlink or inventing a second document representation'},null,2));
+console.log(JSON.stringify({state:'W7C_SCENARIO_EXTENDED_NOT_ADMITTED',scenario:target.id,route:target.route,productSrcChanged:false,directAction:'documents-review-unlink',mutationPermissionOwner:'scenario.allowMutation',reviewOnlyMutationClassPermission:true,confirmActionDispositionRetained:true,placement:'immediately-after-scenario-documents-selected-document',obsoleteDispositionRemoved:{owner:'config/inspector/action-coverage-current.json',action:'documents-review-unlink',count:1},continuityDestination:'document-work-open -> physical destination capture -> dossier Documents tab if present',proof:['scenario-level allowMutation follows physical visual-runtime-inspector contract','review click opens context only; documents-confirm-unlink is never clicked','exact relation review visible','one-character reason keeps confirm disabled through neutral evidence marker','valid reason restores confirm enabled through neutral evidence marker','physical destination after document-work-open is captured before any dossier-tab assumption','existing dossier Documents tab is reached only if the rendered destination actually exposes it'],captures:captureMarkers,truth:'error prevention, recoverability and Documents→Rad continuity are exercised on existing owners without committing unlink or inventing a second document representation'},null,2));
