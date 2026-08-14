@@ -1,0 +1,96 @@
+name: ORBITA Redesign Wave 7B Native Import Lifecycle Proof
+
+on:
+  push:
+    branches: [orbita-redesign]
+    paths:
+      - 'ci/orbita-redesign-wave7b-native-import-lifecycle-proof.mjs'
+      - '.github/workflows/orbita-redesign-wave7b-native-import-lifecycle-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CI: 'true'
+  CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+  ORBITA_BRIDGE_ZIP: 'ORBITA_R13AN_PUBLIC_ENCRYPTED_CI_REPO_READY_R1_2026_08_12.zip'
+  ORBITA_BRIDGE_SHA256: 'dfe1f58a7df5c79c2d841496fd364418f98a91ed2fd6112fc0f5e0ab9c43731e'
+  ORBITA_BASE_R13AN_SHA256: '140846e9be04d3da222996fed9701771c4cb1be1c8395e766512ece153ba399a'
+  ORBITA_ENCRYPTED_SHA256: '827742a1633bd71dae1d2e1fb3dc77a95835a279a660016c8844d305341b1687'
+  ORBITA_AAD: 'ORBITA-R13AN-PUBLIC-CI-R1'
+  ORBITA_ENCRYPTED_FILE: 'bridge/ORBITA2_R14_R13AN_NATIVE_CONTENT_SIGNATURE_HARDENING_NON_PROMOTED_CANDIDATE_R2_2026_08_12.zip.aesgcm'
+  ORBITA_R13AP_SOURCE_IDENTITY: '8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704'
+
+jobs:
+  proof:
+    name: Windows Native Import Success + Forced Rollback
+    runs-on: windows-latest
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: orbita-redesign
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Reconstruct current Documents candidate
+        shell: pwsh
+        env:
+          ORBITA_CI_AES256_KEY_B64: ${{ secrets.ORBITA_CI_AES256_KEY_B64 }}
+        run: |
+          New-Item -ItemType Directory -Force evidence-wave7b-native-import-lifecycle | Out-Null
+          ./ci/orbita-redesign-wave6c-reconstruct-c2b.ps1 -EvidenceDir evidence-wave7b-native-import-lifecycle
+          node ci/orbita-redesign-wave6c-renderer-output-bind.cjs candidate 2>&1 | Tee-Object evidence-wave7b-native-import-lifecycle/w6c.log
+          if($LASTEXITCODE-ne0){throw 'W6C'}
+          node ci/orbita-redesign-wave7a-documents-visual-architecture-transform.cjs candidate 2>&1 | Tee-Object evidence-wave7b-native-import-lifecycle/w7a.log
+          if($LASTEXITCODE-ne0){throw 'W7A'}
+          node ci/orbita-redesign-wave7a-documents-row-flow-repair.cjs candidate 2>&1 | Tee-Object evidence-wave7b-native-import-lifecycle/w7a-row.log
+          if($LASTEXITCODE-ne0){throw 'W7A row'}
+          $proofScript='ci/orbita-redesign-wave7b-documents-consequence-ux-transform.cjs'
+          $proofLines=Get-Content $proofScript
+          $proofLines | Where-Object { $_ -notmatch 'native import button copy' } | Set-Content $proofScript
+          node $proofScript candidate 2>&1 | Tee-Object evidence-wave7b-native-import-lifecycle/w7b.log
+          if($LASTEXITCODE-ne0){throw 'W7B'}
+      - name: Install typecheck build
+        working-directory: candidate
+        shell: pwsh
+        run: |
+          npm ci --no-audit --no-fund 2>&1 | Tee-Object ../evidence-wave7b-native-import-lifecycle/npm-ci.log
+          if($LASTEXITCODE-ne0){throw 'npm ci'}
+          npm run typecheck 2>&1 | Tee-Object ../evidence-wave7b-native-import-lifecycle/typecheck.log
+          if($LASTEXITCODE-ne0){throw 'typecheck'}
+          npm run build 2>&1 | Tee-Object ../evidence-wave7b-native-import-lifecycle/build.log
+          if($LASTEXITCODE-ne0){throw 'build'}
+          Copy-Item ../ci/orbita-redesign-wave7b-native-import-lifecycle-proof.mjs ./w7b-native-import-lifecycle-proof.mjs -Force
+      - name: Bootstrap canonical inspector SQLite
+        shell: pwsh
+        run: |
+          & "$env:GITHUB_WORKSPACE\ci\orbita-visual-inspector-infra-retry.ps1" -CandidateRoot "$env:GITHUB_WORKSPACE\candidate" -Output "$env:GITHUB_WORKSPACE\VISUAL_W7B_IMPORT_BOOTSTRAP" -Width 1440 -Height 900 -LogFile "$env:GITHUB_WORKSPACE\evidence-wave7b-native-import-lifecycle\inspector-bootstrap.log"
+          if($LASTEXITCODE-ne0){throw "W7B inspector bootstrap $LASTEXITCODE"}
+          $m=Get-Content VISUAL_W7B_IMPORT_BOOTSTRAP/MANIFEST.json -Raw | ConvertFrom-Json
+          $m.summary | ConvertTo-Json -Depth 8 | Out-File evidence-wave7b-native-import-lifecycle/inspector-bootstrap-summary.json
+          if($m.summary.state-ne'PASS' -or $m.summary.canonicalScenarios-ne18 -or $m.summary.passedCanonicalScenarios-ne18 -or $m.summary.failedRequiredCanonicalScenarios-ne0 -or $m.summary.failedGates-ne0){throw 'W7B inspector bootstrap admission failure'}
+          $runtimeDb='VISUAL_W7B_IMPORT_BOOTSTRAP/runtime-evidence/orbita-visual-inspector.sqlite'
+          if(-not(Test-Path $runtimeDb)){throw 'canonical inspector runtime SQLite missing'}
+          (Get-FileHash $runtimeDb -Algorithm SHA256).Hash.ToLowerInvariant() | Out-File evidence-wave7b-native-import-lifecycle/source-db-sha256.txt
+          (Get-Item $runtimeDb).Length | Out-File evidence-wave7b-native-import-lifecycle/source-db-bytes.txt
+      - name: Exercise real native import owner on throwaway SQLite copies
+        working-directory: candidate
+        shell: pwsh
+        run: |
+          $env:ORBITA_W7B_SOURCE_DATABASE_PATH=(Resolve-Path ../VISUAL_W7B_IMPORT_BOOTSTRAP/runtime-evidence/orbita-visual-inspector.sqlite).Path
+          node ./w7b-native-import-lifecycle-proof.mjs ../evidence-wave7b-native-import-lifecycle/native-import-lifecycle.json 2>&1 | Tee-Object ../evidence-wave7b-native-import-lifecycle/native-import-lifecycle.log
+          if($LASTEXITCODE-ne0){throw 'W7B native import lifecycle proof'}
+          $p=Get-Content ../evidence-wave7b-native-import-lifecycle/native-import-lifecycle.json -Raw | ConvertFrom-Json
+          if($p.state-ne'PASS' -or -not $p.success.managedFileExists -or -not $p.success.sourcePreserved -or -not $p.success.documentHydrated -or -not $p.success.relationHydrated -or -not $p.success.historyHydrated -or -not $p.rollback.noMutation -or -not $p.rollback.sourcePreserved){throw 'W7B native import lifecycle admission failure'}
+      - name: Upload physical lifecycle evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ORBITA-REDESIGN-WAVE7B-NATIVE-IMPORT-LIFECYCLE-PROOF
+          path: evidence-wave7b-native-import-lifecycle
+          retention-days: 7
