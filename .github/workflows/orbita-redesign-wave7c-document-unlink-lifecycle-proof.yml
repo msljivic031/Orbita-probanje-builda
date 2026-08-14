@@ -26,7 +26,7 @@ jobs:
   proof:
     name: Windows Throwaway SQLite Unlink Lifecycle
     runs-on: windows-latest
-    timeout-minutes: 55
+    timeout-minutes: 95
     steps:
       - uses: actions/checkout@v4
         with:
@@ -66,10 +66,23 @@ jobs:
           if($LASTEXITCODE-ne0){throw 'build'}
           Copy-Item ../ci/orbita-redesign-wave7c-document-unlink-lifecycle-proof.mjs ./w7c-unlink-lifecycle-proof.mjs
           Pop-Location
+      - name: Bootstrap canonical inspector SQLite relation truth
+        shell: pwsh
+        run: |
+          & "$env:GITHUB_WORKSPACE\ci\orbita-visual-inspector-infra-retry.ps1" -CandidateRoot "$env:GITHUB_WORKSPACE\candidate" -Output "$env:GITHUB_WORKSPACE\VISUAL_W7C_UNLINK_BOOTSTRAP" -Width 1440 -Height 900 -LogFile "$env:GITHUB_WORKSPACE\evidence-wave7c-unlink-lifecycle\inspector-bootstrap.log"
+          if($LASTEXITCODE-ne0){throw "W7C inspector bootstrap $LASTEXITCODE"}
+          $m=Get-Content VISUAL_W7C_UNLINK_BOOTSTRAP/MANIFEST.json -Raw | ConvertFrom-Json
+          $m.summary | ConvertTo-Json -Depth 8 | Out-File evidence-wave7c-unlink-lifecycle/inspector-bootstrap-summary.json
+          if($m.summary.state-ne'PASS' -or $m.summary.canonicalScenarios-ne18 -or $m.summary.passedCanonicalScenarios-ne18 -or $m.summary.failedRequiredCanonicalScenarios-ne0 -or $m.summary.failedGates-ne0){throw 'W7C inspector bootstrap admission failure'}
+          $runtimeDb='VISUAL_W7C_UNLINK_BOOTSTRAP/runtime-evidence/orbita-visual-inspector.sqlite'
+          if(-not(Test-Path $runtimeDb)){throw 'canonical inspector runtime SQLite missing'}
+          (Get-FileHash $runtimeDb -Algorithm SHA256).Hash.ToLowerInvariant() | Out-File evidence-wave7c-unlink-lifecycle/source-db-sha256.txt
+          (Get-Item $runtimeDb).Length | Out-File evidence-wave7c-unlink-lifecycle/source-db-bytes.txt
       - name: Prove successful relation-only unlink and rejected no-mutation unlink
         working-directory: candidate
         shell: pwsh
         run: |
+          $env:ORBITA_W7C_SOURCE_DATABASE_PATH=(Resolve-Path ../VISUAL_W7C_UNLINK_BOOTSTRAP/runtime-evidence/orbita-visual-inspector.sqlite).Path
           node ./w7c-unlink-lifecycle-proof.mjs ../evidence-wave7c-unlink-lifecycle/unlink-lifecycle.json 2>&1 | Tee-Object ../evidence-wave7c-unlink-lifecycle/unlink-lifecycle.log
           if($LASTEXITCODE-ne0){throw 'W7C unlink lifecycle proof'}
           $p=Get-Content ../evidence-wave7c-unlink-lifecycle/unlink-lifecycle.json -Raw | ConvertFrom-Json
