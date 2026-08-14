@@ -1,0 +1,57 @@
+name: ORBITA Redesign Wave 7C Unlink Request Shape Forensic
+
+on:
+  push:
+    branches: [orbita-redesign]
+    paths:
+      - 'ci/orbita-redesign-wave7c-unlink-request-shape-forensic.cjs'
+      - '.github/workflows/orbita-redesign-wave7c-unlink-request-shape-forensic.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CI: 'true'
+  CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+  ORBITA_BRIDGE_ZIP: 'ORBITA_R13AN_PUBLIC_ENCRYPTED_CI_REPO_READY_R1_2026_08_12.zip'
+  ORBITA_BRIDGE_SHA256: 'dfe1f58a7df5c79c2d841496fd364418f98a91ed2fd6112fc0f5e0ab9c43731e'
+  ORBITA_BASE_R13AN_SHA256: '140846e9be04d3da222996fed9701771c4cb1be1c8395e766512ece153ba399a'
+  ORBITA_ENCRYPTED_SHA256: '827742a1633bd71dae1d2e1fb3dc77a95835a279a660016c8844d305341b1687'
+  ORBITA_AAD: 'ORBITA-R13AN-PUBLIC-CI-R1'
+  ORBITA_ENCRYPTED_FILE: 'bridge/ORBITA2_R14_R13AN_NATIVE_CONTENT_SIGNATURE_HARDENING_NON_PROMOTED_CANDIDATE_R2_2026_08_12.zip.aesgcm'
+  ORBITA_R13AP_SOURCE_IDENTITY: '8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704'
+
+jobs:
+  forensic:
+    name: Windows Unlink Request Shape Map
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: orbita-redesign
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Reconstruct candidate
+        shell: pwsh
+        env:
+          ORBITA_CI_AES256_KEY_B64: ${{ secrets.ORBITA_CI_AES256_KEY_B64 }}
+        run: |
+          New-Item -ItemType Directory -Force evidence-wave7c-unlink-shape | Out-Null
+          ./ci/orbita-redesign-wave6c-reconstruct-c2b.ps1 -EvidenceDir evidence-wave7c-unlink-shape
+      - name: Resolve exact unlink request shape
+        shell: pwsh
+        run: |
+          node ci/orbita-redesign-wave7c-unlink-request-shape-forensic.cjs candidate evidence-wave7c-unlink-shape/unlink-request-shape.json 2>&1 | Tee-Object evidence-wave7c-unlink-shape/unlink-request-shape.log
+          if($LASTEXITCODE-ne0){throw 'unlink request shape forensic'}
+      - name: Upload unlink shape evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: ORBITA-REDESIGN-WAVE7C-UNLINK-REQUEST-SHAPE-FORENSIC
+          path: evidence-wave7c-unlink-shape
+          retention-days: 7
