@@ -27,25 +27,38 @@ try {
     $text = if (Test-Path $attemptLog) { Get-Content $attemptLog -Raw } else { '' }
     $manifestPath = Join-Path $Output 'MANIFEST.json'
     $captures = -1
+    $canonicalScenarios = -1
+    $executedCommands = -1
     if (Test-Path $manifestPath) {
       try {
         $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
         $captures = [int]($manifest.summary.captures)
-      } catch { $captures = -1 }
+        $canonicalScenarios = [int]($manifest.summary.canonicalScenarios)
+        $executedCommands = [int]($manifest.summary.executedCommands)
+      } catch {
+        $captures = -1
+        $canonicalScenarios = -1
+        $executedCommands = -1
+      }
     }
 
     $isElectronFetchInfra = ($text -match 'Downloading Electron binary') -and ($text -match 'fetch failed|Electron failed to install correctly') -and ($captures -eq 0)
-    if (-not $isElectronFetchInfra) {
-      Write-Error "ORBITA_VISUAL_INSPECTOR_REAL_FAIL attempt=$attempt exit=$exitCode captures=$captures"
+    $hasExpectedViewportReadback = $text -match ('ORBITA_VIEWPORT_READBACK \{\"innerWidth\":' + [regex]::Escape([string]$Width) + ',\"innerHeight\":' + [regex]::Escape([string]$Height) + ',\"devicePixelRatio\":1\}')
+    $isEarlyCdpRuntimeInfra = ($text -match 'CDP request timed out: Runtime\.evaluate') -and $hasExpectedViewportReadback -and ($captures -ge 0) -and ($captures -le 1) -and ($canonicalScenarios -eq 0) -and ($executedCommands -eq 0)
+    $isTransientInfra = $isElectronFetchInfra -or $isEarlyCdpRuntimeInfra
+
+    if (-not $isTransientInfra) {
+      Write-Error "ORBITA_VISUAL_INSPECTOR_REAL_FAIL attempt=$attempt exit=$exitCode captures=$captures canonical=$canonicalScenarios executed=$executedCommands"
       exit $exitCode
     }
 
     if ($attempt -ge $InfraAttempts) {
-      Write-Error "ORBITA_VISUAL_INSPECTOR_INFRA_EXHAUSTED attempts=$InfraAttempts captures=0"
+      Write-Error "ORBITA_VISUAL_INSPECTOR_INFRA_EXHAUSTED attempts=$InfraAttempts captures=$captures canonical=$canonicalScenarios executed=$executedCommands"
       exit $exitCode
     }
 
-    Write-Warning "ORBITA_VISUAL_INSPECTOR_TRANSIENT_ELECTRON_FETCH attempt=$attempt; retrying unchanged candidate"
+    $kind = if ($isElectronFetchInfra) { 'ELECTRON_FETCH' } else { 'EARLY_CDP_RUNTIME' }
+    Write-Warning "ORBITA_VISUAL_INSPECTOR_TRANSIENT_$kind attempt=$attempt; retrying unchanged candidate"
     Start-Sleep -Seconds 2
   }
 } finally {
