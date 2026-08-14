@@ -23,9 +23,19 @@ if(baselineIndexes.length!==1)throw new Error(`physically proven selected-docume
 const reviewMarker='documents-unlink-relation-review';
 const invalidMarker='documents-unlink-invalid-reason';
 const readyMarker='documents-unlink-valid-reason-ready';
+const continuityMarker='documents-linked-rad-dossier-documents';
 const isW7cStep=(step)=>!!step&&(
- (step.type==='capture'&&[reviewMarker,invalidMarker,readyMarker].includes(step.label))||
- (typeof step.selector==='string'&&(step.selector.includes('documents-review-unlink')||step.selector.includes('data-orbita-w7c-relation-review')||step.selector.includes('data-orbita-w7c-unlink-reason')||step.selector.includes('data-orbita-w7c-confirm-unlink')))
+ (step.type==='capture'&&[reviewMarker,invalidMarker,readyMarker,continuityMarker].includes(step.label))||
+ (typeof step.selector==='string'&&(
+   step.selector.includes('documents-review-unlink')||
+   step.selector.includes('data-orbita-w7c-relation-review')||
+   step.selector.includes('data-orbita-w7c-unlink-reason')||
+   step.selector.includes('data-orbita-w7c-confirm-unlink')||
+   step.selector==='.document-work-open'||
+   step.selector.includes('selected-work-open-dossier')||
+   step.selector.includes('data-orbita-dossier-tab="documents"')||
+   step.selector.includes('data-orbita-dossier-active-tab="documents"')
+ ))
 );
 target.steps=target.steps.filter(step=>!isW7cStep(step));
 const baselineIndex=target.steps.findIndex(step=>step&&step.type==='capture'&&step.label===baselineLabel);
@@ -45,10 +55,17 @@ const proofSteps=[
  {type:'fill',selector:reasonSelector,value:'Ispravka pogrešne veze'},
  {type:'wait',milliseconds:80},
  {type:'assertEnabled',selector:confirmStateSelector},
- {type:'capture',label:readyMarker}
+ {type:'capture',label:readyMarker},
+ {type:'click',selector:'.document-work-open'},
+ {type:'wait',milliseconds:180},
+ {type:'click',selector:'[data-orbita-action="selected-work-open-dossier"]'},
+ {type:'waitFor',selector:'[data-orbita-dossier-tab="documents"]',timeoutMs:5000},
+ {type:'click',selector:'[data-orbita-dossier-tab="documents"]'},
+ {type:'waitFor',selector:'[data-orbita-dossier-active-tab="documents"]',timeoutMs:5000},
+ {type:'capture',label:continuityMarker}
 ];
 target.steps.splice(baselineIndex+1,0,...proofSteps);
-for(const label of [reviewMarker,invalidMarker,readyMarker])if(target.steps.filter(step=>step&&step.type==='capture'&&step.label===label).length!==1)throw new Error(`W7C capture count invalid ${label}`);
+for(const label of [reviewMarker,invalidMarker,readyMarker,continuityMarker])if(target.steps.filter(step=>step&&step.type==='capture'&&step.label===label).length!==1)throw new Error(`W7C capture count invalid ${label}`);
 fs.writeFileSync(scenarioFile,JSON.stringify(doc,null,2)+'\n');
 fs.writeFileSync(coverageFile,JSON.stringify(coverage,null,2)+'\n');
-console.log(JSON.stringify({state:'W7C_SCENARIO_EXTENDED_NOT_ADMITTED',scenario:target.id,route:target.route,productSrcChanged:false,directAction:'documents-review-unlink',confirmActionDispositionRetained:true,placement:'immediately-after-scenario-documents-selected-document',obsoleteDispositionRemoved:{owner:'config/inspector/action-coverage-current.json',action:'documents-review-unlink',count:1},proof:['exact relation review visible','one-character reason keeps confirm disabled through neutral evidence marker','valid reason restores confirm enabled through neutral evidence marker','documents-confirm-unlink is never clicked in canonical inspector'],captures:[reviewMarker,invalidMarker,readyMarker],truth:'error prevention and recoverability are exercised without misclassifying the uncommitted confirm action as direct coverage and without mutating canonical relation truth'},null,2));
+console.log(JSON.stringify({state:'W7C_SCENARIO_EXTENDED_NOT_ADMITTED',scenario:target.id,route:target.route,productSrcChanged:false,directAction:'documents-review-unlink',confirmActionDispositionRetained:true,placement:'immediately-after-scenario-documents-selected-document',obsoleteDispositionRemoved:{owner:'config/inspector/action-coverage-current.json',action:'documents-review-unlink',count:1},proof:['exact relation review visible','one-character reason keeps confirm disabled through neutral evidence marker','valid reason restores confirm enabled through neutral evidence marker','documents-confirm-unlink is never clicked in canonical inspector','existing linked-Rad control opens the selected Rad','existing selected-work dossier owner opens dossier','existing dossier Documents tab is reached without mutation'],captures:[reviewMarker,invalidMarker,readyMarker,continuityMarker],truth:'error prevention, recoverability and Documents→Rad dossier continuity are exercised on existing owners without committing unlink or inventing a second document representation'},null,2));
