@@ -1,0 +1,122 @@
+name: ORBITA Redesign Wave 7C Documents Recovery Proof
+
+on:
+  push:
+    branches: [orbita-redesign]
+    paths:
+      - 'ci/orbita-redesign-wave7c-documents-recovery-ux-transform.cjs'
+      - 'ci/orbita-redesign-wave7c-documents-recovery-ux-gate.cjs'
+      - 'ci/orbita-redesign-wave7c-documents-recovery-scenario-proof.cjs'
+      - 'ci/orbita-redesign-wave7c-documents-recovery-visual-gate.cjs'
+      - '.github/workflows/orbita-redesign-wave7c-documents-recovery-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CI: 'true'
+  CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+  ORBITA_BRIDGE_ZIP: 'ORBITA_R13AN_PUBLIC_ENCRYPTED_CI_REPO_READY_R1_2026_08_12.zip'
+  ORBITA_BRIDGE_SHA256: 'dfe1f58a7df5c79c2d841496fd364418f98a91ed2fd6112fc0f5e0ab9c43731e'
+  ORBITA_BASE_R13AN_SHA256: '140846e9be04d3da222996fed9701771c4cb1be1c8395e766512ece153ba399a'
+  ORBITA_ENCRYPTED_SHA256: '827742a1633bd71dae1d2e1fb3dc77a95835a279a660016c8844d305341b1687'
+  ORBITA_AAD: 'ORBITA-R13AN-PUBLIC-CI-R1'
+  ORBITA_ENCRYPTED_FILE: 'bridge/ORBITA2_R14_R13AN_NATIVE_CONTENT_SIGNATURE_HARDENING_NON_PROMOTED_CANDIDATE_R2_2026_08_12.zip.aesgcm'
+  ORBITA_R13AP_SOURCE_IDENTITY: '8c8e411e679b93e3994b3b64425bb83ef03318eb4316937ca3a28a0be18e5704'
+
+jobs:
+  proof:
+    name: Windows Documents Recovery Runtime + Visual Proof
+    runs-on: windows-latest
+    timeout-minutes: 115
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: orbita-redesign
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Reconstruct exact admitted product line through W7B presentation
+        shell: pwsh
+        env:
+          ORBITA_CI_AES256_KEY_B64: ${{ secrets.ORBITA_CI_AES256_KEY_B64 }}
+        run: |
+          New-Item -ItemType Directory -Force evidence-wave7c-recovery | Out-Null
+          ./ci/orbita-redesign-wave6c-reconstruct-c2b.ps1 -EvidenceDir evidence-wave7c-recovery
+          node ci/orbita-redesign-wave6c-renderer-output-bind.cjs candidate 2>&1 | Tee-Object evidence-wave7c-recovery/w6c-renderer-bind.log
+          if($LASTEXITCODE-ne0){throw 'W6C renderer bind'}
+          node ci/orbita-redesign-wave7a-documents-visual-architecture-transform.cjs candidate 2>&1 | Tee-Object evidence-wave7c-recovery/w7a-transform.log
+          if($LASTEXITCODE-ne0){throw 'W7A transform'}
+          node ci/orbita-redesign-wave7a-documents-row-flow-repair.cjs candidate 2>&1 | Tee-Object evidence-wave7c-recovery/w7a-row-flow.log
+          if($LASTEXITCODE-ne0){throw 'W7A row flow'}
+          node ci/orbita-redesign-wave7a-documents-visual-architecture-gate.cjs candidate 2>&1 | Tee-Object evidence-wave7c-recovery/w7a-gate.log
+          if($LASTEXITCODE-ne0){throw 'W7A gate'}
+          $proofScript='ci/orbita-redesign-wave7b-documents-consequence-ux-transform.cjs'
+          $proofLines=Get-Content $proofScript
+          $proofLines | Where-Object { $_ -notmatch 'native import button copy' } | Set-Content $proofScript
+          node $proofScript candidate 2>&1 | Tee-Object evidence-wave7c-recovery/w7b-consequence.log
+          if($LASTEXITCODE-ne0){throw 'W7B consequence'}
+      - name: Apply and gate W7C recovery UX
+        shell: pwsh
+        run: |
+          node ci/orbita-redesign-wave7c-documents-recovery-ux-transform.cjs candidate 2>&1 | Tee-Object evidence-wave7c-recovery/w7c-transform.log
+          if($LASTEXITCODE-ne0){throw 'W7C transform'}
+          node ci/orbita-redesign-wave7c-documents-recovery-ux-gate.cjs candidate 2>&1 | Tee-Object evidence-wave7c-recovery/w7c-gate.log
+          if($LASTEXITCODE-ne0){throw 'W7C gate'}
+          node ci/orbita-redesign-wave7c-documents-recovery-scenario-proof.cjs candidate 2>&1 | Tee-Object evidence-wave7c-recovery/w7c-scenario.log
+          if($LASTEXITCODE-ne0){throw 'W7C scenario'}
+      - name: Typecheck schema action coverage build
+        working-directory: candidate
+        shell: pwsh
+        run: |
+          npm ci --no-audit --no-fund 2>&1 | Tee-Object ../evidence-wave7c-recovery/npm-ci.log
+          if($LASTEXITCODE-ne0){throw 'npm ci'}
+          npm run typecheck 2>&1 | Tee-Object ../evidence-wave7c-recovery/typecheck.log
+          if($LASTEXITCODE-ne0){throw 'typecheck'}
+          npm run check:inspector-schema 2>&1 | Tee-Object ../evidence-wave7c-recovery/schema.log
+          if($LASTEXITCODE-ne0){throw 'schema'}
+          npm run check:action-coverage 2>&1 | Tee-Object ../evidence-wave7c-recovery/action-coverage.log
+          if($LASTEXITCODE-ne0){throw 'action coverage'}
+          npm run build 2>&1 | Tee-Object ../evidence-wave7c-recovery/build.log
+          if($LASTEXITCODE-ne0){throw 'build'}
+      - name: Full canonical visual inspector 1440x900
+        shell: pwsh
+        run: |
+          & "$env:GITHUB_WORKSPACE\ci\orbita-visual-inspector-infra-retry.ps1" -CandidateRoot "$env:GITHUB_WORKSPACE\candidate" -Output "$env:GITHUB_WORKSPACE\VISUAL_W7C_1440" -Width 1440 -Height 900 -LogFile "$env:GITHUB_WORKSPACE\evidence-wave7c-recovery\inspector-1440.log"
+          if($LASTEXITCODE-ne0){throw "1440 inspector $LASTEXITCODE"}
+          node ci/orbita-redesign-wave7a-documents-visual-evidence-gate.cjs VISUAL_W7C_1440 1440 900 2>&1 | Tee-Object evidence-wave7c-recovery/w7a-visual-1440.log
+          if($LASTEXITCODE-ne0){throw 'W7A visual 1440'}
+          node ci/orbita-redesign-wave7c-documents-recovery-visual-gate.cjs VISUAL_W7C_1440 1440 900 2>&1 | Tee-Object evidence-wave7c-recovery/w7c-visual-1440.log
+          if($LASTEXITCODE-ne0){throw 'W7C visual 1440'}
+          New-Item -ItemType Directory -Force evidence-wave7c-recovery/visual-1440 | Out-Null
+          Get-ChildItem VISUAL_W7C_1440/screenshots -Filter '*documents-unlink-relation-review*.png' | Copy-Item -Destination evidence-wave7c-recovery/visual-1440
+          Get-ChildItem VISUAL_W7C_1440/states -Filter '*documents-unlink-relation-review*.html' | Copy-Item -Destination evidence-wave7c-recovery/visual-1440
+          $m=Get-Content VISUAL_W7C_1440/MANIFEST.json -Raw | ConvertFrom-Json
+          $m.summary | ConvertTo-Json -Depth 8 | Out-File evidence-wave7c-recovery/summary-1440.json
+          if($m.summary.state-ne'PASS' -or $m.summary.canonicalScenarios-ne18 -or $m.summary.passedCanonicalScenarios-ne18 -or $m.summary.failedRequiredCanonicalScenarios-ne0 -or $m.summary.failedGates-ne0){throw '1440 admission failure'}
+      - name: Full canonical visual inspector 1366x768
+        shell: pwsh
+        run: |
+          & "$env:GITHUB_WORKSPACE\ci\orbita-visual-inspector-infra-retry.ps1" -CandidateRoot "$env:GITHUB_WORKSPACE\candidate" -Output "$env:GITHUB_WORKSPACE\VISUAL_W7C_1366" -Width 1366 -Height 768 -LogFile "$env:GITHUB_WORKSPACE\evidence-wave7c-recovery\inspector-1366.log"
+          if($LASTEXITCODE-ne0){throw "1366 inspector $LASTEXITCODE"}
+          node ci/orbita-redesign-wave7a-documents-visual-evidence-gate.cjs VISUAL_W7C_1366 1366 768 2>&1 | Tee-Object evidence-wave7c-recovery/w7a-visual-1366.log
+          if($LASTEXITCODE-ne0){throw 'W7A visual 1366'}
+          node ci/orbita-redesign-wave7c-documents-recovery-visual-gate.cjs VISUAL_W7C_1366 1366 768 2>&1 | Tee-Object evidence-wave7c-recovery/w7c-visual-1366.log
+          if($LASTEXITCODE-ne0){throw 'W7C visual 1366'}
+          New-Item -ItemType Directory -Force evidence-wave7c-recovery/visual-1366 | Out-Null
+          Get-ChildItem VISUAL_W7C_1366/screenshots -Filter '*documents-unlink-relation-review*.png' | Copy-Item -Destination evidence-wave7c-recovery/visual-1366
+          Get-ChildItem VISUAL_W7C_1366/states -Filter '*documents-unlink-relation-review*.html' | Copy-Item -Destination evidence-wave7c-recovery/visual-1366
+          $m=Get-Content VISUAL_W7C_1366/MANIFEST.json -Raw | ConvertFrom-Json
+          $m.summary | ConvertTo-Json -Depth 8 | Out-File evidence-wave7c-recovery/summary-1366.json
+          if($m.summary.state-ne'PASS' -or $m.summary.canonicalScenarios-ne18 -or $m.summary.passedCanonicalScenarios-ne18 -or $m.summary.failedRequiredCanonicalScenarios-ne0 -or $m.summary.failedGates-ne0){throw '1366 admission failure'}
+      - name: Upload W7C recovery evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ORBITA-REDESIGN-WAVE7C-DOCUMENTS-RECOVERY-PROOF
+          path: evidence-wave7c-recovery
+          retention-days: 7
