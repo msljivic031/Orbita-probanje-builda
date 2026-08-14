@@ -5,6 +5,7 @@ on:
     branches: [orbita-redesign]
     paths:
       - 'ci/orbita-redesign-wave7c-documents-scenario-owner-forensic.cjs'
+      - 'ci/orbita-redesign-wave7c-document-record-shape-forensic.cjs'
       - '.github/workflows/orbita-redesign-wave7c-documents-scenario-owner-forensic.yml'
   workflow_dispatch:
 
@@ -24,7 +25,7 @@ env:
 
 jobs:
   forensic:
-    name: Windows Documents Scenario Owner Map
+    name: Windows Documents Scenario + Record Shape Map
     runs-on: windows-latest
     timeout-minutes: 40
     steps:
@@ -60,6 +61,11 @@ jobs:
         run: |
           node ci/orbita-redesign-wave7c-documents-scenario-owner-forensic.cjs candidate evidence-wave7c-scenario-owner/documents-scenario-owner.json 2>&1 | Tee-Object evidence-wave7c-scenario-owner/scenario-owner.log
           if($LASTEXITCODE-ne0){throw 'scenario owner forensic'}
+      - name: Resolve canonical DocumentRecord shape
+        shell: pwsh
+        run: |
+          node ci/orbita-redesign-wave7c-document-record-shape-forensic.cjs candidate evidence-wave7c-scenario-owner/document-record-shape.json 2>&1 | Tee-Object evidence-wave7c-scenario-owner/document-record-shape.log
+          if($LASTEXITCODE-ne0){throw 'DocumentRecord shape forensic'}
       - name: Upload scenario owner evidence
         if: always()
         uses: actions/upload-artifact@v4
