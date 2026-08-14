@@ -1,7 +1,16 @@
 const fs=require('fs'),path=require('path');
 const root=path.resolve(process.argv[2]||'candidate');
-const file=path.join(root,'config','inspector','scenarios.json');
-const doc=JSON.parse(fs.readFileSync(file,'utf8'));
+const scenarioFile=path.join(root,'config','inspector','scenarios.json');
+const coverageFile=path.join(root,'config','inspector','action-coverage-current.json');
+if(!fs.existsSync(scenarioFile)||!fs.existsSync(coverageFile))throw new Error('inspector scenario/action coverage owners missing');
+const doc=JSON.parse(fs.readFileSync(scenarioFile,'utf8'));
+const coverage=JSON.parse(fs.readFileSync(coverageFile,'utf8'));
+if(!Array.isArray(coverage.explicitDispositions))throw new Error('explicitDispositions owner missing');
+const dispositionIndexes=[];
+coverage.explicitDispositions.forEach((entry,index)=>{if(entry&&entry.action==='documents-review-unlink')dispositionIndexes.push(index);});
+if(dispositionIndexes.length!==1)throw new Error(`documents-review-unlink explicit disposition expected 1, got ${dispositionIndexes.length}`);
+coverage.explicitDispositions.splice(dispositionIndexes[0],1);
+if(coverage.explicitDispositions.some(entry=>entry&&entry.action==='documents-review-unlink'))throw new Error('obsolete disposition removal incomplete');
 let target=null,count=0;
 function visit(node){
  if(!node||typeof node!=='object')return;
@@ -22,5 +31,6 @@ if(!target.steps.some(step=>step&&step.type==='capture'&&step.label===marker)){
   {type:'capture',label:marker}
  );
 }
-fs.writeFileSync(file,JSON.stringify(doc,null,2)+'\n');
-console.log(JSON.stringify({state:'W7C_SCENARIO_EXTENDED_NOT_ADMITTED',scenario:target.id,route:target.route,productSrcChanged:false,action:'documents-review-unlink',assertion:'data-orbita-w7c-relation-review=true',capture:marker,truth:'exact physically proven documents-select-document authored scenario; real unlink-review action; no synthetic route or fake relation state'},null,2));
+fs.writeFileSync(scenarioFile,JSON.stringify(doc,null,2)+'\n');
+fs.writeFileSync(coverageFile,JSON.stringify(coverage,null,2)+'\n');
+console.log(JSON.stringify({state:'W7C_SCENARIO_EXTENDED_NOT_ADMITTED',scenario:target.id,route:target.route,productSrcChanged:false,action:'documents-review-unlink',obsoleteDispositionRemoved:{owner:'config/inspector/action-coverage-current.json',count:1},assertion:'data-orbita-w7c-relation-review=true',capture:marker,truth:'exact physically proven documents-select-document authored scenario; direct action coverage replaces exactly one obsolete explicit disposition; no synthetic route or fake relation state'},null,2));
