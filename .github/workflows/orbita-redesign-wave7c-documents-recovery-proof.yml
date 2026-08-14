@@ -93,8 +93,8 @@ jobs:
           node ci/orbita-redesign-wave7c-documents-recovery-visual-gate.cjs VISUAL_W7C_1440 1440 900 2>&1 | Tee-Object evidence-wave7c-recovery/w7c-visual-1440.log
           if($LASTEXITCODE-ne0){throw 'W7C visual 1440'}
           New-Item -ItemType Directory -Force evidence-wave7c-recovery/visual-1440 | Out-Null
-          Get-ChildItem VISUAL_W7C_1440/screenshots -Filter '*documents-unlink-relation-review*.png' | Copy-Item -Destination evidence-wave7c-recovery/visual-1440
-          Get-ChildItem VISUAL_W7C_1440/states -Filter '*documents-unlink-relation-review*.html' | Copy-Item -Destination evidence-wave7c-recovery/visual-1440
+          Get-ChildItem VISUAL_W7C_1440/screenshots -Filter '*.png' | Where-Object { $_.Name -match 'documents-unlink-relation-review|documents-unlink-invalid-reason|documents-unlink-valid-reason-ready' } | Copy-Item -Destination evidence-wave7c-recovery/visual-1440
+          Get-ChildItem VISUAL_W7C_1440/states -Filter '*.html' | Where-Object { $_.Name -match 'documents-unlink-relation-review|documents-unlink-invalid-reason|documents-unlink-valid-reason-ready' } | Copy-Item -Destination evidence-wave7c-recovery/visual-1440
           $m=Get-Content VISUAL_W7C_1440/MANIFEST.json -Raw | ConvertFrom-Json
           $m.summary | ConvertTo-Json -Depth 8 | Out-File evidence-wave7c-recovery/summary-1440.json
           if($m.summary.state-ne'PASS' -or $m.summary.canonicalScenarios-ne18 -or $m.summary.passedCanonicalScenarios-ne18 -or $m.summary.failedRequiredCanonicalScenarios-ne0 -or $m.summary.failedGates-ne0){throw '1440 admission failure'}
@@ -108,8 +108,8 @@ jobs:
           node ci/orbita-redesign-wave7c-documents-recovery-visual-gate.cjs VISUAL_W7C_1366 1366 768 2>&1 | Tee-Object evidence-wave7c-recovery/w7c-visual-1366.log
           if($LASTEXITCODE-ne0){throw 'W7C visual 1366'}
           New-Item -ItemType Directory -Force evidence-wave7c-recovery/visual-1366 | Out-Null
-          Get-ChildItem VISUAL_W7C_1366/screenshots -Filter '*documents-unlink-relation-review*.png' | Copy-Item -Destination evidence-wave7c-recovery/visual-1366
-          Get-ChildItem VISUAL_W7C_1366/states -Filter '*documents-unlink-relation-review*.html' | Copy-Item -Destination evidence-wave7c-recovery/visual-1366
+          Get-ChildItem VISUAL_W7C_1366/screenshots -Filter '*.png' | Where-Object { $_.Name -match 'documents-unlink-relation-review|documents-unlink-invalid-reason|documents-unlink-valid-reason-ready' } | Copy-Item -Destination evidence-wave7c-recovery/visual-1366
+          Get-ChildItem VISUAL_W7C_1366/states -Filter '*.html' | Where-Object { $_.Name -match 'documents-unlink-relation-review|documents-unlink-invalid-reason|documents-unlink-valid-reason-ready' } | Copy-Item -Destination evidence-wave7c-recovery/visual-1366
           $m=Get-Content VISUAL_W7C_1366/MANIFEST.json -Raw | ConvertFrom-Json
           $m.summary | ConvertTo-Json -Depth 8 | Out-File evidence-wave7c-recovery/summary-1366.json
           if($m.summary.state-ne'PASS' -or $m.summary.canonicalScenarios-ne18 -or $m.summary.passedCanonicalScenarios-ne18 -or $m.summary.failedRequiredCanonicalScenarios-ne0 -or $m.summary.failedGates-ne0){throw '1366 admission failure'}
