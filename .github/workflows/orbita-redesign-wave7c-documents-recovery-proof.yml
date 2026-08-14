@@ -89,8 +89,8 @@ jobs:
           & "$env:GITHUB_WORKSPACE\ci\orbita-visual-inspector-infra-retry.ps1" -CandidateRoot "$env:GITHUB_WORKSPACE\candidate" -Output "$env:GITHUB_WORKSPACE\VISUAL_W7C_1440" -Width 1440 -Height 900 -LogFile "$env:GITHUB_WORKSPACE\evidence-wave7c-recovery\inspector-1440.log"
           if($LASTEXITCODE-ne0){throw "1440 inspector $LASTEXITCODE"}
           New-Item -ItemType Directory -Force evidence-wave7c-recovery/visual-1440 | Out-Null
-          Get-ChildItem VISUAL_W7C_1440/screenshots -Filter '*.png' | Where-Object { $_.Name -match 'documents-unlink-relation-review|documents-unlink-invalid-reason|documents-unlink-valid-reason-ready|documents-linked-rad-dossier-documents' } | Copy-Item -Destination evidence-wave7c-recovery/visual-1440
-          Get-ChildItem VISUAL_W7C_1440/states -Filter '*.html' | Where-Object { $_.Name -match 'documents-unlink-relation-review|documents-unlink-invalid-reason|documents-unlink-valid-reason-ready|documents-linked-rad-dossier-documents' } | Copy-Item -Destination evidence-wave7c-recovery/visual-1440
+          Get-ChildItem VISUAL_W7C_1440/screenshots -Filter '*.png' | Where-Object { $_.Name -match 'documents-unlink-relation-review|documents-unlink-invalid-reason|documents-unlink-valid-reason-ready|documents-linked-rad-destination|documents-linked-rad-dossier-documents' } | Copy-Item -Destination evidence-wave7c-recovery/visual-1440
+          Get-ChildItem VISUAL_W7C_1440/states -Filter '*.html' | Where-Object { $_.Name -match 'documents-unlink-relation-review|documents-unlink-invalid-reason|documents-unlink-valid-reason-ready|documents-linked-rad-destination|documents-linked-rad-dossier-documents' } | Copy-Item -Destination evidence-wave7c-recovery/visual-1440
           Copy-Item VISUAL_W7C_1440/MANIFEST.json evidence-wave7c-recovery/MANIFEST-1440.json
           $m=Get-Content VISUAL_W7C_1440/MANIFEST.json -Raw | ConvertFrom-Json
           $m.summary | ConvertTo-Json -Depth 8 | Out-File evidence-wave7c-recovery/summary-1440.json
@@ -105,8 +105,8 @@ jobs:
           & "$env:GITHUB_WORKSPACE\ci\orbita-visual-inspector-infra-retry.ps1" -CandidateRoot "$env:GITHUB_WORKSPACE\candidate" -Output "$env:GITHUB_WORKSPACE\VISUAL_W7C_1366" -Width 1366 -Height 768 -LogFile "$env:GITHUB_WORKSPACE\evidence-wave7c-recovery\inspector-1366.log"
           if($LASTEXITCODE-ne0){throw "1366 inspector $LASTEXITCODE"}
           New-Item -ItemType Directory -Force evidence-wave7c-recovery/visual-1366 | Out-Null
-          Get-ChildItem VISUAL_W7C_1366/screenshots -Filter '*.png' | Where-Object { $_.Name -match 'documents-unlink-relation-review|documents-unlink-invalid-reason|documents-unlink-valid-reason-ready|documents-linked-rad-dossier-documents' } | Copy-Item -Destination evidence-wave7c-recovery/visual-1366
-          Get-ChildItem VISUAL_W7C_1366/states -Filter '*.html' | Where-Object { $_.Name -match 'documents-unlink-relation-review|documents-unlink-invalid-reason|documents-unlink-valid-reason-ready|documents-linked-rad-dossier-documents' } | Copy-Item -Destination evidence-wave7c-recovery/visual-1366
+          Get-ChildItem VISUAL_W7C_1366/screenshots -Filter '*.png' | Where-Object { $_.Name -match 'documents-unlink-relation-review|documents-unlink-invalid-reason|documents-unlink-valid-reason-ready|documents-linked-rad-destination|documents-linked-rad-dossier-documents' } | Copy-Item -Destination evidence-wave7c-recovery/visual-1366
+          Get-ChildItem VISUAL_W7C_1366/states -Filter '*.html' | Where-Object { $_.Name -match 'documents-unlink-relation-review|documents-unlink-invalid-reason|documents-unlink-valid-reason-ready|documents-linked-rad-destination|documents-linked-rad-dossier-documents' } | Copy-Item -Destination evidence-wave7c-recovery/visual-1366
           Copy-Item VISUAL_W7C_1366/MANIFEST.json evidence-wave7c-recovery/MANIFEST-1366.json
           $m=Get-Content VISUAL_W7C_1366/MANIFEST.json -Raw | ConvertFrom-Json
           $m.summary | ConvertTo-Json -Depth 8 | Out-File evidence-wave7c-recovery/summary-1366.json
